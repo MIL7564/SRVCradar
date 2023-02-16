@@ -11,5 +11,5 @@ _srvcRadar locates individuals in need - issuing alerts to their repsective Legi
 
 
 ## Acknowledgements
-+ Please see [TROUBLESHOOT](+2 TROUBLESHOOT_) for a running list of references, such as StackOverflow_
-+ ChatGPT
++ Please see [TROUBLESHOOT](https://github.com/salmanshuaib/srvcRadar/tree/main/%2B2%20TROUBLESHOOT_) for a running list of references, such as StackOverflow.
++ ChatGPT.
