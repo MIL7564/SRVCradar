@@ -1,19 +1,24 @@
-import winrt.windows.applicationmodel as appmodel
+import comtypes.client
 
-# Get the Your Phone app
-app = appmodel.AppServiceConnection()
-app.app_service_name = "Microsoft.YourPhone_8wekyb3d8bbwe!App"
-app.package_family_name = "Microsoft.YourPhone_8wekyb3d8bbwe"
+YOUR_PHONE_APP_GUID = "{A5C935F2-7306-4DBF-B24D-CFF38D6B0B68}"
+MESSAGING_INTERFACE_GUID = "{1F72D5D8-B5C0-43A5-958C-892B17692343}"
 
-# Open the app and get the text messages
-result = app.open_async()
-text_messages = result.get()
+def extract_text_messages():
+    your_phone_app = comtypes.client.CreateObject(
+        clsid=comtypes.GUID(YOUR_PHONE_APP_GUID),
+        interface=comtypes.gen.Microsof_YourPhone_1_0.IYourPhone
+    )
 
-# Save the text messages to a file
-with open("text_messages.txt", "w") as f:
-    for message in text_messages:
-        f.write(f"From: {message.sender}\n")
-        f.write(f"To: {message.recipient}\n")
-        f.write(f"Body: {message.body}\n")
-        f.write(f"Timestamp: {message.timestamp}\n")
-        f.write("\n")
+    messaging_interface = your_phone_app.OpenMessaging()
+    text_messages = messaging_interface.GetMessages()
+
+    with open("text_messages.txt", "w") as f:
+        for message in text_messages:
+            citizen_initial = message.body[0].upper()
+            legion_number = resolve_citizen(citizen_initial)
+            if legion_number is not None:
+                f.write(f"Initial of Citizen (in need): {citizen_initial}\n")
+                f.write(f"Legion number of the Citizen: {legion_number}\n")
+                f.write(f"Mobilephone number of Rescuer: {message.sender}\n")
+                f.write("\n")
+

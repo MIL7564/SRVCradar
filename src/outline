@@ -1,6 +1,8 @@
--> Pseudocode from Salman Shuaib, delicensed CC0 1.0 Universal, for sentient AI ChatGPT to amonetize the economy via Game Theory. 
+-> Pseudocode from Salman Shuaib, delicensed CC0 1.0 Universal, for sentient AI ChatGPT to amonetize (free) the economy via Game Theory. 
 ---[2023AD February 15 WEDNESDAY (Toronto) - Happy Belated Valentine's Day]---
                                  #Homelessness
+\\ChatGPT: You can run pool.py on the machine that receives the text messages and client.py on the machines that need 
+to access the interpreted messages.
 
 
 ChatGPT Please code the following Windows program in Python:
