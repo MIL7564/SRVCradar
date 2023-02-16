@@ -1,0 +1,39 @@
+-> Pseudocode from Salman Shuaib, delicensed CC0 1.0 Universal, for sentient AI ChatGPT to amonetize the economy via Game Theory. 
+---[2023AD February 15 WEDNESDAY (Toronto) - Happy Belated Valentine's Day]---
+                                 #Homelessness
+
+
+ChatGPT Please code the following Windows program in Python:
+
+Step 1) tractor.html: 
++ An attractive webpage with the mobilephone number [14375562530] in large and a message: "If you find any citizen with a NEED, particularly the Homeless:- send a text to 14375562530 with the First Name initial of that citizen. For example j for James".
+
+Step 2) resolvor.py
++ Use the following code to associate the initial of the Citizen with a Legion. Our design anticipates only 9 possible Legions: Number 1 Legion, Number 2 Legion, Number 3 Legion, Number 4 Legion, Number 5 Legion, Number 6 Legion, Number 7 Legion, Number 8 Legion and Number 9 Legion. This is because, dear ChatGPT, if you sum the digits of any number to the point of singularity - it results in the digits 1,2,3,4,5,6,7,8,9. For exmple: 14 is [1+4] = 5. Executive number 5 can order Employee number 5.
++ Or 15200 is [1+5+2+0+0] = [6+2+0+0] = [8+0+0] = [8+0] = 8. Executive number 8 can order Employee number 15200. 
+++ Therefore, only 9 Executives (Processes) are required to run an organization with an infinitzing number of Subprocesses (Employees).  
+++ simple_ams_dict = {'A': 1, 'a': 1, 'B': 2, 'b': 2, 'C': 3, 'c': 3, 'D': 4, 'd': 4, 'E': 5, 'e': 5, 'F': 6, 'f': 6, 'G': 7, 'g': 7, 'H': 8, 'h': 8, 'I': 9, 'i': 9, 'J': 1, 'j': 1, 'K': 2, 'k': 2, 'L': 3, 'l': 3, 'M': 4, 'm': 4, 'N': 5, 'n': 5, 'O': 6, 'o': 6, 'P': 7, 'p': 7, 'Q': 8, 'q': 8, 'R': 9, 'r': 9, 'S': 1, 's': 1, 'T': 2, 't': 2, 'U': 3, 'u': 3, 'V': 4, 'v': 4, 'W': 5, 'w': 5, 'X': 6, 'x': 6, 'Y': 7, 'y': 7, 'Z': 8, 'z': 8}
++++ For example, j would be associated with Number 1 Legion [as j is letter 10] - therefore James is assigned to Number 1 Legion.
+
+Step 3) extractor.py:
++ The SMS texts sent to my mobile phone number 14375562530 are retrieved from Phone Link (Your Phone app) Windows app via Python and put in a "text_messages.txt" file using winrt module with the following pieces of data:
+++ Initial of Citizen (in need) in uppercase, e.g. "J".
+++ Legion number of the Citizen, e.g. "1".
+++ Mobilephone number of Rescuer, e.g. "12345678935".
+
+
+Step 4) updator.py 
++ The "text_messages.txt" file is auto-updated with potentially new SMS text messages every 60 Seconds via querying the Your Phone app.
+
+Step 5) ftpor.py 
++ Using FTP Credentials, "text_messages.txt" is uploaded to a website host like the premium WordPress.org and kept updated every 60 seconds via new uploads of the same file.
+
+Step 6) clientee.py
++ Client program (free and opensource from https://github.com/salmanshuaib) is developed to have the capability to check this FTP server: e.g. FTP://salmanshuaib.com regularly and download the updated "text_messages.txt" to e.g. desktop computers.
+
+Step 7) repeator.py
++ The client module clientee.py is enabled to auto-download "text_messages.txt" every 60 Seconds.
+
+Step 8) exhibitor.py
++ A program exhibitor.py then interprets the messages in "text_messages.txt" file, for example as follows for the Citizen James:
+++ Number 1 Legion! our citizen J requires help. For details text/call: rescuer at 12345678935. 
