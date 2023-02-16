@@ -1,5 +1,4 @@
-##INTRODUCTION
-
+## INTRODUCTION
 _srvcRadar locates individuals in need - issuing alerts to their repsective Legions (each person is assigned a legion based on their firt name initial in their own language of choice)._
 
 - [Introduction](): A downloadable software that issues alerts for individuals in need, gamifying the response.
@@ -10,6 +9,6 @@ _srvcRadar locates individuals in need - issuing alerts to their repsective Legi
 - [Diversity](): Each Citizen can be helped based on their first name in their own language of preference; as A to I are 9 letters and you just need the first nine Letters of any language to incorporate that set (nation) into the game. For example, Rho is Letter 17 in the Greek alphabet - which means if your name began with Rho then you belong to Number 8 Command [as 1+7=8] of the IMMERSIVEReality.
 
 
-## Acknowledgements
+## ACKNOWLEDGEMENTS
 + Please see [TROUBLESHOOT](https://github.com/salmanshuaib/srvcRadar/tree/main/%2B2%20TROUBLESHOOT_) for a running list of references, such as StackOverflow.
 + ChatGPT.
