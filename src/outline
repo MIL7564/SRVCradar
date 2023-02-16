@@ -16,7 +16,7 @@ Step 2) resolvor.py
 +++ For example, j would be associated with Number 1 Legion [as j is letter 10] - therefore James is assigned to Number 1 Legion.
 
 Step 3) extractor.py:
-+ The SMS texts sent to my mobile phone number 14375562530 are retrieved from Phone Link (Your Phone app) Windows app via Python and put in a "text_messages.txt" file using winrt module with the following pieces of data:
++ The SMS texts sent to my mobile phone number 14375562530 are retrieved from Phone Link (Your Phone app) Windows app via Python and put in a "text_messages.txt" file using winsdk module with the following pieces of data:
 ++ Initial of Citizen (in need) in uppercase, e.g. "J".
 ++ Legion number of the Citizen, e.g. "1".
 ++ Mobilephone number of Rescuer, e.g. "12345678935".
