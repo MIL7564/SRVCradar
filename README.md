@@ -1,5 +1,5 @@
 ## INTRODUCTION
-_srvcRadar locates individuals in need - issuing alerts to their repsective Commands (each person is assigned a command based on their firt name initial in their own language of choice)._
+_srvcRadar locates individuals in need - issuing alerts to their repsective Commands (each person is assigned to a Command based on their firt name initial in their own language of choice)._
 
 - [Introduction](): A downloadable software that issues alerts for individuals in need, gamifying the response.
 - [Gamification](): Competition will exist between the 9 possible Commands in rescuing the suffering.
