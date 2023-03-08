@@ -44,11 +44,13 @@ const validateText = (text) => {
     };
   };
   
+  /*
   // Example usage
   const textInput = "Salman Doe; #Housing; Need help with rent";
   const validated = validateText(textInput);
   console.log(validated); // { firstName: "John", lastName: "Doe", hashtag: "#Housing", fullText: "Need help with rent" }
-  
+ */ 
+
 //pseudocode: 
 /* If Text arrives saying "#housing"
 + has text arrived in 
