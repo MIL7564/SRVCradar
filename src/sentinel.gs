@@ -10,30 +10,34 @@ function updateSheet() {
   if (!newSheet) {
     // Create a new sheet called "Results" if it doesn't exist
     newSheet = spreadsheet.insertSheet("Results");
-    
-    // Set the column labels for the "Results" sheet
-    var columnLabels = [];
-    for (var i = 1; i <= 9; i++) {
-      columnLabels.push("Legion " + i);
-    }
-    newSheet.getRange(1, 1, 1, 9).setValues([columnLabels]);
   } else {
-    // Check if the column labels have already been set on the "Results" sheet
-    var columnLabels = newSheet.getRange(1, 1, 1, 9).getValues()[0];
-    if (columnLabels.join() !== "Legion 1,Legion 2,Legion 3,Legion 4,Legion 5,Legion 6,Legion 7,Legion 8,Legion 9") {
-      // Set the column labels if they haven't already been set
-      for (var i = 1; i <= 9; i++) {
-        newSheet.getRange(1, i).setValue("Legion " + i);
-      }
-    }
+    // Clear the "Results" sheet before populating it with new data
+    newSheet.clear();
   }
   
-  // Set the computed digits in the second column of the "Results" sheet
+  // Set the column labels for the "Results" sheet
+  var columnLabels = [];
+  for (var i = 1; i <= 9; i++) {
+    columnLabels.push("Legion " + i);
+  }
+  newSheet.getRange(1, 1, 1, 9).setValues([columnLabels]);
+  
+  // Add the occurrence of the digit to the corresponding Legion's score
+  var legionScores = Array(9).fill(0);
   for (var i = 0; i < range.length; i++) {
     var firstLetter = range[i][1].charAt(0).toLowerCase();
     var digit = resolute(firstLetter);
-    newSheet.getRange(i+2, digit).setValue(digit);
+    
+    // Add the occurrence of the digit to the corresponding Legion's score
+    legionScores[digit - 1]++;
   }
+  
+  // Set the scores for each Legion in the second row of the "Results" sheet
+  var scoresRow = [];
+  for (var i = 0; i < 9; i++) {
+    scoresRow.push(legionScores[i]);
+  }
+  newSheet.getRange(2, 1, 1, 9).setValues([scoresRow]);
 }
 
 function resolute(name) {
