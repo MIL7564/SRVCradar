@@ -5,10 +5,15 @@ function updateSheet() {
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
   
+  // Create a new sheet called "Results"
+  var newSheet = spreadsheet.insertSheet("Results");
+  
   for (var i = 0; i < range.length; i++) {
     var firstLetter = range[i][1].charAt(0).toLowerCase();
     var digit = resolute(firstLetter);
-    sheet.getRange(i+1, 2).setValue(digit);
+    
+    // Set the computed digit in the second column of the new sheet
+    newSheet.getRange(i+1, 2).setValue(digit);
   }
 }
 
