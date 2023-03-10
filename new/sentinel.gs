@@ -4,23 +4,29 @@ function updateSheet() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
-  
-  // Set the column labels for the "Results" sheet
+
+  // Check if there are 33 entries under column B
+  if (range.length > 32) {
+    // Clear the sheet except for the Legion Scores column
+    sheet.getRange("B1:H" + range.length).clearContent();
+  }
+
+  // Set the column labels for the "Sheet1" sheet
   sheet.getRange(1, 10).setValue("Legion Scores");
   for (var i = 0; i < 9; i++) {
     sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
   }
-  
+
   // Add the occurrence of the digit to the corresponding Legion's score
   var legionScores = Array(9).fill(0);
   for (var i = 0; i < range.length; i++) {
     var firstLetter = range[i][1].charAt(0).toLowerCase();
     var digit = resolute(firstLetter);
-    
+
     // Add the occurrence of the digit to the corresponding Legion's score
     legionScores[digit - 1]++;
   }
-  
+
   // Set the scores for each Legion in columns J and K
   for (var i = 0; i < 9; i++) {
     sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
@@ -42,5 +48,3 @@ function resolute(name) {
     return initial_value;
   }
 }
-
-
