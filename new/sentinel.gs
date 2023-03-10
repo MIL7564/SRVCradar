@@ -42,3 +42,5 @@ function resolute(name) {
     return initial_value;
   }
 }
+
+
