@@ -5,22 +5,11 @@ function updateSheet() {
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
   
-  // Check if a sheet called "Results" already exists
-  var newSheet = spreadsheet.getSheetByName("Results");
-  if (!newSheet) {
-    // Create a new sheet called "Results" if it doesn't exist
-    newSheet = spreadsheet.insertSheet("Results");
-  } else {
-    // Clear the "Results" sheet before populating it with new data
-    newSheet.clear();
-  }
-  
   // Set the column labels for the "Results" sheet
-  var columnLabels = [];
-  for (var i = 1; i <= 9; i++) {
-    columnLabels.push("Legion " + i);
+  sheet.getRange(1, 10).setValue("Legion Scores");
+  for (var i = 0; i < 9; i++) {
+    sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
   }
-  newSheet.getRange(1, 1, 1, 9).setValues([columnLabels]);
   
   // Add the occurrence of the digit to the corresponding Legion's score
   var legionScores = Array(9).fill(0);
@@ -32,12 +21,11 @@ function updateSheet() {
     legionScores[digit - 1]++;
   }
   
-  // Set the scores for each Legion in the second row of the "Results" sheet
-  var scoresRow = [];
+  // Set the scores for each Legion in columns J and K
   for (var i = 0; i < 9; i++) {
-    scoresRow.push(legionScores[i]);
+    sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
+    sheet.getRange(i+2, 11).setValue(legionScores[i]);
   }
-  newSheet.getRange(2, 1, 1, 9).setValues([scoresRow]);
 }
 
 function resolute(name) {
