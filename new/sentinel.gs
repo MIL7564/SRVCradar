@@ -12,9 +12,9 @@ function updateSheet() {
   }
 
   // Set the column labels for the "Sheet1" sheet
-  sheet.getRange(1, 10).setValue("Legion Scores");
+  sheet.getRange(13, 10).setValue("Legion Scores");
   for (var i = 0; i < 9; i++) {
-    sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
+    sheet.getRange(i+14, 10).setValue("Legion " + (i+1));
   }
 
   // Add the occurrence of the digit to the corresponding Legion's score
@@ -29,8 +29,8 @@ function updateSheet() {
 
   // Set the scores for each Legion in columns J and K
   for (var i = 0; i < 9; i++) {
-    sheet.getRange(i+2, 10).setValue("Legion " + (i+1));
-    sheet.getRange(i+2, 11).setValue(legionScores[i]);
+    sheet.getRange(i+14, 10).setValue("Legion " + (i+1));
+    sheet.getRange(i+14, 11).setValue(legionScores[i]);
   }
 }
 
