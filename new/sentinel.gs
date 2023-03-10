@@ -1,16 +1,29 @@
 function updateSheet() {
-  var spreadsheetName = "1UNSDG_FE"; // Change to the name of your spreadsheet
+  var spreadsheetName = "LEGIONS"; // Change to the name of your spreadsheet
   var sheetName = "Sheet1"; // Change to the name of your sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
-
+  
   // Check if there are 33 entries under column B
   if (range.length > 32) {
+    // Get the winner of the previous set of 33 texts
+    var legionScores = Array(9).fill(0);
+    for (var i = 0; i < range.length - 1; i++) {
+      var firstLetter = range[i][1].charAt(0).toLowerCase();
+      var digit = resolute(firstLetter);
+      legionScores[digit - 1]++;
+    }
+    var maxScore = Math.max(...legionScores);
+    var winner = "Legion " + (legionScores.indexOf(maxScore) + 1);
+    
+    // Declare the winner in Cell K11
+    sheet.getRange("K11").setValue(winner + " won the previous set of 33 texts");
+    
     // Clear the sheet except for the Legion Scores column
-    sheet.getRange("B1:H" + range.length).clearContent();
+    sheet.getRange("A1:H" + range.length).clearContent();
   }
-
+  
   // Set the column labels for the "Sheet1" sheet
   sheet.getRange(13, 10).setValue("Legion Scores");
   for (var i = 0; i < 9; i++) {
