@@ -1,3 +1,5 @@
+//Delicensed: CC0 1.0 Universal 
+
 interface ValidatedText {
     firstName: string;
     lastName: string;
@@ -51,7 +53,16 @@ interface ValidatedText {
     };
   };
   
-  //Example usage
-  const textInput = "John; Doe; #Housing; Need help with rent";
-  const validated: ValidatedText = validateText(textInput);
-  console.log(validated); // { firstName: "John", lastName: "Doe", hashtag: "#Housing", fullText: "Need help with rent" }
+//Example usage
+const textInput = "John; Doe; #Housing; Need help with rent";
+const validated: ValidatedText = validateText(textInput);
+console.log(validated); // { firstName: "John", lastName: "Doe", hashtag: "#Housing", fullText: "Need help with rent" }
+
+
+/* Pseudocode referred to ChatGPT after over 55 experiments in Economics by Salman Shuaib: 
++ Write JavaScript for validating a `Text` ingredient input at IFTTT, such that it is considered VALID if it contains the following FORMAT: 
+First Name; Last Name; Hashtag; Full Text
+If the VALIDATION fails, the follow content is output:
+First Name: "Unknown"; Last Name: "Alerter"; Hashtag: "#Housing", Full Text: `Text`
+*/
+
