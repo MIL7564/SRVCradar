@@ -10,14 +10,29 @@ function updateSheet() {
   if (!newSheet) {
     // Create a new sheet called "Results" if it doesn't exist
     newSheet = spreadsheet.insertSheet("Results");
+    
+    // Set the column labels for the "Results" sheet
+    var columnLabels = [];
+    for (var i = 1; i <= 9; i++) {
+      columnLabels.push("Legion " + i);
+    }
+    newSheet.getRange(1, 1, 1, 9).setValues([columnLabels]);
+  } else {
+    // Check if the column labels have already been set on the "Results" sheet
+    var columnLabels = newSheet.getRange(1, 1, 1, 9).getValues()[0];
+    if (columnLabels.join() !== "Legion 1,Legion 2,Legion 3,Legion 4,Legion 5,Legion 6,Legion 7,Legion 8,Legion 9") {
+      // Set the column labels if they haven't already been set
+      for (var i = 1; i <= 9; i++) {
+        newSheet.getRange(1, i).setValue("Legion " + i);
+      }
+    }
   }
   
+  // Set the computed digits in the second column of the "Results" sheet
   for (var i = 0; i < range.length; i++) {
     var firstLetter = range[i][1].charAt(0).toLowerCase();
     var digit = resolute(firstLetter);
-    
-    // Set the computed digit in the second column of the new sheet
-    newSheet.getRange(i+1, 2).setValue(digit);
+    newSheet.getRange(i+2, digit).setValue(digit);
   }
 }
 
