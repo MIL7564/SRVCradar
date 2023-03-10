@@ -1,13 +1,14 @@
 function updateSheet() {
-  var sheetName = "1UNSDG_FE"; // Change to the name of your sheet
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
-  var range = sheet.getRange("B:B");
-  var values = range.getValues();
+  var spreadsheetName = "1UNSDG_FE"; // Change to the name of your spreadsheet
+  var sheetName = "Sheet1"; // Change to the name of your sheet
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  var range = sheet.getDataRange().getValues();
   
-  for (var i = 0; i < values.length; i++) {
-    var firstLetter = values[i][0].charAt(0).toLowerCase();
+  for (var i = 0; i < range.length; i++) {
+    var firstLetter = range[i][1].charAt(0).toLowerCase();
     var digit = resolute(firstLetter);
-    range.getCell(i+1, 2).setValue(digit);
+    sheet.getRange(i+1, 2).setValue(digit);
   }
 }
 
