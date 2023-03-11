@@ -1,35 +1,24 @@
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
-  var sheetName = "Sheet1"; // Change to the name of your sheet
+  var sheetName = "Messages"; // Change to the name of your sheet
+  var resultsSheetName = "Results"; // Change to the name of your results sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
   
-  // Check if there are 33 entries under column B
+  // set column A width to 200 Pixels
+  sheet.setColumnWidth(1, 200);
+
+  // Clear the sheet except for the Legion Scores column if there are 33 or more entries
   if (range.length > 32) {
-    // Get the winner of the previous set of 33 texts
-    var legionScores = Array(9).fill(0);
-    for (var i = 0; i < range.length - 1; i++) {
-      if (range[i][1].length > 0) {
-        var firstLetter = range[i][1].charAt(0).toLowerCase();
-        var digit = resolute(firstLetter);
-        legionScores[digit - 1]++;
-      }
-    }
-    var maxScore = Math.max(...legionScores);
-    var winner = "Legion " + (legionScores.indexOf(maxScore) + 1);
-    
-    // Declare the winner in Cell K11
-    sheet.getRange("K11").setValue(winner + " won the previous set of 33 texts");
-    
-    // Clear the sheet except for the Legion Scores column
     sheet.getRange("A1:H" + range.length).clearContent();
   }
   
-  // Set the column labels for the "Sheet1" sheet
-  sheet.getRange(13, 10).setValue("Legion Scores");
+  // Set the column labels for the "Results" sheet
+  var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
+  resultsSheet.getRange(1, 1).setValue("Legion Scores");
   for (var i = 0; i < 9; i++) {
-    sheet.getRange(i+14, 10).setValue("Legion " + (i+1));
+    resultsSheet.getRange(i+2, 1).setValue("Legion " + (i+1));
   }
 
   // Add the occurrence of the digit to the corresponding Legion's score
@@ -44,17 +33,16 @@ function updateSheet() {
     }
   }
 
-  // Set the scores for each Legion in columns J and K
+  // Set the scores for each Legion in the "Results" sheet
   for (var i = 0; i < 9; i++) {
-    sheet.getRange(i+14, 10).setValue("Legion " + (i+1));
-    sheet.getRange(i+14, 11).setValue(legionScores[i]);
+    resultsSheet.getRange(i+2, 2).setValue(legionScores[i]);
   }
 }
 
 function resolute(name) {
   var charCode = name.charCodeAt(0);
   if (charCode < 97 || charCode > 122) {
-    // Return 9 if the character is not one of the 26 letters of the English alphabet; overusage of 9, as there is also a Legion 9 that will benefit, will automatically devalue it
+    // Return 9 if the character is not one of the 26 letters of the English alphabet
     return 9;
   } else {
     var initial_value = charCode - 96;
