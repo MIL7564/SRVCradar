@@ -1,5 +1,5 @@
 function updateSheet() {
-  var spreadsheetName = "LEGIONS"; // Change to the name of your spreadsheet
+  var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
   var sheetName = "Sheet1"; // Change to the name of your sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
@@ -10,9 +10,11 @@ function updateSheet() {
     // Get the winner of the previous set of 33 texts
     var legionScores = Array(9).fill(0);
     for (var i = 0; i < range.length - 1; i++) {
-      var firstLetter = range[i][1].charAt(0).toLowerCase();
-      var digit = resolute(firstLetter);
-      legionScores[digit - 1]++;
+      if (range[i][1].length > 0) {
+        var firstLetter = range[i][1].charAt(0).toLowerCase();
+        var digit = resolute(firstLetter);
+        legionScores[digit - 1]++;
+      }
     }
     var maxScore = Math.max(...legionScores);
     var winner = "Legion " + (legionScores.indexOf(maxScore) + 1);
@@ -33,11 +35,13 @@ function updateSheet() {
   // Add the occurrence of the digit to the corresponding Legion's score
   var legionScores = Array(9).fill(0);
   for (var i = 0; i < range.length; i++) {
-    var firstLetter = range[i][1].charAt(0).toLowerCase();
-    var digit = resolute(firstLetter);
+    if (range[i][1].length > 0) {
+      var firstLetter = range[i][1].charAt(0).toLowerCase();
+      var digit = resolute(firstLetter);
 
-    // Add the occurrence of the digit to the corresponding Legion's score
-    legionScores[digit - 1]++;
+      // Add the occurrence of the digit to the corresponding Legion's score
+      legionScores[digit - 1]++;
+    }
   }
 
   // Set the scores for each Legion in columns J and K
