@@ -33,8 +33,12 @@ function updateSheet() {
     }
   }
 
-  // Set the scores for each Legion in the "Results" sheet
+  // Determine the highest score and set the background color of the corresponding cell(s) to Yellow
+  var maxScore = Math.max(...legionScores);
   for (var i = 0; i < 9; i++) {
+    if (legionScores[i] === maxScore) {
+      resultsSheet.getRange(i+2, 1, 1, 2).setBackground("yellow");
+    }
     resultsSheet.getRange(i+2, 2).setValue(legionScores[i]);
   }
 }
