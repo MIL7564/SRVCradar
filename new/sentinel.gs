@@ -9,14 +9,15 @@ function updateSheet() {
   // set column A width to 200 Pixels
   sheet.setColumnWidth(1, 200);
 
-  // Clear the sheet except for the Legion Scores column if there are 33 or more entries
+  // Clear the sheet if there are 33 or more entries
   if (range.length > 32) {
-    sheet.getRange("A1:H" + range.length).clearContent();
+    sheet.clearContent();
   }
   
   // Set the column labels for the "Results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
   resultsSheet.getRange(1, 1).setValue("Legion Scores");
+  resultsSheet.getRange(1,1).setFontWeight("bold");
   for (var i = 0; i < 9; i++) {
     resultsSheet.getRange(i+2, 1).setValue("Legion " + (i+1));
   }
