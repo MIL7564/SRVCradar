@@ -87,5 +87,3 @@ function setTrigger() {
              .create();
   }
 }
-
-
