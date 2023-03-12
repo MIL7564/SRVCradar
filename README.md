@@ -10,5 +10,5 @@ _sentinel locates individuals in need - issuing alerts to their repsective Legio
 
 
 ## ACKNOWLEDGEMENTS
-+ Please see [TROUBLESHOOT](https://github.com/salmanshuaib/srvcRadar/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.
++ Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.
 + ChatGPT.
