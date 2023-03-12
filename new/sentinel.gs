@@ -15,13 +15,12 @@ function updateSheet() {
   sheet.setColumnWidth(1, 200);
 
   // Clear the sheet if there are 33 or more entries
-  if (range.length > 32) {
+  if (range.length >= 33) {
     sheet.clearContent();
   }
 
   // Set the column labels for the "Results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
-  resultsSheet.getRange(1,1).setFontWeight("bold");
   for (var i = 0; i < 9; i++) {
     resultsSheet.getRange(i+2, 1).setValue("Legion " + (i+1));
   }
@@ -33,7 +32,7 @@ function updateSheet() {
   if (range.length > 0) {
     for (var i = 0; i < range.length; i++) {
       if (range[i][0].length > 0) {
-        var firstLetter = range[i][0].charAt(0).toLowerCase();
+        var firstLetter = range[i][1].charAt(0).toLowerCase();
         var digit = resolute(firstLetter);
 
         // Add the occurrence of the digit to the corresponding Legion's score
@@ -88,3 +87,5 @@ function setTrigger() {
              .create();
   }
 }
+
+
