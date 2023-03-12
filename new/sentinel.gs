@@ -1,3 +1,8 @@
+function autoexecute() {
+  // The code to execute every 1 minutes goes here
+  updateSheet();
+}  
+
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
   var sheetName = "Messages"; // Change to the name of your sheet
@@ -58,3 +63,27 @@ function resolute(name) {
     return initial_value;
   }
 }
+
+function setTrigger() {
+  // Get all existing triggers in the project
+  var triggers = ScriptApp.getProjectTriggers();
+
+  // Check if a trigger already exists for the autoexecute function
+  var triggerExists = false;
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() == 'autoexecute') {
+      triggerExists = true;
+      break;
+    }
+  }
+
+  // If a trigger doesn't exist, create a new one that runs the autoexecute function every 10 minutes
+  if (!triggerExists) {
+    ScriptApp.newTrigger('autoexecute')
+             .timeBased()
+             .everyMinutes(1)
+             .create();
+  }
+}
+
+
