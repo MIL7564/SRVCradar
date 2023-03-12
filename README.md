@@ -1,5 +1,5 @@
 ## INTRODUCTION
-_srvcRadar locates individuals in need - issuing alerts to their repsective Legions (each person is assigned to a Legion based on their first name initial in their own language of choice)._
+_sentinel locates individuals in need - issuing alerts to their repsective Legions (each person is assigned to a Legion based on their first name initial in their own language of choice)._
 
 - [Introduction](): A downloadable software that issues alerts for individuals in need, gamifying the response.
 - [Gamification](): Competition will exist between the 9 possible Legions in rescuing the suffering.
