@@ -10,7 +10,7 @@ function updateSheet() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
-  
+
   // set column A width to 200 Pixels
   sheet.setColumnWidth(1, 200);
 
@@ -18,10 +18,9 @@ function updateSheet() {
   if (range.length > 32) {
     sheet.clearContent();
   }
-  
+
   // Set the column labels for the "Results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
-  resultsSheet.getRange(1, 1).setValue("Legion Scores");
   resultsSheet.getRange(1,1).setFontWeight("bold");
   for (var i = 0; i < 9; i++) {
     resultsSheet.getRange(i+2, 1).setValue("Legion " + (i+1));
@@ -29,13 +28,17 @@ function updateSheet() {
 
   // Add the occurrence of the digit to the corresponding Legion's score
   var legionScores = Array(9).fill(0);
-  for (var i = 0; i < range.length; i++) {
-    if (range[i][1].length > 0) {
-      var firstLetter = range[i][1].charAt(0).toLowerCase();
-      var digit = resolute(firstLetter);
 
-      // Add the occurrence of the digit to the corresponding Legion's score
-      legionScores[digit - 1]++;
+  // Check if Messages sheet is empty
+  if (range.length > 0) {
+    for (var i = 0; i < range.length; i++) {
+      if (range[i][0].length > 0) {
+        var firstLetter = range[i][0].charAt(0).toLowerCase();
+        var digit = resolute(firstLetter);
+
+        // Add the occurrence of the digit to the corresponding Legion's score
+        legionScores[digit - 1]++;
+      }
     }
   }
 
@@ -77,7 +80,7 @@ function setTrigger() {
     }
   }
 
-  // If a trigger doesn't exist, create a new one that runs the autoexecute function every 10 minutes
+  // If a trigger doesn't exist create a new one that runs the autoexecute function every 1 minutes
   if (!triggerExists) {
     ScriptApp.newTrigger('autoexecute')
              .timeBased()
@@ -85,5 +88,3 @@ function setTrigger() {
              .create();
   }
 }
-
-
