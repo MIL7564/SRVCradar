@@ -11,6 +11,10 @@ function updateSheet() {
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
 
+  // Set the column labels for the Messages sheet
+  sheet.getRange(1, 1).setValue("DATE").setFontWeight('bold').setHorizontalAlignment("center");
+  sheet.getRange(1, 2).setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("center");
+
   // set column A width to 200 Pixels
   sheet.setColumnWidth(1, 200);
 
@@ -21,16 +25,20 @@ function updateSheet() {
 
   // Set the column labels for the "Results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
-  for (var i = 0; i < 9; i++) {
-    resultsSheet.getRange(i+2, 1).setValue("Legion " + (i+1));
-  }
+  resultsSheet.getRange("A1").setValue("LEGION").setFontWeight('bold');
+  resultsSheet.getRange("B1").setValue("SCORE").setFontWeight('bold');
+  // Set horizontal alignment for column A and B
+  resultsSheet.getRange("A1:B1").setHorizontalAlignment("center");
 
-  // Add the occurrence of the digit to the corresponding Legion's score
+  // Initialize legionScores array to zero
   var legionScores = Array(9).fill(0);
 
   // Check if Messages sheet is empty
   if (range.length > 0) {
     for (var i = 0; i < range.length; i++) {
+      if (i === 0) {
+        continue; // skip first row
+      }
       if (range[i][0].length > 0) {
         var firstLetter = range[i][1].charAt(0).toLowerCase();
         var digit = resolute(firstLetter);
@@ -41,15 +49,22 @@ function updateSheet() {
     }
   }
 
+  // Set legion titles and scores in the results sheet
+  for (var i = 0; i < 9; i++) {
+    var legionTitle = "Legion " + (i+1);
+    resultsSheet.getRange(i+2, 1).setValue(legionTitle);
+    resultsSheet.getRange(i+2, 2).setValue(legionScores[i]);
+  }
+
   // Determine the highest score and set the background color of the corresponding cell(s) to Yellow
   var maxScore = Math.max(...legionScores);
   for (var i = 0; i < 9; i++) {
     if (legionScores[i] === maxScore) {
       resultsSheet.getRange(i+2, 1, 1, 2).setBackground("yellow");
     }
-    resultsSheet.getRange(i+2, 2).setValue(legionScores[i]);
   }
 }
+
 
 function resolute(name) {
   var charCode = name.charCodeAt(0);
