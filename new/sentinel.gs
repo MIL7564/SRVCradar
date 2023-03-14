@@ -1,5 +1,5 @@
 function autoexecute() {
-  // Call the sort function to sort the "Messages" sheet
+  // Call the sort function to sort the "messages" sheet
   sortSheet();
   
   // The code to execute every 1 minutes goes here
@@ -8,13 +8,13 @@ function autoexecute() {
 
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
-  var sheetName = "Messages"; // Change to the name of your sheet
-  var resultsSheetName = "Results"; // Change to the name of your results sheet
+  var sheetName = "messages"; // Change to the name of your sheet
+  var resultsSheetName = "results"; // Change to the name of your results sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getDataRange().getValues();
 
-  // Set the column labels for the Messages sheet
+  // Set the column labels for the messages sheet
   sheet.getRange(1, 1).setValue("DATE").setFontWeight('bold').setHorizontalAlignment("center");
   sheet.getRange(1, 2).setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("center");
 
@@ -26,7 +26,7 @@ function updateSheet() {
     sheet.clearContent();
   }
 
-  // Set the column labels for the "Results" sheet
+  // Set the column labels for the "results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
   resultsSheet.getRange("A1").setValue("LEGION").setFontWeight('bold');
   resultsSheet.getRange("B1").setValue("SCORE").setFontWeight('bold');
@@ -36,7 +36,7 @@ function updateSheet() {
   // Initialize legionScores array to zero
   var legionScores = Array(9).fill(0);
 
-  // Check if Messages sheet is empty
+  // Check if messages sheet is empty
   if (range.length > 0) {
     for (var i = 0; i < range.length; i++) {
       if (i === 0) {
@@ -61,6 +61,10 @@ function updateSheet() {
 
   // Determine the highest score and set the background color of the corresponding cell(s) to Yellow
   var maxScore = Math.max(...legionScores);
+  
+  // Clear the background color of all cells in the results sheet excepting the first row
+resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastColumn()).clearFormat();
+  
   for (var i = 0; i < 9; i++) {
     if (legionScores[i] === maxScore) {
       resultsSheet.getRange(i+2, 1, 1, 2).setBackground("yellow");
@@ -86,7 +90,7 @@ function resolute(name) {
 
 function sortSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
-  var sheetName = "Messages"; // Change to the name of your sheet
+  var sheetName = "messages"; // Change to the name of your sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
   var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
