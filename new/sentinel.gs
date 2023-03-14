@@ -1,4 +1,7 @@
 function autoexecute() {
+  // Call the sort function to sort the "Messages" sheet
+  sortSheet();
+  
   // The code to execute every 1 minutes goes here
   updateSheet();
 }  
@@ -80,6 +83,48 @@ function resolute(name) {
     return initial_value;
   }
 }
+
+function sortSheet() {
+  var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
+  var sheetName = "Messages"; // Change to the name of your sheet
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
+  var values = range.getValues();
+
+  // Sort the range in descending order based on the "DATE" column
+  values.sort(function(a, b) {
+    var dateA = parseDate(a[0]);
+    var dateB = parseDate(b[0]);
+    return dateB - dateA;
+  });
+
+  // Update the sorted range on the sheet
+  range.setValues(values);
+}
+
+function parseDate(dateStr) {
+  var dateParts = dateStr.split(" ");
+  var month = parseMonth(dateParts[0]);
+  var day = parseInt(dateParts[1].replace(",", ""));
+  var year = parseInt(dateParts[2]);
+  var timeParts = dateParts[4].split(":");
+  var hour = parseInt(timeParts[0]);
+  var minute = parseInt(timeParts[1]);
+  if (dateParts[5] == "PM") {
+    hour += 12;
+  }
+  var dateObj = new Date(year, month, day, hour, minute);
+  return dateObj;
+}
+
+function parseMonth(monthStr) {
+  var monthNames = [    "January", "February", "March", "April", "May", "June",    "July", "August", "September", "October", "November", "December"  ];
+  return monthNames.indexOf(monthStr);
+}
+
+
+
 
 function setTrigger() {
   // Get all existing triggers in the project
