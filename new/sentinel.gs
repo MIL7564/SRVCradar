@@ -1,4 +1,4 @@
-//v0.0.1
+//v0.0.2
 function autoexecute() {
   // Call the sort function to sort the "messages" sheet
   sortSheet();
