@@ -1,7 +1,6 @@
-//v0.0.7
 function onOpen() {
   setTrigger();
-  autoexecute();
+  autoexecute();  //auteexecute() should be called from externally to onOpen() function as well
 }
 
 function autoexecute() {
@@ -23,8 +22,8 @@ function updateSheet() {
 
   // Set the column labels for the messages sheet if it's empty
   if (firstRow[0][0] == "" && firstRow[0][1] == "") {
-    messagesSheet.getRange(1, 1).setValue("TIME").setFontWeight('bold').setHorizontalAlignment("left");
-    messagesSheet.getRange(1, 2).setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
+    messagesSheet.getRange("A1").setValue("TIME").setFontWeight('bold').setHorizontalAlignment("center");
+    messagesSheet.getRange("B1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("center");;
     // set column A width to 200 Pixels
     messagesSheet.setColumnWidth(1, 200);
   }
@@ -32,7 +31,7 @@ function updateSheet() {
   // Clear the sheet if there are 33 or more entries (except the first row)
  if (range.length >= 13) {
   messagesSheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).clearContent();
-  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("center");
   messagesSheet.setColumnWidth(1, 200);
 }
 
