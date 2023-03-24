@@ -1,4 +1,9 @@
-//v0.0.6
+//v0.0.7
+function onOpen() {
+  setTrigger();
+  autoexecute();
+}
+
 function autoexecute() {
   // Call the sort function to sort the "messages" sheet
   sortSheet();
@@ -9,23 +14,28 @@ function autoexecute() {
 
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
-  var sheetName = "messages"; // Change to the name of your sheet
+  var messagesSheetName = "messages"; // Change to the name of your sheet
   var resultsSheetName = "results"; // Change to the name of your results sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getSheetByName(sheetName);
-  var range = sheet.getDataRange().getValues();
+  var messagesSheet = spreadsheet.getSheetByName(messagesSheetName);
+  var range = messagesSheet.getDataRange().getValues();
+  var firstRow = messagesSheet.getRange(1, 1, 1, 2).getValues();
 
-  // Set the column labels for the messages sheet
-  sheet.getRange(1, 1).setValue("DATE").setFontWeight('bold').setHorizontalAlignment("center");
-  sheet.getRange(1, 2).setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("center");
-
-  // set column A width to 200 Pixels
-  sheet.setColumnWidth(1, 200);
-
-  // Clear the sheet if there are 33 or more entries
-  if (range.length >= 33) {
-    sheet.clearContent();
+  // Set the column labels for the messages sheet if it's empty
+  if (firstRow[0][0] == "" && firstRow[0][1] == "") {
+    messagesSheet.getRange(1, 1).setValue("TIME").setFontWeight('bold').setHorizontalAlignment("left");
+    messagesSheet.getRange(1, 2).setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
+    // set column A width to 200 Pixels
+    messagesSheet.setColumnWidth(1, 200);
   }
+
+  // Clear the sheet if there are 33 or more entries (except the first row)
+ if (range.length >= 13) {
+  messagesSheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).clearContent();
+  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.setColumnWidth(1, 200);
+}
+
 
   // Set the column labels for the "results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
@@ -38,11 +48,8 @@ function updateSheet() {
   var legionScores = Array(9).fill(0);
 
   // Check if messages sheet is empty
-  if (range.length > 0) {
-    for (var i = 0; i < range.length; i++) {
-      if (i === 0) {
-        continue; // skip first row
-      }
+  if (range.length > 1) {
+    for (var i = 1; i < range.length; i++) {
       if (range[i][0].length > 0) {
         var firstLetter = range[i][1].charAt(0).toLowerCase();
         var digit = resolute(firstLetter);
@@ -64,7 +71,7 @@ function updateSheet() {
   var maxScore = Math.max(...legionScores);
   
   // Clear the background color of all cells in the results sheet excepting the first row
-resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastColumn()).clearFormat();
+  resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastColumn()).clearFormat();
   
   for (var i = 0; i < 9; i++) {
     if (legionScores[i] === maxScore) {
@@ -72,6 +79,7 @@ resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastCol
     }
   }
 }
+
 
 
 function resolute(name) {
@@ -97,7 +105,7 @@ function sortSheet() {
   var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
   var values = range.getValues();
 
-  // Sort the range in descending order based on the "DATE" column
+  // Sort the range in descending order based on the "TIME" column
   values.sort(function(a, b) {
     var dateA = parseDate(a[0]);
     var dateB = parseDate(b[0]);
@@ -127,8 +135,6 @@ function parseMonth(monthStr) {
   var monthNames = [    "January", "February", "March", "April", "May", "June",    "July", "August", "September", "October", "November", "December"  ];
   return monthNames.indexOf(monthStr);
 }
-
-
 
 
 function setTrigger() {
