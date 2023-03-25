@@ -9,7 +9,23 @@ function autoexecute() {
   
   // The code to execute every 1 minutes goes here
   updateSheet();
+
+  // Flush changes to the spreadsheet
+  SpreadsheetApp.flush();
+
+  // Clear cache every 1 minute
+  var html = HtmlService.createHtmlOutput('<script>google.script.host.close();</script>');
+  SpreadsheetApp.getUi().showModalDialog(html, 'Clearing cache...');
+  
+  // Reload the app every 1 minute
+  var appUrl = 'https://script.google.com/macros/s/ceed8c2e-eb78-465d-8356-20b9e690b48b/exec';
+  var response = UrlFetchApp.fetch(appUrl);
+
+  //add a cache-control header to your HTTP responses that instructs the client (e.g., the user's browser) to not cache responses, and instead request fresh content from the server every time.
+  doGet()
 }  
+
+
 
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
@@ -22,17 +38,18 @@ function updateSheet() {
 
   // Set the column labels for the messages sheet if it's empty
   if (firstRow[0][0] == "" && firstRow[0][1] == "") {
-    messagesSheet.getRange("A1").setValue("TIME").setFontWeight('bold').setHorizontalAlignment("center");
-    messagesSheet.getRange("B1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("center");;
+    messagesSheet.getRange("A1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
+    messagesSheet.getRange("B1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");;
     // set column A width to 200 Pixels
     messagesSheet.setColumnWidth(1, 200);
   }
 
-  // Clear the sheet if there are 33 or more entries (except the first row)
- if (range.length >= 13) {
-  messagesSheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).clearContent();
-  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("center");
-  messagesSheet.setColumnWidth(1, 200);
+  // Clear the sheet if there are 13 or more entries (except the first row)
+ if (range.length > 12) {
+  messagesSheet.getRange(2, 1, messagesSheet.getLastRow() - 1, messagesSheet.getLastColumn()).clearContent();
+  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.setColumnWidth(1, 200); 
+  
 }
 
 
@@ -104,7 +121,7 @@ function sortSheet() {
   var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
   var values = range.getValues();
 
-  // Sort the range in descending order based on the "TIME" column
+  // Sort the range in descending order based on the "DATE" column
   values.sort(function(a, b) {
     var dateA = parseDate(a[0]);
     var dateB = parseDate(b[0]);
@@ -153,7 +170,19 @@ function setTrigger() {
   if (!triggerExists) {
     ScriptApp.newTrigger('autoexecute')
              .timeBased()
-             .everyMinutes(1)
+             .everySeconds(60)
              .create();
   }
 }
+
+function doGet() {
+  var output = HtmlService.createHtmlOutputFromFile('index')
+      .setTitle('Sentinel')
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+
+  // Add the Cache-Control header
+  output.addMetaTag('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  return output;
+}
+
