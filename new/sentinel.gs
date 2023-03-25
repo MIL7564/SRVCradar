@@ -1,31 +1,21 @@
+var legionScores = Array(9).fill(0);
+
 function onOpen() {
   setTrigger();
-  autoexecute();  //auteexecute() should be called from externally of onOpen() function as well
+  autoexecute(); 
+  updateSheet();  // Call updateSheet() when the spreadsheet is opened 
 }
 
 function autoexecute() {
-  // Call the sort function to sort the "messages" sheet
-  sortSheet();
-  
   // The code to execute every 1 minutes goes here
   updateSheet();
-
-  // Flush changes to the spreadsheet
-  SpreadsheetApp.flush();
-
-  // Clear cache every 1 minute
-  var html = HtmlService.createHtmlOutput('<script>google.script.host.close();</script>');
-  SpreadsheetApp.getUi().showModalDialog(html, 'Clearing cache...');
   
-  // Reload the app every 1 minute
-  var appUrl = 'https://script.google.com/macros/s/ceed8c2e-eb78-465d-8356-20b9e690b48b/exec';
-  var response = UrlFetchApp.fetch(appUrl);
+  // Call the sort function to sort the "messages" sheet
+  sortSheet();
 
-  //add a cache-control header to your HTTP responses that instructs the client (e.g., the user's browser) to not cache responses, and instead request fresh content from the server every time.
+  //add a cache-control header to your HTTP responses that instructs the client to not cache responses, and instead request fresh content from the server every time.
   doGet()
 }  
-
-
 
 function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
@@ -43,14 +33,13 @@ function updateSheet() {
     // set column A width to 200 Pixels
     messagesSheet.setColumnWidth(1, 200);
   }
-
-  // Clear the sheet if there are 13 or more entries (except the first row)
- if (range.length > 12) {
-  messagesSheet.getRange(2, 1, messagesSheet.getLastRow() - 1, messagesSheet.getLastColumn()).clearContent();
+  
+  // Clear the sheet if there are 14 or more entries (except the first row)
+  if (range.length >= 15) {
+  messagesSheet.getRange(2, 1, messagesSheet.getLastRow()-1, messagesSheet.getLastColumn()).clearContent();
   messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
   messagesSheet.setColumnWidth(1, 200); 
-  
-}
+  } 
 
 
   // Set the column labels for the "results" sheet
@@ -59,9 +48,6 @@ function updateSheet() {
   resultsSheet.getRange("B1").setValue("SCORE").setFontWeight('bold');
   // Set horizontal alignment for column A and B
   resultsSheet.getRange("A1:B1").setHorizontalAlignment("center");
-
-  // Initialize legionScores array to zero
-  var legionScores = Array(9).fill(0);
 
   // Check if messages sheet is empty
   if (range.length > 1) {
