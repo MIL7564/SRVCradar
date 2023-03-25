@@ -1,6 +1,6 @@
 function onOpen() {
   setTrigger();
-  autoexecute();  //auteexecute() should be called from externally to onOpen() function as well
+  autoexecute();  //auteexecute() should be called from externally of onOpen() function as well
 }
 
 function autoexecute() {
