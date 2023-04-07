@@ -116,7 +116,7 @@ function sortSheet() {
   var numRows = sheet.getLastRow() - 1;
   
   if (numRows > 0) {
-    var range = sheet.getRange(2, 1, numRows, sheet.getLastColumn());
+    var range = sheet.getRange(2, 2, numRows, sheet.getLastColumn());
     var values = range.getValues();
 
     // Sort the range in descending order based on the "DATE" column
