@@ -62,7 +62,7 @@ function updateSheet() {
 
   for (var i = 1; i < range.length; i++) {
     if (range[i][0].length > 0) {
-      var phone = range[i][2];
+      var phone = range[i][3];
       var digit = resolute(phone); // pass the phone number to the resolute function
       if (digit >= 1 && digit <= 9) {
         legionScores[digit - 1]++;
