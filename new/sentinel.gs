@@ -28,10 +28,12 @@ function updateSheet() {
 
   // Set the column labels for the messages sheet if it's empty
   if (firstRow[0][0] == "" && firstRow[0][1] == "") {
-    messagesSheet.getRange("A1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
-    messagesSheet.getRange("B1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");;
-    // set column A width to 200 Pixels
-    messagesSheet.setColumnWidth(1, 200);
+  messagesSheet.getRange("A1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("B1").setValue("PHONE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("C1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
+
+  // set column A width to 200 Pixels
+  messagesSheet.setColumnWidth(1, 200);
   }
   
   // Clear the sheet if there are 14 or more entries (except the first row)
@@ -51,15 +53,18 @@ function updateSheet() {
 
   // Check if messages sheet is empty
   if (range.length > 1) {
-    for (var i = 1; i < range.length; i++) {
-      if (range[i][0].length > 0) {
-        var firstLetter = range[i][1].charAt(0).toLowerCase();
-        var digit = resolute(firstLetter);
-
-        // Add the occurrence of the digit to the corresponding Legion's score
+    
+  for (var i = 1; i < range.length; i++) {
+    if (range[i][0].length > 0) {
+      var phone = range[i][1];
+      var digit = resolute(phone); // pass the phone number to the resolute function
+      if (digit >= 1 && digit <= 9) {
         legionScores[digit - 1]++;
       }
     }
+  } 
+
+
   }
 
   // Set legion titles and scores in the results sheet
@@ -83,20 +88,16 @@ function updateSheet() {
 }
 
 
+function resolute(phNum) {
+  var digits = phNum.toString().split("").map(Number);
+  var sum = digits.reduce(function(a, b) { return a + b; });
 
-function resolute(name) {
-  var charCode = name.charCodeAt(0);
-  if (charCode < 97 || charCode > 122) {
-    // Return 9 if the character is not one of the 26 letters of the English alphabet
-    return 9;
-  } else {
-    var initial_value = charCode - 96;
-    while (initial_value > 9) {
-      var digits = Array.from(String(initial_value), Number);
-      initial_value = digits.reduce(function(a, b) { return a + b; });
-    }
-    return initial_value;
+  while (sum > 9) {
+    digits = sum.toString().split("").map(Number);
+    sum = digits.reduce(function(a, b) { return a + b; });
   }
+  
+  return sum;
 }
 
 function sortSheet() {
@@ -104,18 +105,22 @@ function sortSheet() {
   var sheetName = "messages"; // Change to the name of your sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = spreadsheet.getSheetByName(sheetName);
-  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
-  var values = range.getValues();
+  var numRows = sheet.getLastRow() - 1;
+  
+  if (numRows > 0) {
+    var range = sheet.getRange(2, 1, numRows, sheet.getLastColumn());
+    var values = range.getValues();
 
-  // Sort the range in descending order based on the "DATE" column
-  values.sort(function(a, b) {
-    var dateA = parseDate(a[0]);
-    var dateB = parseDate(b[0]);
-    return dateB - dateA;
-  });
+    // Sort the range in descending order based on the "DATE" column
+    values.sort(function(a, b) {
+      var dateA = parseDate(a[0]);
+      var dateB = parseDate(b[0]);
+      return dateB - dateA;
+    });
 
-  // Update the sorted range on the sheet
-  range.setValues(values);
+    // Update the sorted range on the sheet
+    range.setValues(values);
+  }
 }
 
 function parseDate(dateStr) {
@@ -165,10 +170,11 @@ function doGet() {
   var output = HtmlService.createHtmlOutputFromFile('index')
       .setTitle('Sentinel')
       .setSandboxMode(HtmlService.SandboxMode.IFRAME);
-
-  // Add the Cache-Control header
-  output.addMetaTag('Cache-Control', 'no-cache, no-store, must-revalidate');
-
   return output;
 }
+
+
+
+
+
 
