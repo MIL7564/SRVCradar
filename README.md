@@ -1,3 +1,6 @@
+![Screenshot 1]() 
+![Screenshot 2]() 
+
 ## INTRODUCTION
 _sentinel enables individuals in need to issue alerts to their repsective Legions (each person is assigned to a Legion based on their telephone area code)._
 
