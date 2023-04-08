@@ -6,6 +6,6 @@ _sentinel enables individuals in need to issue alerts to their repsective Legion
     We issue a Penalty to a Legion based on the number of MESSAGES emanating from its ranks. This is purposed to incentivize Legions taking care of their rank and file before things come to a boil.
 - [Self-sustaining](): Competition between the 9 Legions ought attract sponsors.
 
-## ACKNOWLEDGEMENTS
+## ACKNOWLEDGMENTS
 + Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.
 + ChatGPT.
