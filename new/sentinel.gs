@@ -1,9 +1,9 @@
-var legionScores = Array(9).fill(0);
+var legionPenalties = Array(9).fill(0);
 
 function onOpen() {
-  updateSheet();  // Call updateSheet() when the spreadsheet is opened
   setTrigger();
-  autoexecute();  
+  autoexecute(); 
+  updateSheet();  // Call updateSheet() when the spreadsheet is opened 
 }
 
 function autoexecute() {
@@ -11,86 +11,78 @@ function autoexecute() {
   updateSheet();
   
   // Call the sort function to sort the "messages" sheet
-  sortSheet(true);
+  sortSheet();
 
-  //add a cache-control header to your HTTP responses that instructs the client to not cache responses, 
-  //and instead request    fresh content from the server every time.
+  //add a cache-control header to your HTTP responses that instructs the client to not cache responses, and instead request fresh content from the server every time.
   doGet()
 }  
 
-function updateSheet() {  
+function updateSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
   var messagesSheetName = "messages"; // Change to the name of your sheet
   var resultsSheetName = "results"; // Change to the name of your results sheet
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var messagesSheet = spreadsheet.getSheetByName(messagesSheetName);
   var range = messagesSheet.getDataRange().getValues();
-  var firstRow = messagesSheet.getRange(1, 1, 1, 3).getValues();
-  
-  //set column B width to 200 Pixels
-  messagesSheet.setColumnWidth(2, 200);
+  var firstRow = messagesSheet.getRange(1, 1, 1, 2).getValues();
 
   // Set the column labels for the messages sheet if it's empty
-  if (firstRow[0][0] == "" && firstRow[0][1] == "" && firstRow[0][2] == "") {
-    messagesSheet.getRange("A1").setValue("SERIAL").setFontWeight('bold').setHorizontalAlignment("left");
-    messagesSheet.getRange("B1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
-    messagesSheet.getRange("C1").setValue("PHONE").setFontWeight('bold').setHorizontalAlignment("left");
-    messagesSheet.getRange("D1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
-    
-    //set column B width to 200 Pixels
-    messagesSheet.setColumnWidth(2, 200);
-  }
+  if (firstRow[0][0] == "" && firstRow[0][1] == "") {
+  messagesSheet.getRange("A1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("B1").setValue("PHONE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("C1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
 
-  // Clear the sheet if there are 14 or more entries (except the first row)
-  if (range.length >= 15) {
-    messagesSheet.getRange(2, 1, messagesSheet.getLastRow()-1, messagesSheet.getLastColumn()).clearContent();
-    messagesSheet.getRange(1, 1, 1, 3).setFontWeight('bold').setHorizontalAlignment("left");
-    
-    //set column B width to 200 Pixels
-    messagesSheet.setColumnWidth(2, 200);
+  // set column A width to 200 Pixels
+  messagesSheet.setColumnWidth(1, 200);
   }
+  
+  // Clear the sheet if there are 14 or more entries (except the first row)
+  if (range.length >= 13) {
+  messagesSheet.getRange(2, 1, messagesSheet.getLastRow()-1, messagesSheet.getLastColumn()).clearContent();
+  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.setColumnWidth(1, 200); 
+  } 
+
 
   // Set the column labels for the "results" sheet
   var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
   resultsSheet.getRange("A1").setValue("LEGION").setFontWeight('bold');
-  resultsSheet.getRange("B1").setValue("SCORE").setFontWeight('bold');
+  resultsSheet.getRange("B1").setValue("PENALTY").setFontWeight('bold');
   // Set horizontal alignment for column A and B
   resultsSheet.getRange("A1:B1").setHorizontalAlignment("center");
 
   // Check if messages sheet is empty
   if (range.length > 1) {
-
+    
   for (var i = 1; i < range.length; i++) {
     if (range[i][0].length > 0) {
-      var phone = range[i][3];
+      var phone = range[i][1];
       var digit = resolute(phone); // pass the phone number to the resolute function
       if (digit >= 1 && digit <= 9) {
-        legionScores[digit - 1]++;
+        legionPenalties[digit - 1]++;
       }
     }
+  } 
+
+
   }
 
-  //add serial number to each row
-  serialize(); 
-}
-
-
-  // Set legion titles and scores in the results sheet
+  // Set legion titles and penalties in the results sheet
   for (var i = 0; i < 9; i++) {
     var legionTitle = "Legion " + (i+1);
     resultsSheet.getRange(i+2, 1).setValue(legionTitle);
-    resultsSheet.getRange(i+2, 2).setValue(legionScores[i]);
+    resultsSheet.getRange(i+2, 2).setValue(legionPenalties[i]);
   }
 
-  // Determine the highest score and set the background color of the corresponding cell(s) to Yellow
-  var maxScore = Math.max(...legionScores);
+  // Determine the highest penalty and set the background color of the corresponding cell(s) to Red
+  var maxPenalty = Math.max(...legionPenalties);
   
   // Clear the background color of all cells in the results sheet excepting the first row
   resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastColumn()).clearFormat();
   
   for (var i = 0; i < 9; i++) {
-    if (legionScores[i] === maxScore) {
-      resultsSheet.getRange(i+2, 1, 1, 2).setBackground("yellow");
+    if (legionPenalties[i] === maxPenalty) {
+      resultsSheet.getRange(i+2, 1, 1, 2).setBackground("#EA4335");
     }
   }
 }
@@ -116,7 +108,7 @@ function sortSheet() {
   var numRows = sheet.getLastRow() - 1;
   
   if (numRows > 0) {
-    var range = sheet.getRange(2, 2, numRows, sheet.getLastColumn());
+    var range = sheet.getRange(2, 1, numRows, sheet.getLastColumn());
     var values = range.getValues();
 
     // Sort the range in descending order based on the "DATE" column
@@ -179,14 +171,4 @@ function doGet() {
       .setTitle('Sentinel')
       .setSandboxMode(HtmlService.SandboxMode.IFRAME);
   return output;
-}
-
-function serialize() {
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var messagesSheet = spreadsheet.getSheetByName("messages");
-  var range = messagesSheet.getDataRange().getValues();
-  
-  for (var i = 1; i < range.length; i++) {
-    messagesSheet.getRange(i+1, 1).setValue(i);
-  }
 }
