@@ -1,4 +1,4 @@
-< img alt="Sentinel App Screenshot" src="https://github.com/salmanshuaib/sentinel/blob/main/new/Screenshot_20230407-234139.png" style="width: 60%; height: auto; float: left;"> 
+< img src="https://github.com/salmanshuaib/sentinel/blob/main/new/Screenshot_20230407-234139.png" alt="Sentinel App Screenshot" style="width: 60%; height: auto; float: left;"> 
 
 
 ## INTRODUCTION
