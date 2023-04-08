@@ -1,3 +1,4 @@
+//v0.0.7
 var legionPenalties = Array(9).fill(0);
 
 function onOpen() {
