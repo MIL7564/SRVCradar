@@ -1,4 +1,4 @@
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/new/Screenshot_20230407-234139.png" alt="Sentinel App Screenshot" style="width: 60%; height: auto; align: left;"> 
+<img src="https://github.com/salmanshuaib/sentinel/blob/main/new/Screenshot_20230407-234139.png" alt="Sentinel App Screenshot" style="width: 45%; height: auto; align: left;"> 
 
 ## INTRODUCTION
 _sentinel enables individuals in need to issue alerts to their repsective Legions (each person is assigned to a Legion based on their telephone area code)._
