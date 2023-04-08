@@ -11,3 +11,4 @@ _sentinel enables individuals in need to issue alerts to their repsective Legion
 ## ACKNOWLEDGMENTS
 + Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.
 + ChatGPT.
+<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B2_TROUBLESHOOT/CC0%20-%2068747470733a2f2f6c6963656e7365627574746f6e732e6e65742f702f7a65726f2f312e302f38387833312e706e67.png">
