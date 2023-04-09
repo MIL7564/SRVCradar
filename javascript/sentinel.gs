@@ -1,6 +1,4 @@
-//v0.0.7
-var legionPenalties = Array(9).fill(0);
-
+//v0.0.8
 function onOpen() {
   setTrigger();
   autoexecute(); 
@@ -19,6 +17,7 @@ function autoexecute() {
 }  
 
 function updateSheet() {
+  var legionPenalties = Array(9).fill(0);
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
   var messagesSheetName = "messages"; // Change to the name of your sheet
   var resultsSheetName = "results"; // Change to the name of your results sheet
@@ -59,9 +58,7 @@ function updateSheet() {
     if (range[i][0].length > 0) {
       var phone = range[i][1];
       var digit = resolute(phone); // pass the phone number to the resolute function
-      if (digit >= 1 && digit <= 9) {
-        legionPenalties[digit - 1]++;
-      }
+      legionPenalties[digit - 1]++;
     }
   } 
 
@@ -91,7 +88,11 @@ function updateSheet() {
 
 function resolute(phNum) {
   var digits = phNum.toString().split("").map(Number);
-  var sum = digits.reduce(function(a, b) { return a + b; });
+  var sum = 0;
+  
+  for (var i = 1; i <= 3; i++) {
+    sum += digits[i];
+  }
 
   while (sum > 9) {
     digits = sum.toString().split("").map(Number);
@@ -100,6 +101,7 @@ function resolute(phNum) {
   
   return sum;
 }
+
 
 function sortSheet() {
   var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
