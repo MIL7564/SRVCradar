@@ -11,6 +11,17 @@
 ++ Sum the COGS for all companies in each Legion. Display the RANKINGS for each Legion in a table: The leading Legions are the ones that have spent the most into the economy (as Cost Of Goods Sold).
 
 +++ SCRIPT:
+/*dart
+This code snippet provides a basic implementation that you can further enhance and adapt to your specific requirements. It includes functions for prompting the user for input, retrieving 
+company data from the EDGAR database, and storing and querying the data in a SQLite database. The Resolute value is calculated using the provided `resolute` function, and the rankings 
+based on COGS are displayed. 
+
+Remember to replace the placeholder functions (`promptForCAC` and `retrieveCompanyDataFromEDGAR`) with your actual implementation for user input and 
+data retrieval.
+
+Note: This code assumes you have the necessary dependencies (`sqflite` and `path`) added to your Flutter project. You can add them to your `pubspec.yaml` file and 
+run `flutter pub get` to download the dependencies.
+*/
 //v0.0.8
 function onOpen() {
   setTrigger();

@@ -1,15 +1,3 @@
-/*dart
-This code snippet provides a basic implementation that you can further enhance and adapt to your specific requirements. It includes functions for prompting the user for input, retrieving 
-company data from the EDGAR database, and storing and querying the data in a SQLite database. The Resolute value is calculated using the provided `resolute` function, and the rankings 
-based on COGS are displayed. 
-
-Remember to replace the placeholder functions (`promptForCAC` and `retrieveCompanyDataFromEDGAR`) with your actual implementation for user input and 
-data retrieval.
-
-Note: This code assumes you have the necessary dependencies (`sqflite` and `path`) added to your Flutter project. You can add them to your `pubspec.yaml` file and 
-run `flutter pub get` to download the dependencies.
-*/
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
@@ -93,53 +81,53 @@ void main() async {
 
 // Function to prompt user for CAC input
 Future<String> promptForCAC() async {
-  // Use your preferred method to prompt for user input
-  // and return the entered CAC as a String
+  stdout.write('Enter your City Area Code (CAC): ');
+  String input = stdin.readLineSync();
+  return input.trim();
 }
 
 // Function to retrieve company data from EDGAR database
 List<Map<String, dynamic>> retrieveCompanyDataFromEDGAR() {
   // Use your preferred method or API to retrieve company data from EDGAR database
   // and return the data as a List of Maps, where each Map represents a company and contains the required facts
-}
+  // Handle errors and provide fallback values
+  try {
+    // Make HTTP request to fetch the list of company CIKs
+    var cikResponse = await http.get(Uri.parse('https://data.sec.gov/submissions/cik.json'));
+    if (cikResponse.statusCode == 200) {
+      List<String> cikList = List<String>.from(json.decode(cikResponse.body));
 
-// Function to retrieve company data from EDGAR database
-Future<List<Map<String, dynamic>>> retrieveCompanyDataFromEDGAR() async {
-  List<Map<String, dynamic>> companyData = [];
+      // Iterate through each CIK and fetch the company data
+      for (var i = 0; i < cikList.length; i++) {
+        var cik = cikList[i];
 
-  // Make HTTP request to fetch the list of company CIKs
-  var cikResponse = await http.get(Uri.parse('https://data.sec.gov/submissions/cik.json'));
-  if (cikResponse.statusCode == 200) {
-    List<String> cikList = List<String>.from(json.decode(cikResponse.body));
+        // Introduce a delay between API requests to adhere to the rate limit
+        await Future.delayed(Duration(milliseconds: i * 100));
 
-    // Iterate through each CIK and fetch the company data
-    for (var i = 0; i < cikList.length; i++) {
-      var cik = cikList[i];
+        // Make HTTP request to fetch the company data for the specific CIK
+        var companyResponse = await http.get(Uri.parse('https://data.sec.gov/submissions/$cik.json'));
+        if (companyResponse.statusCode == 200) {
+          var companyJson = json.decode(companyResponse.body);
 
-      // Introduce a delay between API requests to adhere to the rate limit
-      await Future.delayed(Duration(milliseconds: i * 100));
+          // Extract the required information from the JSON response
+          var companyName = companyJson['name'];
+          var areaCode = companyJson['phoneAreaCode'];
+          var cogs = await fetchCOGS(cik); // Fetch Cost of Goods Sold for the specific CIK
 
-      // Make HTTP request to fetch the company data for the specific CIK
-      var companyResponse = await http.get(Uri.parse('https://data.sec.gov/submissions/$cik.json'));
-      if (companyResponse.statusCode == 200) {
-        var companyJson = json.decode(companyResponse.body);
+          // Create a map with the extracted data
+          var companyMap = {
+            'CompanyName': companyName,
+            'AreaCode': areaCode,
+            'COGS': cogs,
+          };
 
-        // Extract the required information from the JSON response
-        var companyName = companyJson['name'];
-        var areaCode = companyJson['phoneAreaCode'];
-        var cogs = await fetchCOGS(cik); // Fetch Cost of Goods Sold for the specific CIK
-
-        // Create a map with the extracted data
-        var companyMap = {
-          'CompanyName': companyName,
-          'AreaCode': areaCode,
-          'COGS': cogs,
-        };
-
-        // Add the company map to the list of company data
-        companyData.add(companyMap);
+          // Add the company map to the list of company data
+          companyData.add(companyMap);
+        }
       }
     }
+  } catch (e) {
+    print('Error retrieving company data from EDGAR database: $e');
   }
 
   return companyData;
@@ -150,17 +138,20 @@ Future<double> fetchCOGS(String cik) async {
   // Introduce a delay between API requests to adhere to the rate limit
   await Future.delayed(Duration(milliseconds: 500));
 
-  var url = Uri.parse('https://data.sec.gov/api/xbrl/companyfacts/$cik.json');
-  var response = await http.get(url);
-  if (response.statusCode == 200) {
-    var data = json.decode(response.body);
-    // Extract the COGS value from the JSON response based on the desired structure
-    var cogs = data['COGS'];
-    return cogs?.toDouble() ?? 0.0; // If COGS is not available, return a default value
+  try {
+    var url = Uri.parse('https://data.sec.gov/api/xbrl/companyfacts/$cik.json');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      // Extract the COGS value from the JSON response based on the desired structure
+      var cogs = data['COGS'];
+      return cogs?.toDouble() ?? 0.0; // If COGS is not available, return a default value
+    } else {
+      print('Error fetching COGS for CIK $cik: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error fetching COGS for CIK $cik: $e');
   }
+
   return 0.0; // Return a default value in case of an error or missing data
 }
-
-
-
-
