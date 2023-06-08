@@ -1,0 +1,190 @@
+- Write Code in Dart for Flutter with the following pseudocode (please ensure attractive graphics):
++ Ask the user to enter his/her three-character City Area Code [CAC] part of his/her telephone number.
++ Advise the user via Dart version of [resolute(phNum)] function in following SCRIPT written in JavaScript of their Legion Number based on their CAC so they can root for their team (Legion).
++ Pull information from EDGAR database (JSON formatted) with the following facts for every company:
+++1 Company Name
+++2 (City) Area Code of company's primary telephone number [three characters conventionally].
+++3 Cost Of Goods Sold [COGS]. [FORGOT]: From both 10-Q and 10-K returns.
++ Store the above three facts in a SQLite database meant for Dart (Flutter).
++ Retrieve each company's city area code (CAC) in turn and convert it into one digit in Dart language using the [resolute(phNum)] function in following SCRIPT written in JavaScript [Assignment Management System hash function].
+++ Store the Resolute (the singularized representation of CAC) for each company as a fourth column for each entry in the SQLite database. The Resolute for a Company is its Legion Number.
+++ Sum the COGS for all companies in each Legion. Display the RANKINGS for each Legion in a table: The leading Legions are the ones that have spent the most into the economy (as Cost Of Goods Sold).
+
++++ SCRIPT:
+//v0.0.8
+function onOpen() {
+  setTrigger();
+  autoexecute(); 
+  updateSheet();  // Call updateSheet() when the spreadsheet is opened 
+}
+
+function autoexecute() {
+  // The code to execute every 1 minutes goes here
+  updateSheet();
+  
+  // Call the sort function to sort the "messages" sheet
+  sortSheet();
+
+  //add a cache-control header to your HTTP responses that instructs the client to not cache responses, and instead request fresh content from the server every time.
+  doGet()
+}  
+
+function updateSheet() {
+  var legionPenalties = Array(9).fill(0);
+  var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
+  var messagesSheetName = "messages"; // Change to the name of your sheet
+  var resultsSheetName = "results"; // Change to the name of your results sheet
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var messagesSheet = spreadsheet.getSheetByName(messagesSheetName);
+  var range = messagesSheet.getDataRange().getValues();
+  var firstRow = messagesSheet.getRange(1, 1, 1, 2).getValues();
+
+  // Set the column labels for the messages sheet if it's empty
+  if (firstRow[0][0] == "" && firstRow[0][1] == "") {
+  messagesSheet.getRange("A1").setValue("DATE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("B1").setValue("PHONE").setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.getRange("C1").setValue("MESSAGE").setFontWeight('bold').setHorizontalAlignment("left");
+
+  // set column A width to 200 Pixels
+  messagesSheet.setColumnWidth(1, 200);
+  }
+  
+  // Clear the sheet if there are 14 or more entries (except the first row)
+  if (range.length >= 13) {
+  messagesSheet.getRange(2, 1, messagesSheet.getLastRow()-1, messagesSheet.getLastColumn()).clearContent();
+  messagesSheet.getRange(1, 1, 1, 2).setFontWeight('bold').setHorizontalAlignment("left");
+  messagesSheet.setColumnWidth(1, 200); 
+  } 
+
+
+  // Set the column labels for the "results" sheet
+  var resultsSheet = spreadsheet.getSheetByName(resultsSheetName);
+  resultsSheet.getRange("A1").setValue("LEGION").setFontWeight('bold');
+  resultsSheet.getRange("B1").setValue("PENALTY").setFontWeight('bold');
+  // Set horizontal alignment for column A and B
+  resultsSheet.getRange("A1:B1").setHorizontalAlignment("center");
+
+  // Check if messages sheet is empty
+  if (range.length > 1) {
+    
+  for (var i = 1; i < range.length; i++) {
+    if (range[i][0].length > 0) {
+      var phone = range[i][1];
+      var digit = resolute(phone); // pass the phone number to the resolute function
+      legionPenalties[digit - 1]++;
+    }
+  } 
+
+
+  }
+
+  // Set legion titles and penalties in the results sheet
+  for (var i = 0; i < 9; i++) {
+    var legionTitle = "Legion " + (i+1);
+    resultsSheet.getRange(i+2, 1).setValue(legionTitle);
+    resultsSheet.getRange(i+2, 2).setValue(legionPenalties[i]);
+  }
+
+  // Determine the highest penalty and set the background color of the corresponding cell(s) to Red
+  var maxPenalty = Math.max(...legionPenalties);
+  
+  // Clear the background color of all cells in the results sheet excepting the first row
+  resultsSheet.getRange(2, 1, resultsSheet.getLastRow()-1, resultsSheet.getLastColumn()).clearFormat();
+  
+  for (var i = 0; i < 9; i++) {
+    if (legionPenalties[i] === maxPenalty) {
+      resultsSheet.getRange(i+2, 1, 1, 2).setBackground("#EA4335");
+    }
+  }
+}
+
+
+function resolute(phNum) {
+  var digits = phNum.toString().split("").map(Number);
+  var sum = 0;
+  
+  for (var i = 1; i <= 3; i++) {
+    sum += digits[i];
+  }
+
+  while (sum > 9) {
+    digits = sum.toString().split("").map(Number);
+    sum = digits.reduce(function(a, b) { return a + b; });
+  }
+  
+  return sum;
+}
+
+
+function sortSheet() {
+  var spreadsheetName = "9LEGIONS"; // Change to the name of your spreadsheet
+  var sheetName = "messages"; // Change to the name of your sheet
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  var numRows = sheet.getLastRow() - 1;
+  
+  if (numRows > 0) {
+    var range = sheet.getRange(2, 1, numRows, sheet.getLastColumn());
+    var values = range.getValues();
+
+    // Sort the range in descending order based on the "DATE" column
+    values.sort(function(a, b) {
+      var dateA = parseDate(a[0]);
+      var dateB = parseDate(b[0]);
+      return dateB - dateA;
+    });
+
+    // Update the sorted range on the sheet
+    range.setValues(values);
+  }
+}
+
+function parseDate(dateStr) {
+  var dateParts = dateStr.split(" ");
+  var month = parseMonth(dateParts[0]);
+  var day = parseInt(dateParts[1].replace(",", ""));
+  var year = parseInt(dateParts[2]);
+  var timeParts = dateParts[4].split(":");
+  var hour = parseInt(timeParts[0]);
+  var minute = parseInt(timeParts[1]);
+  if (dateParts[5] == "PM") {
+    hour += 12;
+  }
+  var dateObj = new Date(year, month, day, hour, minute);
+  return dateObj;
+}
+
+function parseMonth(monthStr) {
+  var monthNames = [    "January", "February", "March", "April", "May", "June",    "July", "August", "September", "October", "November", "December"  ];
+  return monthNames.indexOf(monthStr);
+}
+
+
+function setTrigger() {
+  // Get all existing triggers in the project
+  var triggers = ScriptApp.getProjectTriggers();
+
+  // Check if a trigger already exists for the autoexecute function
+  var triggerExists = false;
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() == 'autoexecute') {
+      triggerExists = true;
+      break;
+    }
+  }
+
+  // If a trigger doesn't exist create a new one that runs the autoexecute function every 1 minutes
+  if (!triggerExists) {
+    ScriptApp.newTrigger('autoexecute')
+             .timeBased()
+             .everySeconds(60)
+             .create();
+  }
+}
+
+function doGet() {
+  var output = HtmlService.createHtmlOutputFromFile('index')
+      .setTitle('Sentinel')
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  return output;
+}
