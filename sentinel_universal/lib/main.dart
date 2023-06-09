@@ -1,7 +1,9 @@
-import 'package:sqflite/sqflite.dart';
+/* import 'package:vm/vm.dart'; */
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
 import 'package:path/path.dart';
+/* import 'package:path_provider/path_provider.dart'; */
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
 
 // Function to retrieve Legion Number based on CAC
 int resolute(String phNum) {
@@ -53,9 +55,9 @@ class SentinelAppState extends State<SentinelApp> {
   }
 
   Future<Database> openDatabaseConnection() async {
-    String databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'legion_scores.db');
     sqflite_ffi.sqfliteFfiInit(); // Initialize FFI
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, 'legion_scores.db');
     return await sqflite_ffi.databaseFactoryFfi.openDatabase(path,
         options: OpenDatabaseOptions(version: 1, onCreate: (db, version) async {
       await db.execute('CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER)');
