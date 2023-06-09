@@ -1,4 +1,5 @@
 /* main.dart */
+/* main.dart */
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -125,13 +126,6 @@ class _SentinelAppState extends State<SentinelApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (results == null || winningLegion == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text('Sentinel App')),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text('Sentinel App')),
       body: Column(
@@ -144,13 +138,6 @@ class _SentinelAppState extends State<SentinelApp> {
           TextField(onChanged: handleAOKInput),
           SizedBox(height: 16),
           ElevatedButton(onPressed: submitForm, child: Text('Submit')),
-          SizedBox(height: 32),
-          Text('Winning Legion: ${winningLegion.name}'),
-          SizedBox(height: 16),
-          Text('Legion\t\tScore'),
-          Text('-------------------'),
-          for (var legion in results!)
-            Text('${legion.name}\t\t${legion.score}'),
           SizedBox(height: 32),
           if (winningLegion.name == results![resolute(cac) - 1].name)
             Column(
@@ -173,4 +160,3 @@ void main() {
     home: SentinelApp(),
   ));
 }
-
