@@ -1,3 +1,4 @@
+/* main.dart */
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -31,7 +32,7 @@ class _SentinelAppState extends State<SentinelApp> {
   late String cac;
   late bool act;
   late Database db;
-  late List<Legion> results;
+  List<Legion>? results; // Make the list nullable
   late Legion winningLegion;
 
   @override
@@ -86,8 +87,8 @@ class _SentinelAppState extends State<SentinelApp> {
   }
 
   Legion determineWinningLegion() {
-    var winningLegion = results.first;
-    for (var legion in results) {
+    var winningLegion = results!.first;
+    for (var legion in results!) {
       if (legion.score > winningLegion.score) {
         winningLegion = legion;
       }
@@ -111,9 +112,9 @@ class _SentinelAppState extends State<SentinelApp> {
 
   Future<void> submitForm() async {
     int userLegion = resolute(cac);
-    int currentScore = await getLegionScore(results[userLegion - 1].name);
+    int currentScore = await getLegionScore(results![userLegion - 1].name);
     int newScore = act ? currentScore + 1 : currentScore;
-    await updateLegionScore(results[userLegion - 1].name, newScore);
+    await updateLegionScore(results![userLegion - 1].name, newScore);
 
     List<Legion> updatedScores = await getLegionScores();
     setState(() {
@@ -125,7 +126,10 @@ class _SentinelAppState extends State<SentinelApp> {
   @override
   Widget build(BuildContext context) {
     if (results == null || winningLegion == null) {
-      return Center(child: CircularProgressIndicator());
+      return Scaffold(
+        appBar: AppBar(title: Text('Sentinel App')),
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
@@ -145,10 +149,10 @@ class _SentinelAppState extends State<SentinelApp> {
           SizedBox(height: 16),
           Text('Legion\t\tScore'),
           Text('-------------------'),
-          for (var legion in results)
+          for (var legion in results!)
             Text('${legion.name}\t\t${legion.score}'),
           SizedBox(height: 32),
-          if (winningLegion.name == results[resolute(cac) - 1].name)
+          if (winningLegion.name == results![resolute(cac) - 1].name)
             Column(
               children: [
                 Text('Congratulations! Your Legion (${winningLegion.name}) is the winner this week.'),
@@ -169,3 +173,4 @@ void main() {
     home: SentinelApp(),
   ));
 }
+
