@@ -1,4 +1,11 @@
--1-
+-1- I am simplifying the following gameplay (script: sentinelCOGS.dart); please make the following edits to sentinelCOGS.dart to produce a new script sentinel.dart:
++ Keep the part in  sentinelCOGS.dart where user enters his CAC (City Area Code).
++ Ask the user to enter amount donated to Homeless (ask this alongside when we ask for CAC).
++ Keep the part in  sentinelCOGS.dart where the CAC is condensed into a single digit which we call the Legion Number.
++ Erase the rest of the code in sentinelCOGS.dart.
++ For each entry of amount donated ("Act Of Kindness"), a point is earned by the user's respective Legion.
++ A scoreboard displays the current scores of each Legion.
++ Winning Legion every WEEK is highlighted in PINK and advised next week off from donating to those Homeless. 
 
 -2- Write Code in Dart for Flutter with the following pseudocode (please ensure attractive graphics):
 + Ask the user to enter his/her three-character City Area Code [CAC] part of his/her telephone number.
