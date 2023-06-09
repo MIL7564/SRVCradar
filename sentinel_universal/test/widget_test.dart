@@ -13,7 +13,7 @@ import 'package:sentinel_universal/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(SentinelApp());
+    await tester.pumpWidget(const SentinelApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -1,5 +1,4 @@
 /* main.dart */
-/* main.dart */
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -25,11 +24,13 @@ class Legion {
 }
 
 class SentinelApp extends StatefulWidget {
+  const SentinelApp({Key? key}) : super(key: key);
+
   @override
-  _SentinelAppState createState() => _SentinelAppState();
+  SentinelAppState createState() => SentinelAppState();
 }
 
-class _SentinelAppState extends State<SentinelApp> {
+class SentinelAppState extends State<SentinelApp> {
   late String cac;
   late bool act;
   late Database db;
@@ -39,6 +40,7 @@ class _SentinelAppState extends State<SentinelApp> {
   @override
   void initState() {
     super.initState();
+    winningLegion = Legion('', 0); // Initialize winningLegion with a default value
     openDatabaseConnection().then((value) {
       db = value;
       getLegionScores().then((legionScores) {
@@ -126,28 +128,35 @@ class _SentinelAppState extends State<SentinelApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (results == null || winningLegion.name.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Sentinel App')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Sentinel App')),
+      appBar: AppBar(title: const Text('Sentinel App')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Enter your City Area Code (CAC):'),
+          const Text('Enter your City Area Code (CAC):'),
           TextField(onChanged: handleCACInput),
-          SizedBox(height: 16),
-          Text('Report an Act Of Kindness by you to Homeless via typing "yes":'),
+          const SizedBox(height: 16),
+          const Text('Report an Act Of Kindness by you to Homeless via typing "yes":'),
           TextField(onChanged: handleAOKInput),
-          SizedBox(height: 16),
-          ElevatedButton(onPressed: submitForm, child: Text('Submit')),
-          SizedBox(height: 32),
+          const SizedBox(height: 16),
+          ElevatedButton(onPressed: submitForm, child: const Text('Submit')),
+          const SizedBox(height: 32),
           if (winningLegion.name == results![resolute(cac) - 1].name)
             Column(
               children: [
                 Text('Congratulations! Your Legion (${winningLegion.name}) is the winner this week.'),
-                Text('You can take the next week off from donating to those homeless.'),
+                const Text('You can take the next week off from donating to those homeless.'),
               ],
             )
           else
-            Text('Legions that did not win! Keep up the good work in supporting the homeless.'),
+            const Text('Legions that did not win! Keep up the good work in supporting the homeless.'),
         ],
       ),
     );
@@ -155,7 +164,7 @@ class _SentinelAppState extends State<SentinelApp> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     title: 'Sentinel App',
     home: SentinelApp(),
   ));
