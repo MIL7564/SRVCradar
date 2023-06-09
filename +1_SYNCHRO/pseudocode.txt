@@ -1,4 +1,6 @@
--1- Write Code in Dart for Flutter with the following pseudocode (please ensure attractive graphics):
+-1-
+
+-2- Write Code in Dart for Flutter with the following pseudocode (please ensure attractive graphics):
 + Ask the user to enter his/her three-character City Area Code [CAC] part of his/her telephone number.
 + Advise the user via Dart version of [resolute(phNum)] function in following SCRIPT written in JavaScript of their Legion Number based on their CAC so they can root for their team (Legion).
 + Pull information from EDGAR database (JSON formatted) with the following facts for every company:
