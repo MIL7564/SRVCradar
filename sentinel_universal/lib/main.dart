@@ -1,9 +1,11 @@
-/* import 'package:vm/vm.dart'; */
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-/* import 'package:path_provider/path_provider.dart'; */
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 // Function to retrieve Legion Number based on CAC
 int resolute(String phNum) {
@@ -170,10 +172,31 @@ class SentinelAppState extends State<SentinelApp> {
   }
 }
 
-void main() {
+void main() async {
   sqflite_ffi.sqfliteFfiInit(); // Initialize FFI
+
+  final availablePort = await findAvailablePort();
+  logger.d('Available Port: $availablePort');
+
   runApp(const MaterialApp(
     title: 'Sentinel App',
     home: SentinelApp(),
   ));
+}
+
+Future<int> findAvailablePort() async {
+  const minPort = 1024; // Minimum port number to start searching
+  const maxPort = 65535; // Maximum port number to search
+
+  for (int port = minPort; port <= maxPort; port++) {
+    try {
+      final serverSocket = await ServerSocket.bind('localhost', port, shared: true);
+      await serverSocket.close();
+      return port;
+    } catch (e) {
+      // Port is not available, continue searching
+    }
+  }
+
+  throw Exception('No available port found.');
 }
