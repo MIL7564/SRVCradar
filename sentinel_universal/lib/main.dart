@@ -33,7 +33,7 @@ class SentinelApp extends StatefulWidget {
 class SentinelAppState extends State<SentinelApp> {
   late String cac;
   late bool act;
-  late Database db;
+  late Database? db;
   List<Legion>? results; // Make the list nullable
   late Legion winningLegion;
 
@@ -82,7 +82,8 @@ class SentinelAppState extends State<SentinelApp> {
   }
 
   Future<int> getLegionScore(String legionName) async {
-    List<Map<String, dynamic>> result = await db.rawQuery('SELECT score FROM scores WHERE legion_name = ?', [legionName]);
+    List<Map<String, dynamic>> result =
+        await db!.rawQuery('SELECT score FROM scores WHERE legion_name = ?', [legionName]);
     if (result.isNotEmpty) {
       return result.first['score'] as int;
     }
@@ -100,7 +101,7 @@ class SentinelAppState extends State<SentinelApp> {
   }
 
   Future<void> updateLegionScore(String legionName, int score) async {
-    await db.transaction((txn) async {
+    await db!.transaction((txn) async {
       await txn.rawInsert('INSERT OR REPLACE INTO scores(legion_name, score) VALUES(?, ?)', [legionName, score]);
     });
   }
@@ -169,3 +170,4 @@ void main() {
     home: SentinelApp(),
   ));
 }
+
