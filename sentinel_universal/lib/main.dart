@@ -1,6 +1,6 @@
-/* main.dart */
-import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
 import 'package:path/path.dart';
 
 // Function to retrieve Legion Number based on CAC
@@ -33,7 +33,7 @@ class SentinelApp extends StatefulWidget {
 class SentinelAppState extends State<SentinelApp> {
   late String cac;
   late bool act;
-  late Database? db;
+  late Database db;
   List<Legion>? results; // Make the list nullable
   late Legion winningLegion;
 
@@ -55,9 +55,11 @@ class SentinelAppState extends State<SentinelApp> {
   Future<Database> openDatabaseConnection() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'legion_scores.db');
-    return await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
+    sqflite_ffi.sqfliteFfiInit(); // Initialize FFI
+    return await sqflite_ffi.databaseFactoryFfi.openDatabase(path,
+        options: OpenDatabaseOptions(version: 1, onCreate: (db, version) async {
       await db.execute('CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER)');
-    });
+    }));
   }
 
   Future<List<Legion>> getLegionScores() async {
@@ -82,8 +84,8 @@ class SentinelAppState extends State<SentinelApp> {
   }
 
   Future<int> getLegionScore(String legionName) async {
-    List<Map<String, dynamic>> result =
-        await db!.rawQuery('SELECT score FROM scores WHERE legion_name = ?', [legionName]);
+    List<Map<String, dynamic>> result = await db.rawQuery(
+        'SELECT score FROM scores WHERE legion_name = ?', [legionName]);
     if (result.isNotEmpty) {
       return result.first['score'] as int;
     }
@@ -101,8 +103,10 @@ class SentinelAppState extends State<SentinelApp> {
   }
 
   Future<void> updateLegionScore(String legionName, int score) async {
-    await db!.transaction((txn) async {
-      await txn.rawInsert('INSERT OR REPLACE INTO scores(legion_name, score) VALUES(?, ?)', [legionName, score]);
+    await db.transaction((txn) async {
+      await txn.rawInsert(
+          'INSERT OR REPLACE INTO scores(legion_name, score) VALUES(?, ?)',
+          [legionName, score]);
     });
   }
 
@@ -165,9 +169,9 @@ class SentinelAppState extends State<SentinelApp> {
 }
 
 void main() {
+  sqflite_ffi.sqfliteFfiInit(); // Initialize FFI
   runApp(const MaterialApp(
     title: 'Sentinel App',
     home: SentinelApp(),
   ));
 }
-
