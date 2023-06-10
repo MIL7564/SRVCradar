@@ -86,11 +86,11 @@ class SentinelApp:
 
     def run(self):
         while True:
-            print("Enter your City Area Code (CAC):")
+            print("Enter your City Area Code (CAC): ")
             cac = input()
             self.handleCACInput(cac)
 
-            print('Report an Act Of Kindness by you to Homeless via typing "yes":')
+            print('Report an Act Of Kindness by you to Homeless via typing "yes": ')
             aok = input()
             self.handleAOKInput(aok)
 
