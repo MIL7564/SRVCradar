@@ -1,4 +1,7 @@
 import sqlite3
+import sys
+import tkinter as tk
+from tkinter import messagebox
 
 # Function to retrieve Legion Number based on CAC
 def resolute(phNum):
@@ -85,23 +88,47 @@ class SentinelApp:
         return winningLegion
 
     def run(self):
-        while True:
-            print("Enter your City Area Code (CAC): ")
-            cac = input()
+        # Create the GUI window
+        root = tk.Tk()
+        root.title("Sentinel App")
+
+        # Function to handle the submit button click event
+        def submit_form():
+            cac = cac_entry.get()
             self.handleCACInput(cac)
 
-            print('Report an Act Of Kindness by you to Homeless via typing "yes": ')
-            aok = input()
+            aok = aok_entry.get()
             self.handleAOKInput(aok)
 
             self.submitForm()
             winningLegion = self.determineWinningLegion()
 
             if winningLegion.name == self.results[resolute(self.cac) - 1].name:
-                print(f"Congratulations! Your Legion ({winningLegion.name}) is the winner this week.")
-                print("You can take the next week off from donating to those homeless.")
+                messagebox.showinfo("Congratulations!", f"Your Legion ({winningLegion.name}) is the winner this week.\nYou can take the next week off from donating to those homeless.")
             else:
-                print("Legions that did not win! Keep up the good work in supporting the homeless.")
+                messagebox.showinfo("Legions that did not win", "Keep up the good work in supporting the homeless.")
+
+            # Clear the input fields
+            cac_entry.delete(0, tk.END)
+            aok_entry.delete(0, tk.END)
+
+        # Create and position the input fields
+        cac_label = tk.Label(root, text="Enter your City Area Code (CAC):")
+        cac_label.pack()
+        cac_entry = tk.Entry(root)
+        cac_entry.pack()
+
+        aok_label = tk.Label(root, text='Report an Act Of Kindness by you to Homeless via typing "yes":')
+        aok_label.pack()
+        aok_entry = tk.Entry(root)
+        aok_entry.pack()
+
+        # Create and position the submit button
+        submit_button = tk.Button(root, text="Submit", command=submit_form)
+        submit_button.pack()
+
+        # Run the GUI main loop
+        root.mainloop()
 
 if __name__ == "__main__":
     app = SentinelApp()
