@@ -3,9 +3,9 @@ import sys
 import tkinter as tk
 from tkinter import messagebox
 
-# Function to retrieve Legion Number based on CAC
+# Function to calculate Legion Number based on CAC
 def resolute(phNum):
-    digits = [int(char) for char in phNum[1:4]]
+    digits = [int(char) for char in phNum]
     while len(digits) > 1:
         digits = [int(char) for char in str(sum(digits))]
     return digits[0]
@@ -112,6 +112,15 @@ class SentinelApp:
             cac_entry.delete(0, tk.END)
             aok_entry.delete(0, tk.END)
 
+            # Update the displayed scores
+            score_label.config(text=getLegionScoresText())
+
+        def getLegionScoresText():
+            scores_text = "Legion Scores:\n"
+            for legion in self.results:
+                scores_text += f"{legion.name}: {legion.score}\n"
+            return scores_text
+
         # Create and position the input fields
         cac_label = tk.Label(root, text="Enter your City Area Code (CAC):")
         cac_label.pack()
@@ -126,6 +135,10 @@ class SentinelApp:
         # Create and position the submit button
         submit_button = tk.Button(root, text="Submit", command=submit_form)
         submit_button.pack()
+
+        # Create and position the score display label
+        score_label = tk.Label(root, text=getLegionScoresText())
+        score_label.pack()
 
         # Run the GUI main loop
         root.mainloop()
