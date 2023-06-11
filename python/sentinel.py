@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox
+import datetime
 
 # Function to calculate Legion Number based on CAC
 def resolute(phNum):
@@ -32,7 +33,7 @@ class SentinelApp:
         path = "legion_scores.db"
         self.db = sqlite3.connect(path)
         cursor = self.db.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER, date TEXT)")
         self.db.commit()
 
     def getLegionScores(self):
@@ -50,7 +51,7 @@ class SentinelApp:
         cursor = self.db.cursor()
         self.results = []
         for legionName in legionNames:
-            cursor.execute("SELECT score FROM scores WHERE legion_name = ?", (legionName,))
+            cursor.execute("SELECT score FROM scores WHERE legion_name = ? AND date = ?", (legionName, self.getFormattedDate()))
             result = cursor.fetchone()
             score = result[0] if result else 0
             legion = next((legion for legion in self.results if legion.name == legionName), None)
@@ -61,7 +62,7 @@ class SentinelApp:
 
     def updateLegionScore(self, legionName, score):
         cursor = self.db.cursor()
-        cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score) VALUES (?, ?)", (legionName, score))
+        cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score, date) VALUES (?, ?, ?)", (legionName, score, self.getFormattedDate()))
         self.db.commit()
 
     def handleCACInput(self, input):
@@ -83,9 +84,9 @@ class SentinelApp:
         self.determineWinningLegions()
 
         if len(self.winningLegions) == 1 and self.winningLegions[0].name == self.results[userLegion - 1].name:
-            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the winner today.\nYou can take the next day off from donating.")
+            messagebox.showinfo("Wow!", f"Your Legion ({self.winningLegions[0].name}) is leading.\nResults will be announced at 23:59 HOURS today.")
         elif self.results[userLegion - 1] not in self.winningLegions:
-            messagebox.showinfo("Apologies!", f"Your Legion ({self.winningLegions[0].name}) may not have won today, please donate tomorrow.")
+            messagebox.showinfo("Oh No!", f"Your Legion ({self.results[userLegion - 1].name}) is behind. Results are to be announced at 23:59 HOURS today.")
 
         # Clear the input fields
         self.cac_entry.delete(0, tk.END)
@@ -99,13 +100,17 @@ class SentinelApp:
         self.winningLegions = [legion for legion in self.results if legion.score == highestScore]
 
         if len(self.winningLegions) > 1:
-            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the among the winners today.\nYou can take the next day off from donating.")
+            messagebox.showinfo("Wowzers!", f"Your Legions ({', '.join(legion.name for legion in self.winningLegions)}) are in the lead.\nResults will be announced at 23:59 HOURS today.")
 
     def getLegionScoresText(self):
         scores_text = "Legion Scores:\n"
         for legion in self.results:
             scores_text += f"{legion.name}: {legion.score}\n"
         return scores_text
+
+    def getFormattedDate(self):
+        current_date = datetime.datetime.now()
+        return current_date.strftime("%Y-%m-%d")
 
     def run(self):
         # Create the GUI window
