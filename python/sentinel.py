@@ -1,6 +1,5 @@
 import sqlite3
 import tkinter as tk
-from tkinter import messagebox
 import datetime
 
 # Function to calculate Legion Number based on CAC
@@ -83,11 +82,6 @@ class SentinelApp:
 
         self.determineWinningLegions()
 
-        if len(self.winningLegions) == 1 and self.winningLegions[0].name == self.results[userLegion - 1].name:
-            messagebox.showinfo("Wow!", f"Your Legion ({self.winningLegions[0].name}) is leading.\nResults will be announced at 23:59 HOURS today.")
-        elif self.results[userLegion - 1] not in self.winningLegions:
-            messagebox.showinfo("Oh No!", f"Your Legion ({self.results[userLegion - 1].name}) is behind. Results are to be announced at 23:59 HOURS today.")
-
         # Clear the input fields
         self.cac_entry.delete(0, tk.END)
         self.aok_entry.delete(0, tk.END)
@@ -98,9 +92,6 @@ class SentinelApp:
     def determineWinningLegions(self):
         highestScore = max(legion.score for legion in self.results)
         self.winningLegions = [legion for legion in self.results if legion.score == highestScore]
-
-        if len(self.winningLegions) > 1:
-            messagebox.showinfo("Wowzers!", f"Your Legions ({', '.join(legion.name for legion in self.winningLegions)}) are in the lead.\nResults will be announced at 23:59 HOURS today.")
 
     def getLegionScoresText(self):
         scores_text = "Legion Scores:\n"
@@ -145,6 +136,16 @@ class SentinelApp:
         # Create and position the score display label
         self.score_label = tk.Label(root, text=self.getLegionScoresText())
         self.score_label.pack()
+
+        # Create and position the results message label
+        current_time = datetime.datetime.now().time()
+        if current_time.hour < 23 or (current_time.hour == 23 and current_time.minute < 59):
+            results_message = "The leading Legion(s) by 23:59 Hours will take the following day off from Acts Of Kindness"
+        else:
+            yesterday_winners = ", ".join([legion.name for legion in self.winningLegions])
+            results_message = f"Today Legion(s) {yesterday_winners} have a day off from Acts Of Kindness"
+        self.results_label = tk.Label(root, text=results_message, fg="red", font=("Arial", 12, "bold"))
+        self.results_label.pack()
 
         # Run the GUI main loop
         root.mainloop()
