@@ -1,5 +1,4 @@
 import sqlite3
-import sys
 import tkinter as tk
 from tkinter import messagebox
 
@@ -21,11 +20,11 @@ class SentinelApp:
         self.act = False
         self.db = None
         self.results = None
-        self.winningLegion = None
+        self.winningLegions = []
         self.initialize()
 
     def initialize(self):
-        self.winningLegion = Legion("", 0)
+        self.winningLegions = []
         self.openDatabaseConnection()
         self.getLegionScores()
 
@@ -73,23 +72,40 @@ class SentinelApp:
 
     def submitForm(self):
         userLegion = resolute(self.cac)
-        currentScore = self.getLegionScore(self.results[userLegion - 1].name)
+        currentScore = self.results[userLegion - 1].score
         newScore = currentScore + 1 if self.act else currentScore
         self.updateLegionScore(self.results[userLegion - 1].name, newScore)
         self.getLegionScores()
 
-    def getLegionScore(self, legionName):
-        cursor = self.db.cursor()
-        cursor.execute("SELECT score FROM scores WHERE legion_name = ?", (legionName,))
-        result = cursor.fetchone()
-        return result[0] if result else 0
+        # Update the displayed scores
+        self.score_label.config(text=self.getLegionScoresText())
 
-    def determineWinningLegion(self):
-        winningLegion = self.results[0]
+        self.determineWinningLegions()
+
+        if len(self.winningLegions) == 1 and self.winningLegions[0].name == self.results[userLegion - 1].name:
+            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the winner today.\nYou can take the next day off from donating.")
+        elif self.results[userLegion - 1] not in self.winningLegions:
+            messagebox.showinfo("Apologies!", f"Your Legion may not have won today, please donate tomorrow.")
+
+        # Clear the input fields
+        self.cac_entry.delete(0, tk.END)
+        self.aok_entry.delete(0, tk.END)
+
+        # Update the displayed scores
+        self.score_label.config(text=self.getLegionScoresText())
+
+    def determineWinningLegions(self):
+        highestScore = max(legion.score for legion in self.results)
+        self.winningLegions = [legion for legion in self.results if legion.score == highestScore]
+
+        if len(self.winningLegions) > 1:
+            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the winner today.\nYou can take the next day off from donating.")
+
+    def getLegionScoresText(self):
+        scores_text = "Legion Scores:\n"
         for legion in self.results:
-            if legion.score > winningLegion.score:
-                winningLegion = legion
-        return winningLegion
+            scores_text += f"{legion.name}: {legion.score}\n"
+        return scores_text
 
     def run(self):
         # Create the GUI window
@@ -98,53 +114,32 @@ class SentinelApp:
 
         # Function to handle the submit button click event
         def submit_form():
-            cac = cac_entry.get()
+            cac = self.cac_entry.get()
             self.handleCACInput(cac)
 
-            aok = aok_entry.get()
+            aok = self.aok_entry.get()
             self.handleAOKInput(aok)
 
             self.submitForm()
-            self.getLegionScores()  # Fetch updated scores
-
-            # Update the displayed scores
-            score_label.config(text=getLegionScoresText())
-
-            winningLegion = self.determineWinningLegion()
-
-            if winningLegion.name == self.results[resolute(self.cac) - 1].name:
-                messagebox.showinfo("Congratulations!", f"Your Legion ({winningLegion.name}) is the winner this week.\nYou can take the next week off from donating to those homeless.")
-            else:
-                messagebox.showinfo("Apologies!", f"Your Legion may not have won this week, but we must keep up the good work in supporting the homeless.")
-
-            # Clear the input fields
-            cac_entry.delete(0, tk.END)
-            aok_entry.delete(0, tk.END)
-
-        def getLegionScoresText():
-            scores_text = "Legion Scores:\n"
-            for legion in self.results:
-                scores_text += f"{legion.name}: {legion.score}\n"
-            return scores_text
 
         # Create and position the input fields
         cac_label = tk.Label(root, text="Enter your City Area Code:")
         cac_label.pack()
-        cac_entry = tk.Entry(root)
-        cac_entry.pack()
+        self.cac_entry = tk.Entry(root)
+        self.cac_entry.pack()
 
         aok_label = tk.Label(root, text='Report an Act Of Kindness by you to Homeless via typing "yes":')
         aok_label.pack()
-        aok_entry = tk.Entry(root)
-        aok_entry.pack()
+        self.aok_entry = tk.Entry(root)
+        self.aok_entry.pack()
 
         # Create and position the submit button
         submit_button = tk.Button(root, text="Submit", command=submit_form)
         submit_button.pack()
 
         # Create and position the score display label
-        score_label = tk.Label(root, text=getLegionScoresText())
-        score_label.pack()
+        self.score_label = tk.Label(root, text=self.getLegionScoresText())
+        self.score_label.pack()
 
         # Run the GUI main loop
         root.mainloop()
