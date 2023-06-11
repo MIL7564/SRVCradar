@@ -54,11 +54,15 @@ class SentinelApp:
             cursor.execute("SELECT score FROM scores WHERE legion_name = ?", (legionName,))
             result = cursor.fetchone()
             score = result[0] if result else 0
-            self.results.append(Legion(legionName, score))
+            legion = next((legion for legion in self.results if legion.name == legionName), None)
+            if legion:
+                legion.score = score  # Update existing Legion object with the fetched score
+            else:
+                self.results.append(Legion(legionName, score))  # Create new Legion object with the fetched score
 
     def updateLegionScore(self, legionName, score):
         cursor = self.db.cursor()
-        cursor.execute("INSERT OR REPLACE INTO scores(legion_name, score) VALUES(?, ?)", (legionName, score))
+        cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score) VALUES (?, ?)", (legionName, score))
         self.db.commit()
 
     def handleCACInput(self, input):
@@ -101,19 +105,21 @@ class SentinelApp:
             self.handleAOKInput(aok)
 
             self.submitForm()
+            self.getLegionScores()  # Fetch updated scores
+
+            # Update the displayed scores
+            score_label.config(text=getLegionScoresText())
+
             winningLegion = self.determineWinningLegion()
 
             if winningLegion.name == self.results[resolute(self.cac) - 1].name:
                 messagebox.showinfo("Congratulations!", f"Your Legion ({winningLegion.name}) is the winner this week.\nYou can take the next week off from donating to those homeless.")
             else:
-                messagebox.showinfo("Legions that did not win", "Keep up the good work in supporting the homeless.")
+                messagebox.showinfo("Apologies!", f"Your Legion may not have won this week, but we must keep up the good work in supporting the homeless.")
 
             # Clear the input fields
             cac_entry.delete(0, tk.END)
             aok_entry.delete(0, tk.END)
-
-            # Update the displayed scores
-            score_label.config(text=getLegionScoresText())
 
         def getLegionScoresText():
             scores_text = "Legion Scores:\n"
@@ -122,7 +128,7 @@ class SentinelApp:
             return scores_text
 
         # Create and position the input fields
-        cac_label = tk.Label(root, text="Enter your City Area Code (CAC):")
+        cac_label = tk.Label(root, text="Enter your City Area Code:")
         cac_label.pack()
         cac_entry = tk.Entry(root)
         cac_entry.pack()
