@@ -3,10 +3,11 @@
 ## INTRODUCTION
 _sentinel enables individuals to report their Acts Of Kindness to achieve points for their Legion. Each person is assigned to a Legion based on their city area code (screengrab shown is from an older model of sentinel)._
 
-- [Introduction](): An Application that seeks to help those Homeless by gamifying competition among individuals donating to them. Size of donation does not matter. 
-- [Gamification](): As there are 9 possible divisions of any organization based on the Assignment Management System hash function: that the sum of digits of any number resolves to 1,2,3,4,5,6,7,8 OR 9: we issue a POINT to a Legion based on each Act Of Kindness. Legion with the highest Points every week gets the following week off from donating.
+- [Introduction](): An Application that seeks to help those in any form of need by gamifying competition among individuals helping them.  
+- [Gamification](): As there are 9 possible divisions of any organization based on the Assignment Management System hash function: that the sum of digits of any number resolves to 1,2,3,4,5,6,7,8 OR 9: we issue a POINT to a Legion based on each Act Of Kindness. Legion with the highest Points every day gets the following day off from helping out.
 - [Self-sustaining](): Competition between the 9 Legions ought attract sponsors.
-- [Theory](): This hash function (the Assignment Management System) is auto-intelligent in that it can enable society to self-organize around a sacred goal by enabling rest period for the donors.
+- [Theory](): This hash function (the Assignment Management System) is auto-intelligent in that it can enable society to self-organize around a sacred goal by enabling rest period for the donors/helpers.
+- [Intangibility](): As it is said, even a smile is charity. Therefore, as long as it is worth your time reporting smiles via typing "yes" by pulling up the application; every Act Of Kindness counts no matter how intangible.
 
 ## ACKNOWLEDGMENTS
 + Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.

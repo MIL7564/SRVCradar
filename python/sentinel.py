@@ -85,7 +85,7 @@ class SentinelApp:
         if len(self.winningLegions) == 1 and self.winningLegions[0].name == self.results[userLegion - 1].name:
             messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the winner today.\nYou can take the next day off from donating.")
         elif self.results[userLegion - 1] not in self.winningLegions:
-            messagebox.showinfo("Apologies!", f"Your Legion may not have won today, please donate tomorrow.")
+            messagebox.showinfo("Apologies!", f"Your Legion ({self.winningLegions[0].name}) may not have won today, please donate tomorrow.")
 
         # Clear the input fields
         self.cac_entry.delete(0, tk.END)
@@ -99,7 +99,7 @@ class SentinelApp:
         self.winningLegions = [legion for legion in self.results if legion.score == highestScore]
 
         if len(self.winningLegions) > 1:
-            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the winner today.\nYou can take the next day off from donating.")
+            messagebox.showinfo("Congratulations!", f"Your Legion ({self.winningLegions[0].name}) is the among the winners today.\nYou can take the next day off from donating.")
 
     def getLegionScoresText(self):
         scores_text = "Legion Scores:\n"
@@ -128,7 +128,7 @@ class SentinelApp:
         self.cac_entry = tk.Entry(root)
         self.cac_entry.pack()
 
-        aok_label = tk.Label(root, text='Report an Act Of Kindness by you to Homeless via typing "yes":')
+        aok_label = tk.Label(root, text='Report an Act Of Kindness by you via typing "yes":')
         aok_label.pack()
         self.aok_entry = tk.Entry(root)
         self.aok_entry.pack()
