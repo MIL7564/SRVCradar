@@ -7,15 +7,17 @@
             background-color: limegreen;
             margin: 0;
             padding: 0;
+            margin-left: 10px;
         }
         
         .navbar {
             background-color: limegreen;
             height: 50px;
             display: flex;
-            justify-content: flex-end;
+            align-items: center;
             padding-right: 100px;
             margin-top: 10px;
+            margin-right: 100px;
         }
         
         .navbar ul {
@@ -23,6 +25,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            margin-left: auto;
         }
         
         .navbar li {
@@ -34,7 +37,7 @@
             font-size: 16px;
             text-decoration: none;
             padding: 15px;
-            display: block; /* Add this line */
+            display: block;
         }
         
         .navbar a:hover {
@@ -64,7 +67,7 @@
         
         .dropdown:hover > a {
             background-color: DarkGreen;
-            padding-bottom: 17px; /* Add this line */
+            padding-bottom: 17px;
         }
         
         /* Additional styling */
@@ -76,14 +79,30 @@
             margin-top: 0.5em;
             margin-bottom: 0.5em;
         }
+        
+        /* Added styling for the logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-left: 0;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
+        <div class="logo">
+            <img src="fe.png" alt="Logo">
+        </div>
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="https://paypal.me/SalmanShuaib" target="_blank">Sponsor Us</a></li>
-            <li><a href="#">Contact Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
             <li><a href="about.html">About Us</a></li>
             <li class="dropdown">
                 <a href="#">Legalities</a>
@@ -96,19 +115,22 @@
         </ul>
     </div>
 
-    <p><b>Application:</b> <a href="https://github.com/salmanshuaib/sentinel" target="_blank">GITHub.Com/salmanshuaib/sentinel</a></p>
-    sentinel enables individuals to report their Acts Of Kindness 💪 to achieve points for their Legion. Each person is assigned to a Legion 📜 based on their city area code.
-    <br><br>
-    <p><b>Me:</b> <a href="https://www.linkedin.com/in/salmanshuaib" target="_blank">LinkedIN.com/in/salmanshuaib/</a></p>
-    I, Salman Shuaib, am a Game Theorist 🎮
+    <div style="height: 800px;">
+        <!-- Place the rest of your content here -->
+        <p><b>Application:</b> <a href="https://github.com/salmanshuaib/sentinel" target="_blank">GITHub.Com/salmanshuaib/sentinel</a></p>
+        <p>sentinel enables individuals to report their Acts Of Kindness 💪 to achieve points for their Legion. Each person is assigned to a Legion 📜 based on their city area code.</p>
+        <br><br>
+        <p><b>Me:</b> <a href="https://www.linkedin.com/in/salmanshuaib" target="_blank">LinkedIN.com/in/salmanshuaib/</a></p>
+        <p>I, Salman Shuaib, am a Game Theorist 🎮</p>
 
-    <p>As it stands, our entire economy 💲, is a gig economy - we have to be "hired" to be productive; a Game has no room for such inefficiencies, something our application aims to fix - forthwith.</p>
+        <p>If we solve Economics, adequate resources 💲💲 can be dedicated toward solving every other problem abruptly. Gamification via an important mathematical function is the avenue chosen in our application.</p>
 
-    <ul>
-        <li>[✔️Loyalty✔️] I am a Canadian Armed Forces officer candidate 🍁</li>
-        <li>[✔️Knowledge✔️] Toronto MU Economics and Mgmt Science (B.Comm Hons) 🎓</li>
-        <li>[✔️Passion✔️] Gamifying poverty out of the equation 🧑‍🔬</li>
-        <li>[✔️Sustainability] if have == sponsors: print("serve you exponentially better") 💯</li>
-    </ul>
+        <ul>
+            <li>[✔️Loyalty✔️] I am a Canadian Armed Forces officer candidate 🍁</li>
+            <li>[✔️Knowledge✔️] Toronto MU Economics and Mgmt Science (B.Comm Hons) 🎓</li>
+            <li>[✔️Passion✔️] Gamifying poverty out of the equation 🧑‍🔬</li>
+            <li>[✔️Sustainability] if have == sponsors: print("serve you exponentially better") 💯</li>
+        </ul>
+    </div>
 </body>
 </html>
