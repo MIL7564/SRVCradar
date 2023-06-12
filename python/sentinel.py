@@ -32,7 +32,7 @@ class SentinelApp:
         path = "legion_scores.db"
         self.db = sqlite3.connect(path)
         cursor = self.db.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER, date TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS scores (legion_name TEXT, score INTEGER)")
         self.db.commit()
 
     def getLegionScores(self):
@@ -47,21 +47,21 @@ class SentinelApp:
             "Legion 8",
             "Legion 9",
         ]
-        cursor = self.db.cursor()
         self.results = []
+
+        cursor = self.db.cursor()
         for legionName in legionNames:
-            cursor.execute("SELECT score FROM scores WHERE legion_name = ? AND date = ?", (legionName, self.getFormattedDate()))
+            cursor.execute(
+                "SELECT score FROM scores WHERE legion_name = ?",
+                (legionName,),
+            )
             result = cursor.fetchone()
             score = result[0] if result else 0
-            legion = next((legion for legion in self.results if legion.name == legionName), None)
-            if legion:
-                legion.score = score  # Update existing Legion object with the fetched score
-            else:
-                self.results.append(Legion(legionName, score))  # Create new Legion object with the fetched score
+            self.results.append(Legion(legionName, score))
 
     def updateLegionScore(self, legionName, score):
         cursor = self.db.cursor()
-        cursor.execute("UPDATE scores SET score = ? WHERE legion_name = ? AND date = ?", (score, legionName, self.getFormattedDate()))
+        cursor.execute("UPDATE scores SET score = ? WHERE legion_name = ?", (score, legionName,))
         self.db.commit()
 
     def handleCACInput(self, input):
@@ -98,10 +98,6 @@ class SentinelApp:
         for legion in self.results:
             scores_text += f"{legion.name}: {legion.score}\n"
         return scores_text
-
-    def getFormattedDate(self):
-        current_date = datetime.datetime.now()
-        return current_date.strftime("%Y-%m-%d")
 
     def run(self):
         # Create the GUI window
