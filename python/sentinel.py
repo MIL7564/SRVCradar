@@ -61,7 +61,7 @@ class SentinelApp:
 
     def updateLegionScore(self, legionName, score):
         cursor = self.db.cursor()
-        cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score, date) VALUES (?, ?, ?)", (legionName, score, self.getFormattedDate()))
+        cursor.execute("UPDATE scores SET score = ? WHERE legion_name = ? AND date = ?", (score, legionName, self.getFormattedDate()))
         self.db.commit()
 
     def handleCACInput(self, input):
@@ -119,7 +119,7 @@ class SentinelApp:
             self.submitForm()
 
         # Create and position the input fields
-        cac_label = tk.Label(root, text="Enter your City Area Code:")
+        cac_label = tk.Label(root, text="Enter your City Area Code, e.g. 416 for Toronto:")
         cac_label.pack()
         self.cac_entry = tk.Entry(root)
         self.cac_entry.pack()
