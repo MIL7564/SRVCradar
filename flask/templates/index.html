@@ -202,6 +202,10 @@
                 const tableBody = document.querySelector("#legion-scores tbody");
                 tableBody.innerHTML = ""; // Clear the table body before updating
           
+                const scoresText = this.getLegionScoresText();
+                const scoreLabel = document.getElementById("score-label");
+                scoreLabel.textContent = scoresText;
+          
                 const headers = ["Legion Name", "Score", "Date"];
                 const headerRow = document.createElement("tr");
           
@@ -260,6 +264,16 @@
           
                 // Update the Legion scores after submitting the form
                 this.getLegionScores();
+            }
+          
+            getLegionScoresText() {
+                let scoresText = "Legion Scores:\n";
+                if (Array.isArray(this.results)) {
+                    for (const legion of this.results) {
+                        scoresText += `${legion.legion_name}: ${legion.score}\n`;
+                    }
+                }
+                return scoresText;
             }
           
             run() {

@@ -19,21 +19,7 @@ class SentinelApp {
   initialize() {
     this.winningLegions = [];
     this.getLegionScores();
-  
-    // Function to handle the keydown event
-    const handleKeyDown = (event) => {
-      // Submit the form if the Enter key is pressed
-      if (event.key === "Enter") {
-        this.submitForm();
-        location.reload();
-      }
-    };
-  
-    // Add event listener to the "Enter" key
-    const aokInput = document.getElementById("aok-input");
-    aokInput.addEventListener("keydown", handleKeyDown);
   }
-  
 
   getLegionScores() {
     const url = "/legion-scores"; // Update the URL to the Flask endpoint that returns the scores
@@ -47,41 +33,29 @@ class SentinelApp {
         console.log("Error fetching Legion scores:", error);
       });
   }
-  
+
   updateLegionScores() {
     const tableBody = document.querySelector("#legion-scores tbody");
     tableBody.innerHTML = ""; // Clear the table body before updating
-  
-    const headers = ["Legion Name", "Score", "Date"];
-    const headerRow = document.createElement("tr");
-  
-    // Create header cells
-    for (const header of headers) {
-      const headerCell = document.createElement("th");
-      headerCell.textContent = header;
-      headerRow.appendChild(headerCell);
-    }
-  
-    tableBody.appendChild(headerRow);
-  
+
     for (const legion of this.results) {
       const row = document.createElement("tr");
       const nameCell = document.createElement("td");
       const scoreCell = document.createElement("td");
       const dateCell = document.createElement("td");
-  
+
       nameCell.textContent = legion.legion_name;
       scoreCell.textContent = legion.score;
       dateCell.textContent = legion.date;
-  
+
       row.appendChild(nameCell);
       row.appendChild(scoreCell);
       row.appendChild(dateCell);
-  
+
       tableBody.appendChild(row);
     }
   }
-  
+
   handleCACInput(input) {
     this.cac = input.trim();
   }
@@ -107,38 +81,31 @@ class SentinelApp {
     // Clear the input fields
     cacInput.value = "";
     aokInput.value = "";
+
+    // Update the Legion scores after submitting the form
+    this.getLegionScores();
   }
 
   getLegionScoresText() {
     let scoresText = "Legion Scores:\n";
     if (Array.isArray(this.results)) {
       for (const legion of this.results) {
-        scoresText += `${legion.name}: ${legion.score}\n`;
+        scoresText += `${legion.legion_name}: ${legion.score}\n`;
       }
     }
     return scoresText;
   }
-  
 
   run() {
     // Function to handle the submit button click event
     const submitForm = () => {
       this.submitForm();
-
-      // Reload the page after submitting the form
-      location.reload();
     };
-  
+
     // Add event listener to submit button
     const submitButton = document.getElementById("submit-button");
     submitButton.addEventListener("click", submitForm);
-  
-    // Create and position the score display label
-    const scoreLabel = document.createElement("div");
-    scoreLabel.id = "score-label";
-    scoreLabel.textContent = this.getLegionScoresText();
-    document.body.appendChild(scoreLabel);
-  
+
     // Fetch and display the Legion scores
     this.getLegionScores();
   }
