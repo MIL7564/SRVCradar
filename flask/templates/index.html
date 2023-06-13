@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>FLOWER Economics</title>
+    <style>
+        body {
+            background-color: limegreen;
+            margin: 0;
+            padding: 0;
+            margin-left: 10px;
+        }
+        
+        .navbar {
+            background-color: limegreen;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-right: 100px;
+            margin-top: 10px;
+            margin-right: 100px;
+        }
+        
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            margin-left: auto;
+        }
+        
+        .navbar li {
+            margin-right: 20px;
+        }
+        
+        .navbar a {
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+        }
+        
+        .navbar a:hover {
+            background-color: DarkGreen;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: LimeGreen;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .dropdown:hover > a {
+            background-color: DarkGreen;
+            padding-bottom: 17px;
+        }
+        
+        /* Additional styling */
+        p {
+            margin-bottom: 0.5em;
+        }
+        
+        ul {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+        
+        /* Added styling for the logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-left: 0;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="fe.png" alt="Logo">
+        </div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="https://paypal.me/SalmanShuaib" target="_blank">Sponsor Me</a></li>
+            <li><a href="contact.html">Contact Me</a></li>
+            <li><a href="about.html">About Me</a></li>
+            <li class="dropdown">
+                <a href="#">Legalities</a>
+                <div class="dropdown-content">
+                    <a href="#">Disclaimer</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms And Conditions</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div style="height: 800px;">
+        <h1>Sentinel App</h1>
+        <label for="cac-input">Enter your City Area Code, e.g. 416 for Toronto:</label>
+        <input type="text" id="cac-input">
+        <label for="aok-input">Report an Act Of Kindness by you via typing "yes":</label>
+        <input type="text" id="aok-input">
+        <button id="submit-button">Submit</button>
+        <div id="score-label"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='sentinel.js') }}"></script>
+</body>
+</html>
