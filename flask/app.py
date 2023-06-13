@@ -8,6 +8,19 @@ app = Flask(__name__, static_folder='static')
 # Get the absolute path to the database file
 database_path = os.path.join(app.root_path, 'data', 'legion_scores.db')
 
+# Initialize the database with nine legions if it's empty
+def initialize_database():
+    db = sqlite3.connect(database_path)
+    cursor = db.cursor()
+    cursor.execute("SELECT count(*) FROM scores")
+    result = cursor.fetchone()
+    count = result[0] if result else 0
+    if count == 0:
+        for legion_num in range(1, 10):
+            cursor.execute("INSERT INTO scores (legion_name, score) VALUES (?, ?)", (f"Legion {legion_num}", 0))
+        db.commit()
+    db.close()
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -26,8 +39,7 @@ def submit():
     result = cursor.fetchone()
     score = result[0] if result else 0
     new_score = score + (1 if aok.lower() == 'yes' else 0)
-    cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score) VALUES (?, ?)",
-                   (f"Legion {user_legion}", new_score))
+    cursor.execute("UPDATE scores SET score = ? WHERE legion_name = ?", (new_score, f"Legion {user_legion}"))
     db.commit()
 
     db.close()
@@ -39,8 +51,8 @@ def get_legion_scores():
     db = sqlite3.connect(database_path)
     cursor = db.cursor()
 
-    # Fetch all the Legion scores from the database
-    cursor.execute("SELECT * FROM scores")
+    # Fetch the scores for the nine legions
+    cursor.execute("SELECT * FROM scores WHERE legion_name LIKE 'Legion %' ORDER BY legion_name")
     results = cursor.fetchall()
 
     # Convert the results into a list of dictionaries
@@ -62,4 +74,5 @@ def serve_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 if __name__ == '__main__':
+    initialize_database()
     app.run()

@@ -97,11 +97,14 @@ class SentinelApp {
 
   getLegionScoresText() {
     let scoresText = "Legion Scores:\n";
-    for (const legion of this.results) {
-      scoresText += `${legion.name}: ${legion.score}\n`;
+    if (Array.isArray(this.results)) {
+      for (const legion of this.results) {
+        scoresText += `${legion.name}: ${legion.score}\n`;
+      }
     }
     return scoresText;
   }
+  
 
   run() {
     // Function to handle the submit button click event

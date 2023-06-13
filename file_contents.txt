@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import sqlite3
 import os
 
-app = Flask(__name__, static_folder='public_html')
+app = Flask(__name__, static_folder='static')
 
 # Get the absolute path to the database file
 database_path = os.path.join(app.root_path, 'data', 'legion_scores.db')
@@ -233,11 +233,14 @@ class SentinelApp {
 
   getLegionScoresText() {
     let scoresText = "Legion Scores:\n";
-    for (const legion of this.results) {
-      scoresText += `${legion.name}: ${legion.score}\n`;
+    if (Array.isArray(this.results)) {
+      for (const legion of this.results) {
+        scoresText += `${legion.name}: ${legion.score}\n`;
+      }
     }
     return scoresText;
   }
+  
 
   run() {
     // Function to handle the submit button click event
@@ -269,7 +272,7 @@ app.run();
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='fe.png') }}" type="image/x-icon">
     <title>FLOWER Economics</title>
     <style>
         body {
@@ -361,12 +364,28 @@ app.run();
             height: 40px;
             width: auto;
         }
+
+        /* Added styling for the image */
+        .image-container {
+            position: absolute;
+            bottom: 90px;
+            right: 150px;
+        }
+        
+        .image-container img {
+            height: 350px;
+            width: auto;
+        }
+
+        .credit {
+        margin-top: 5px; /* Adjust this value to reduce or increase the distance */
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="fe.png" alt="Logo">
+            <img src="{{ url_for('static', filename='fe.png') }}" alt="Logo">
         </div>
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -402,6 +421,10 @@ app.run();
             </thead>
             <tbody></tbody>
         </table>
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='dreamstime_s_138875124.jpg') }}" alt="Image">
+            <p class="credit">ID 138875124 © Enjoys | Dreamstime.com</p>
+        </div>
     </div>
     <script src="{{ url_for('static', filename='sentinel.js') }}"></script>
 </body>
