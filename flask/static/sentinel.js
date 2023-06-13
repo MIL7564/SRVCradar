@@ -22,25 +22,52 @@ class SentinelApp {
   }
 
   getLegionScores() {
-    const legionNames = [
-      "Legion 1",
-      "Legion 2",
-      "Legion 3",
-      "Legion 4",
-      "Legion 5",
-      "Legion 6",
-      "Legion 7",
-      "Legion 8",
-      "Legion 9",
-    ];
-    this.results = [];
-
-    for (const legionName of legionNames) {
-      const score = 0; // Set initial score to 0 in JavaScript
-      this.results.push({ name: legionName, score: score });
+    const url = "/legion-scores"; // Update the URL to the Flask endpoint that returns the scores
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.results = data;
+        this.updateLegionScores();
+      })
+      .catch((error) => {
+        console.log("Error fetching Legion scores:", error);
+      });
+  }
+  
+  updateLegionScores() {
+    const tableBody = document.querySelector("#legion-scores tbody");
+    tableBody.innerHTML = ""; // Clear the table body before updating
+  
+    const headers = ["Legion Name", "Score", "Date"];
+    const headerRow = document.createElement("tr");
+  
+    // Create header cells
+    for (const header of headers) {
+      const headerCell = document.createElement("th");
+      headerCell.textContent = header;
+      headerRow.appendChild(headerCell);
+    }
+  
+    tableBody.appendChild(headerRow);
+  
+    for (const legion of this.results) {
+      const row = document.createElement("tr");
+      const nameCell = document.createElement("td");
+      const scoreCell = document.createElement("td");
+      const dateCell = document.createElement("td");
+  
+      nameCell.textContent = legion.legion_name;
+      scoreCell.textContent = legion.score;
+      dateCell.textContent = legion.date;
+  
+      row.appendChild(nameCell);
+      row.appendChild(scoreCell);
+      row.appendChild(dateCell);
+  
+      tableBody.appendChild(row);
     }
   }
-
+  
   handleCACInput(input) {
     this.cac = input.trim();
   }
@@ -81,18 +108,18 @@ class SentinelApp {
     const submitForm = () => {
       this.submitForm();
     };
-
+  
     // Add event listener to submit button
     const submitButton = document.getElementById("submit-button");
     submitButton.addEventListener("click", submitForm);
-
+  
     // Create and position the score display label
     const scoreLabel = document.createElement("div");
     scoreLabel.id = "score-label";
     scoreLabel.textContent = this.getLegionScoresText();
     document.body.appendChild(scoreLabel);
-
-    // Run the JavaScript code
+  
+    // Fetch and display the Legion scores
     this.getLegionScores();
   }
 }
