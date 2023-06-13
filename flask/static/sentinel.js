@@ -19,7 +19,21 @@ class SentinelApp {
   initialize() {
     this.winningLegions = [];
     this.getLegionScores();
+  
+    // Function to handle the keydown event
+    const handleKeyDown = (event) => {
+      // Submit the form if the Enter key is pressed
+      if (event.key === "Enter") {
+        this.submitForm();
+        location.reload();
+      }
+    };
+  
+    // Add event listener to the "Enter" key
+    const aokInput = document.getElementById("aok-input");
+    aokInput.addEventListener("keydown", handleKeyDown);
   }
+  
 
   getLegionScores() {
     const url = "/legion-scores"; // Update the URL to the Flask endpoint that returns the scores
@@ -110,6 +124,9 @@ class SentinelApp {
     // Function to handle the submit button click event
     const submitForm = () => {
       this.submitForm();
+
+      // Reload the page after submitting the form
+      location.reload();
     };
   
     // Add event listener to submit button

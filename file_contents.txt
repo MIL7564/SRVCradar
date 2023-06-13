@@ -9,6 +9,19 @@ app = Flask(__name__, static_folder='static')
 # Get the absolute path to the database file
 database_path = os.path.join(app.root_path, 'data', 'legion_scores.db')
 
+# Initialize the database with nine legions if it's empty
+def initialize_database():
+    db = sqlite3.connect(database_path)
+    cursor = db.cursor()
+    cursor.execute("SELECT count(*) FROM scores")
+    result = cursor.fetchone()
+    count = result[0] if result else 0
+    if count == 0:
+        for legion_num in range(1, 10):
+            cursor.execute("INSERT INTO scores (legion_name, score) VALUES (?, ?)", (f"Legion {legion_num}", 0))
+        db.commit()
+    db.close()
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -27,8 +40,7 @@ def submit():
     result = cursor.fetchone()
     score = result[0] if result else 0
     new_score = score + (1 if aok.lower() == 'yes' else 0)
-    cursor.execute("INSERT OR REPLACE INTO scores (legion_name, score) VALUES (?, ?)",
-                   (f"Legion {user_legion}", new_score))
+    cursor.execute("UPDATE scores SET score = ? WHERE legion_name = ?", (new_score, f"Legion {user_legion}"))
     db.commit()
 
     db.close()
@@ -40,8 +52,8 @@ def get_legion_scores():
     db = sqlite3.connect(database_path)
     cursor = db.cursor()
 
-    # Fetch all the Legion scores from the database
-    cursor.execute("SELECT * FROM scores")
+    # Fetch the scores for the nine legions
+    cursor.execute("SELECT * FROM scores WHERE legion_name LIKE 'Legion %' ORDER BY legion_name")
     results = cursor.fetchall()
 
     # Convert the results into a list of dictionaries
@@ -63,6 +75,7 @@ def serve_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 if __name__ == '__main__':
+    initialize_database()
     app.run()
 
 
@@ -378,7 +391,7 @@ app.run();
         }
 
         .credit {
-        margin-top: 5px; /* Adjust this value to reduce or increase the distance */
+            margin-top: 5px; /* Adjust this value to reduce or increase the distance */
         }
     </style>
 </head>
@@ -427,6 +440,126 @@ app.run();
         </div>
     </div>
     <script src="{{ url_for('static', filename='sentinel.js') }}"></script>
+    <script>
+        // JavaScript equivalent of resolute function
+        function resolute(phNum) {
+            let digits = Array.from(String(phNum), Number);
+            while (digits.length > 1) {
+                digits = Array.from(String(digits.reduce((a, b) => a + b)), Number);
+            }
+            return digits[0];
+        }
+      
+        class SentinelApp {
+            constructor() {
+                this.cac = "";
+                this.act = false;
+                this.results = null;
+                this.winningLegions = [];
+                this.initialize();
+            }
+          
+            initialize() {
+                this.winningLegions = [];
+                this.getLegionScores();
+            }
+          
+            getLegionScores() {
+                const url = "/legion-scores"; // Update the URL to the Flask endpoint that returns the scores
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        this.results = data;
+                        this.updateLegionScores();
+                    })
+                    .catch((error) => {
+                        console.log("Error fetching Legion scores:", error);
+                    });
+            }
+          
+            updateLegionScores() {
+                const tableBody = document.querySelector("#legion-scores tbody");
+                tableBody.innerHTML = ""; // Clear the table body before updating
+          
+                const headers = ["Legion Name", "Score", "Date"];
+                const headerRow = document.createElement("tr");
+          
+                // Create header cells
+                for (const header of headers) {
+                    const headerCell = document.createElement("th");
+                    headerCell.textContent = header;
+                    headerRow.appendChild(headerCell);
+                }
+          
+                tableBody.appendChild(headerRow);
+          
+                for (const legion of this.results) {
+                    const row = document.createElement("tr");
+                    const nameCell = document.createElement("td");
+                    const scoreCell = document.createElement("td");
+                    const dateCell = document.createElement("td");
+          
+                    nameCell.textContent = legion.legion_name;
+                    scoreCell.textContent = legion.score;
+                    dateCell.textContent = legion.date;
+          
+                    row.appendChild(nameCell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(dateCell);
+          
+                    tableBody.appendChild(row);
+                }
+            }
+          
+            handleCACInput(input) {
+                this.cac = input.trim();
+            }
+          
+            handleAOKInput(input) {
+                this.act = input.trim().toLowerCase() === "yes";
+            }
+          
+            submitForm() {
+                const cacInput = document.getElementById("cac-input");
+                const aokInput = document.getElementById("aok-input");
+                this.handleCACInput(cacInput.value);
+                this.handleAOKInput(aokInput.value);
+          
+                // Perform the necessary calculations and update the database using Flask's endpoint
+                const xhr = new XMLHttpRequest();
+                const url = "http://localhost:5000/submit";
+                const params = `cac=${encodeURIComponent(this.cac)}&aok=${encodeURIComponent(this.act ? 'yes' : 'no')}`;
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send(params);
+          
+                // Clear the input fields
+                cacInput.value = "";
+                aokInput.value = "";
+          
+                // Update the Legion scores after submitting the form
+                this.getLegionScores();
+            }
+          
+            run() {
+                // Function to handle the submit button click event
+                const submitForm = () => {
+                    this.submitForm();
+                };
+          
+                // Add event listener to submit button
+                const submitButton = document.getElementById("submit-button");
+                submitButton.addEventListener("click", submitForm);
+          
+                // Fetch and display the Legion scores
+                this.getLegionScores();
+            }
+        }
+      
+        // Create an instance of the SentinelApp class and run it
+        const app = new SentinelApp();
+        app.run();
+    </script>
 </body>
 </html>
 
