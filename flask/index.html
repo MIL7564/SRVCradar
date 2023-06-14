@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" href="{{ url_for('static', filename='fe.png') }}" type="image/x-icon">
+    <link rel="icon" href="/fe.ico" type="image/x-icon">
     <title>FLOWER Economics</title>
     <style>
         body {
@@ -118,10 +118,10 @@
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="{{ url_for('static', filename='fe.png') }}" alt="Logo">
+            <img src="static/fe.png" alt="Logo">
         </div>
         <ul>
-            <li><a href="index.html">Home</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="https://paypal.me/SalmanShuaib" target="_blank">Sponsor</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="about.html">About</a></li>
@@ -155,15 +155,102 @@
             <tbody></tbody>
         </table>
         <div class="image-container">
-            <img src="{{ url_for('static', filename='dreamstime_s_138875124.jpg') }}" alt="Image">
+            <img src="static/dreamstime_s_138875124.jpg" alt="Image">
             <p class="caption">We need an economic model to mutually escape poverty!</p>
             <p class="credit">ID 138875124 © Enjoys | Dreamstime.com</p>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='sentinel.js') }}"></script>
+    <script src="static/sentinel.js"></script>
     <script>
-        // JavaScript code remains the same
-        // ...
+        // JavaScript equivalent of resolute function
+        function resolute(phNum) {
+            let digits = Array.from(String(phNum), Number);
+            while (digits.length > 1) {
+                digits = Array.from(String(digits.reduce((a, b) => a + b)), Number);
+            }
+            return digits[0];
+        }
+
+        // Fetch and display the Legion scores
+        const url = "/legion-scores";
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                const tableBody = document.querySelector("#legion-scores tbody");
+                tableBody.innerHTML = ""; // Clear the table body before updating
+
+                for (const legion of data) {
+                    const row = document.createElement("tr");
+                    const nameCell = document.createElement("td");
+                    const scoreCell = document.createElement("td");
+                    const dateCell = document.createElement("td");
+
+                    nameCell.textContent = legion.legion_name;
+                    scoreCell.textContent = legion.score;
+                    dateCell.textContent = legion.date;
+
+                    row.appendChild(nameCell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(dateCell);
+
+                    tableBody.appendChild(row);
+                }
+            })
+            .catch((error) => {
+                console.log("Error fetching Legion scores:", error);
+            });
+
+        // Function to handle the submit button click event
+        function submitForm() {
+            const cacInput = document.getElementById("cac-input");
+            const aokInput = document.getElementById("aok-input");
+            const cac = cacInput.value.trim();
+            const aok = aokInput.value.trim().toLowerCase();
+
+            // Perform the necessary calculations and update the database using Flask's endpoint
+            const xhr = new XMLHttpRequest();
+            const url = "http://localhost:5000/submit";
+            const params = `cac=${encodeURIComponent(cac)}&aok=${encodeURIComponent(aok === "yes" ? 'yes' : 'no')}`;
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send(params);
+
+            // Clear the input fields
+            cacInput.value = "";
+            aokInput.value = "";
+
+            // Update the Legion scores after submitting the form
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    const tableBody = document.querySelector("#legion-scores tbody");
+                    tableBody.innerHTML = ""; // Clear the table body before updating
+
+                    for (const legion of data) {
+                        const row = document.createElement("tr");
+                        const nameCell = document.createElement("td");
+                        const scoreCell = document.createElement("td");
+                        const dateCell = document.createElement("td");
+
+                        nameCell.textContent = legion.legion_name;
+                        scoreCell.textContent = legion.score;
+                        dateCell.textContent = legion.date;
+
+                        row.appendChild(nameCell);
+                        row.appendChild(scoreCell);
+                        row.appendChild(dateCell);
+
+                        tableBody.appendChild(row);
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error fetching Legion scores:", error);
+                });
+        }
+
+        // Add event listener to submit button
+        const submitButton = document.getElementById("submit-button");
+        submitButton.addEventListener("click", submitForm);
     </script>
 </body>
 </html>
