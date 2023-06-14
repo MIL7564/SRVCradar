@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import sqlite3
 import os
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder='')
 
 # Get the absolute path to the database file
 database_path = os.path.join(app.root_path, 'data', 'legion_scores.db')
@@ -23,7 +23,7 @@ def initialize_database():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -68,10 +68,6 @@ def get_legion_scores():
     db.close()
 
     return jsonify(scores)
-
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory(app.static_folder, filename)
 
 if __name__ == '__main__':
     initialize_database()
