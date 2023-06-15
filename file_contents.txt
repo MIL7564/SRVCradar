@@ -1,4 +1,6 @@
-**app.py:
+***Codebase:
+
+**app.py:-
 from scripts.sentinel import resolute
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import sqlite3
@@ -74,7 +76,7 @@ if __name__ == '__main__':
     initialize_database()
     app.run()
 
-**index.html:
+**index.html:-
 <!DOCTYPE html>
 <html>
 <head>
@@ -195,7 +197,7 @@ if __name__ == '__main__':
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="static/fe.png" alt="Logo">
+            <img src="/static/fe.png" alt="Logo">
         </div>
         <ul>
             <li><a href="{{ url_for('index') }}">Home</a></li>
@@ -232,7 +234,7 @@ if __name__ == '__main__':
             <tbody></tbody>
         </table>
         <div class="image-container">
-            <img src="static/dreamstime_s_138875124.jpg" alt="Image">
+            <img src="/static/dreamstime_s_138875124.jpg" alt="Image">
             <p class="caption">We need an economic model to mutually escape poverty!</p>
             <p class="credit">ID 138875124 © Enjoys | Dreamstime.com</p>
         </div>
@@ -255,7 +257,7 @@ if __name__ == '__main__':
 </body>
 </html>
 
-**sentinel.py:
+**sentinel.py:-
 import requests
 import tkinter as tk
 
@@ -324,7 +326,7 @@ class SentinelApp:
 if __name__ == "__main__":
     app = SentinelApp()
 
-**sentinel.js:
+**sentinel.js:-
 // JavaScript equivalent of resolute function
 function resolute(phNum) {
   let digits = Array.from(String(phNum), Number);
@@ -445,4 +447,3 @@ class SentinelWebApp {
     this.getLegionScores();
   }
 }
-
