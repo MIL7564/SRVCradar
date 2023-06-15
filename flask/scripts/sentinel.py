@@ -3,10 +3,13 @@ import tkinter as tk
 
 # Function to calculate Legion Number based on CAC
 def resolute(phNum):
-    digits = [int(char) for char in phNum]
+    digits = [int(char) for char in str(phNum) if char.isdigit()]
+    if not digits:
+        return 0
     while len(digits) > 1:
         digits = [int(char) for char in str(sum(digits))]
     return digits[0]
+
 
 class SentinelApp:
     def __init__(self):

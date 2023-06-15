@@ -171,86 +171,9 @@
             return digits[0];
         }
 
-        // Fetch and display the Legion scores
-        const url = "/legion-scores";
-        fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-                const tableBody = document.querySelector("#legion-scores tbody");
-                tableBody.innerHTML = ""; // Clear the table body before updating
-
-                for (const legion of data) {
-                    const row = document.createElement("tr");
-                    const nameCell = document.createElement("td");
-                    const scoreCell = document.createElement("td");
-                    const dateCell = document.createElement("td");
-
-                    nameCell.textContent = legion.legion_name;
-                    scoreCell.textContent = legion.score;
-                    dateCell.textContent = legion.date;
-
-                    row.appendChild(nameCell);
-                    row.appendChild(scoreCell);
-                    row.appendChild(dateCell);
-
-                    tableBody.appendChild(row);
-                }
-            })
-            .catch((error) => {
-                console.log("Error fetching Legion scores:", error);
-            });
-
-        // Function to handle the submit button click event
-        function submitForm() {
-            const cacInput = document.getElementById("cac-input");
-            const aokInput = document.getElementById("aok-input");
-            const cac = cacInput.value.trim();
-            const aok = aokInput.value.trim().toLowerCase();
-
-            // Perform the necessary calculations and update the database using Flask's endpoint
-            const xhr = new XMLHttpRequest();
-            const url = "http://localhost:5000/submit";
-            const params = `cac=${encodeURIComponent(cac)}&aok=${encodeURIComponent(aok === "yes" ? 'yes' : 'no')}`;
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.send(params);
-
-            // Clear the input fields
-            cacInput.value = "";
-            aokInput.value = "";
-
-            // Update the Legion scores after submitting the form
-            fetch(url)
-                .then((response) => response.json())
-                .then((data) => {
-                    const tableBody = document.querySelector("#legion-scores tbody");
-                    tableBody.innerHTML = ""; // Clear the table body before updating
-
-                    for (const legion of data) {
-                        const row = document.createElement("tr");
-                        const nameCell = document.createElement("td");
-                        const scoreCell = document.createElement("td");
-                        const dateCell = document.createElement("td");
-
-                        nameCell.textContent = legion.legion_name;
-                        scoreCell.textContent = legion.score;
-                        dateCell.textContent = legion.date;
-
-                        row.appendChild(nameCell);
-                        row.appendChild(scoreCell);
-                        row.appendChild(dateCell);
-
-                        tableBody.appendChild(row);
-                    }
-                })
-                .catch((error) => {
-                    console.log("Error fetching Legion scores:", error);
-                });
-        }
-
-        // Add event listener to submit button
-        const submitButton = document.getElementById("submit-button");
-        submitButton.addEventListener("click", submitForm);
+        // Create an instance of the SentinelWebApp class and run it
+        const app = new SentinelWebApp();
+        app.run();
     </script>
 </body>
 </html>

@@ -7,7 +7,7 @@ function resolute(phNum) {
   return digits[0];
 }
 
-class SentinelApp {
+class SentinelWebApp {
   constructor() {
     this.cac = "";
     this.act = false;
@@ -71,20 +71,28 @@ class SentinelApp {
     this.handleAOKInput(aokInput.value);
 
     // Perform the necessary calculations and update the database using Flask's endpoint
-    const xhr = new XMLHttpRequest();
     const url = "http://localhost:5000/submit";
-    const params = `cac=${encodeURIComponent(this.cac)}&aok=${encodeURIComponent(this.act ? 'yes' : 'no')}`;
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send(params);
+    const params = new URLSearchParams();
+    params.append("cac", this.cac);
+    params.append("aok", this.act ? "yes" : "no");
 
-    // Clear the input fields
-    cacInput.value = "";
-    aokInput.value = "";
+    fetch(url, {
+      method: "POST",
+      body: params,
+    })
+      .then(() => {
+        // Clear the input fields
+        cacInput.value = "";
+        aokInput.value = "";
 
-    // Update the Legion scores after submitting the form
-    this.getLegionScores();
+        // Update the Legion scores after submitting the form
+        this.getLegionScores();
+      })
+      .catch((error) => {
+        console.log("Error submitting form:", error);
+      });
   }
+
 
   getLegionScoresText() {
     let scoresText = "Legion Scores:\n";
@@ -110,7 +118,3 @@ class SentinelApp {
     this.getLegionScores();
   }
 }
-
-// Create an instance of the SentinelApp class and run it
-const app = new SentinelApp();
-app.run();
