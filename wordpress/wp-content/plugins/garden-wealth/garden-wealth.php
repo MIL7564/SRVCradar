@@ -9,18 +9,21 @@
  * License: Creative Commons Zero v1.0 Universal
  */
 
- // Define a shortcode for the photo gallery
+// Define a shortcode for the photo gallery
 function garden_gallery_shortcode($atts) {
     ob_start();
 
     // Get attributes
-    $atts = shortcode_atts(array(
-        'category' => 'all', // Default to show all categories
-    ), $atts);
+    $atts = shortcode_atts(
+        array(
+            'category' => 'all', // Default to show all categories
+        ),
+        $atts
+    );
 
     // Prepare arguments for querying images
     $args = array(
-        'post_type' => 'attachment',
+        'post_type'      => 'attachment',
         'post_mime_type' => 'image',
         'posts_per_page' => -1,
     );
@@ -30,8 +33,8 @@ function garden_gallery_shortcode($atts) {
         $args['tax_query'] = array(
             array(
                 'taxonomy' => 'category',
-                'field' => 'slug',
-                'terms' => $atts['category'],
+                'field'    => 'slug',
+                'terms'    => $atts['category'],
             ),
         );
     }
@@ -61,7 +64,7 @@ function garden_gallery_shortcode($atts) {
 
         echo '</div>';
     } else {
-        echo 'No images found.';
+        echo '<div class="no-images">No images found.</div>';
     }
 
     // Display the upload form
@@ -74,6 +77,16 @@ function garden_gallery_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('garden_gallery', 'garden_gallery_shortcode');
+
+// Add custom CSS to center the "No images found" message
+function garden_gallery_custom_css() {
+    echo '<style>
+        .garden-gallery .no-images {
+            text-align: center;
+        }
+    </style>';
+}
+add_action('wp_head', 'garden_gallery_custom_css');
 
 // Handle the image upload form submission
 add_action('admin_post_garden_gallery_upload', 'garden_gallery_handle_upload');
@@ -93,9 +106,9 @@ function garden_gallery_handle_upload() {
     // Create the attachment post
     $attachment = array(
         'post_mime_type' => $uploaded_image['type'],
-        'post_title' => $file_name,
-        'post_content' => '',
-        'post_status' => 'inherit',
+        'post_title'     => $file_name,
+        'post_content'   => '',
+        'post_status'    => 'inherit',
     );
     $attachment_id = wp_insert_attachment($attachment, $file_path);
 
