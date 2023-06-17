@@ -1,3 +1,19 @@
+- Flower Economics Inc. as a SOCIAL ENTERPRISE: 
++ We have to think of a way to associate sentinel with garden-wealth, charity with business, to work on these two plans simultaneously so that we do not end up getting undercut 
+by profiteering companies.:
+++ FE OPERATIONS: Instead of re-inventing the wheel and starting from scratch, why not choose the existing WordPress platform and design "sentinel" (the application for gamifying competition among Legion for 
+Acts Of Kindness) as a WordPress Plugin.
+++ FE LOGISTICS: In order to sustain the development of sentinel, we need a business to thrive on. And I have chosed "garden-wealth" as the name of the Plugin we will design for WordPress as a Logistics arm of Flower Economics Inc. 
++++ garden-wealth is a plugin that locates nearest registered Pedestrian to a Garden that a Customer orders from and gets that Garden's Produce to Customer via the Pedestrian.
+COMMENT1: Rather than thinking of sentinel and garden-wealth as separate pursuits; lets say we make our first produce delivery from a garden to a customer - lets say we make it for free: this 
+would be an Act Of Kindness (investment). It will receive a SWIFTER number of POINTS from our sentinel application as the delivery is indigenous to our Flower Economics Inc; we can enable direct communication between garden-wealth and sentinel via an API to tally the Act Of Kindness ~ an API that can also be used by other companies that want to participate in carrying out Acts Of Kindness in a gamified manner via the sentinel app.
+COMMENT2: As the Pedestrian is not an employee of FE Inc. (stranger to FE), so we would need some form of receipt from the customer certifying that the produce was received. This receipt would 
+be uploaded to through the API channel to sentinel and qualify as a set of points on the sentinel application.
+COMMENT3: In this way we can have a standard way for any company to report its Acts Of Kindness, deriving (brand) value and recognition for them via a ticker highlight on FlowerEconomics.Com, via 
+the standard API reporting process (i.e. a receipt from a customer is required and is uploaded for public view at FlowerEconomics.com [admin's email can be alerted to for by the community 
+incase something obnoxious is uploaded online]).
+
+
 - Freerider problem:
 + What if someone just keeps punching "yes" into our application to achieve victory for their Legion.
 ++ While this can happen, there is no reward from a Legion for its members to do so.
