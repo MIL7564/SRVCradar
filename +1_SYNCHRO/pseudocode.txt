@@ -1,11 +1,229 @@
--1- I am simplifying the following gameplay (script: sentinelCOGS.dart); please make the following edits to sentinelCOGS.dart to produce a new script sentinel.dart:
-+ Keep the part in  sentinelCOGS.dart where user enters his CAC (City Area Code).
-+ Ask the user to enter amount donated to Homeless (ask this alongside when we ask for CAC).
-+ Keep the part in  sentinelCOGS.dart where the CAC is condensed into a single digit which we call the Legion Number.
-+ Erase the rest of the code in sentinelCOGS.dart.
-+ For each entry of amount donated ("Act Of Kindness"), a point is earned by the user's respective Legion.
-+ A scoreboard displays the current scores of each Legion.
-+ Winning Legion every WEEK is highlighted in PINK and advised next week off from donating to those Homeless. 
+-3- 
+1. I NEED AN INPUT FIELD ON MY WordPress HOME PAGE WITH A SUBMIT BUTTON IN A PHP PLUGIN CALLED sentinel. THE INPUT FIELD ASKS FOR THE "City Area Code" PART OF AN UNAUTHENTICATED WORDPRESS 
+USER'S TELEPHONE NUMBER. E.G. MY City Area Code IS 437 [KINDLY SHOW THIS AS A FADED EXAMPLE IN THE INPUT FIELD].
+2. NEXT A STATEMENT IS WRITTEN BELOW THE ABOVE INPUT FIELD: "IF YOU CARRIED OUT AN ACT OF KINDNESS, SELECT FROM AMONG THE FOLLOWING OPTIONS: 
+A: "Take my word for it [1 Point]" FOLLOWED BY ["Submit" BUTTON (signifies Option A chosen by User)].
+B: "Let me upload proof [20 Points]" FOLLOWED BY ["Upload" BUTTON (signifies Option B chosen by User)].
+NOTE1: IN THE FUTURE THERE WILL BE OTHER TIERS OF POINTS BASED ON THE TOTAL AMOUNT OF STRESS (TIME) THAT GOES INTO UPLOADNG THAT PROOF (INCLUDING WORKING TOWARDS IT; SUCH AS TOWARDS A 
+UNIVERSITY DEGREE [Appraisal]). 
+3. The garden-wealth PLUGIN PHOTOGALLERY CONCURRENTLY DISPLAYS PAST AND NEW PROOFS UPLOADED. ITS CODE IS AS FOLLOWS BUT THE "Upload" BUTTON LOCATION WILL NEED TO BE ADJUSTED TO ABOVE THE PHOTO
+GALLERY AS WE DID NOT ACCOUNT FOR ABOVE OPTION A ("Take my word for it") IN THE FOLLOWING garden-wealth CODE:
+
+<?php
+/**
+ * Plugin Name: Garden Wealth
+ * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
+ * Description: garden-wealth gets gardens' produce to customers via pedestrians.
+ * Version: 1.0.0
+ * Author: Salman Shuaib and ChatGPT
+ * Author URI: FLOWEReconomics.com
+ * License: Creative Commons Zero v1.0 Universal
+ */
+
+// Define a shortcode for the photo gallery
+function garden_gallery_shortcode($atts) {
+    ob_start();
+
+    // Get attributes
+    $atts = shortcode_atts(
+        array(
+            'category' => 'all', // Default to show all categories
+        ),
+        $atts
+    );
+
+    // Prepare arguments for querying images
+    $args = array(
+        'post_type'      => 'attachment',
+        'post_mime_type' => 'image',
+        'posts_per_page' => -1,
+    );
+
+    // If a specific category is specified, filter the images by that category
+    if ($atts['category'] !== 'all') {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'category',
+                'field'    => 'slug',
+                'terms'    => $atts['category'],
+            ),
+        );
+    }
+
+    // Query images
+    $images = get_posts($args);
+
+    // Display the search form
+    echo '<div class="garden-gallery-search-container">';
+    echo '<form class="garden-gallery-search" action="" method="get">';
+    echo '<input type="text" name="gallery_search" placeholder="Search gallery..." value="' . esc_attr($_GET['gallery_search'] ?? '') . '">';
+    echo '<input type="submit" value="Search">';
+    echo '</form>';
+    echo '</div>';
+
+    // Set the number of images per page
+    $images_per_page = 9;
+
+    // Calculate the total number of pages
+    $total_pages = ceil(count($images) / $images_per_page);
+
+    // Get the current page number
+    $current_page = isset($_GET['gallery_page']) ? absint($_GET['gallery_page']) : 1;
+
+    // Calculate the offset for the images query
+    $offset = ($current_page - 1) * $images_per_page;
+
+    // Slice the images array to display the images on the current page
+    $images_to_display = array_slice($images, $offset, $images_per_page);
+
+    // Display the gallery images
+    if ($images_to_display) {
+        echo '<div class="garden-gallery">';
+
+        foreach ($images_to_display as $image) {
+            $image_url = wp_get_attachment_image_url($image->ID, 'thumbnail');
+
+            // Display the gallery item
+            echo '<div class="gallery-item">';
+            echo '<a href="' . wp_get_attachment_image_url($image->ID, 'full') . '">';
+            echo '<img src="' . $image_url . '" alt="">';
+            echo '</a>';
+            echo '</div>';
+
+        }
+
+        echo '</div>';
+
+        // Display pagination links
+        if ($total_pages > 1) {
+            echo '<div class="garden-gallery-pagination">';
+            for ($i = 1; $i <= $total_pages; $i++) {
+                $active_class = ($i === $current_page) ? 'active' : '';
+                echo '<a class="' . $active_class . '" href="?gallery_page=' . $i . '">' . $i . '</a>';
+            }
+            echo '</div>';
+        }
+    } else {
+        echo '<div class="no-images">No images found.</div>';
+    }
+
+    // Display the upload form
+    echo '<form class="garden-gallery-upload" action="' . esc_url(admin_url('admin-post.php')) . '" method="post" enctype="multipart/form-data">';
+    echo '<input type="hidden" name="action" value="garden_gallery_upload">';
+    echo '<input type="file" name="gallery_image">';
+    echo '<input type="submit" value="Upload">';
+    echo '</form>';
+
+    return ob_get_clean();
+}
+add_shortcode('garden_gallery', 'garden_gallery_shortcode');
+
+// Add custom CSS to style the gallery layout
+function garden_gallery_custom_css() {
+    echo '<style>
+        .garden-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            text-align: center;
+        }
+
+        .garden-gallery .gallery-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .garden-gallery .empty-gallery-item {
+            visibility: hidden;
+        }
+
+        .garden-gallery-search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .garden-gallery-search {
+            display: inline-block;
+        }
+
+        .garden-gallery-search input[type="text"] {
+            vertical-align: middle;
+            height: 100%;
+        }
+        .garden-gallery-search input[type="submit"] {
+            vertical-align: middle;
+            height: 53px; /* Adjust the value as needed */
+            line-height: 20px; /* Adjust the value as needed */
+        }
+        
+
+        .garden-gallery-pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .garden-gallery-pagination a {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .garden-gallery-pagination a.active {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>';
+}
+add_action('wp_head', 'garden_gallery_custom_css');
+
+// Handle the image upload form submission
+add_action('admin_post_garden_gallery_upload', 'garden_gallery_handle_upload');
+function garden_gallery_handle_upload() {
+    $uploaded_image = $_FILES['gallery_image'];
+
+    // Set the upload directory
+    $upload_dir = wp_upload_dir();
+
+    // Prepare the file name
+    $file_name = basename($uploaded_image['name']);
+    $file_path = $upload_dir['path'] . '/' . $file_name;
+
+    // Move the uploaded image to the upload directory
+    move_uploaded_file($uploaded_image['tmp_name'], $file_path);
+
+    // Create the attachment post
+    $attachment = array(
+        'post_mime_type' => $uploaded_image['type'],
+        'post_title'     => $file_name,
+        'post_content'   => '',
+        'post_status'    => 'inherit',
+    );
+    $attachment_id = wp_insert_attachment($attachment, $file_path);
+
+    // Generate attachment metadata
+    $attachment_data = wp_generate_attachment_metadata($attachment_id, $file_path);
+    wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+    // Redirect back to the gallery page after uploading
+    wp_redirect(wp_get_referer());
+    exit;
+}
+
+4. A DATABASE TABLE "league" IS cREATED WITH TWO COLUMNS: "Legion Number" AND "Score". THIS TABLE league IS DISPLAYED ON THE HOMEPAGE BELOW STEP 3's PHOTO GALLERY garde-wealth.
+5. NOW I WANT TO CONVERT THE JavaScript FUNCTION resolute(phNum) PREVIOUSLY POSTED IN OUR CHAT ABOVE INTO PHP CODE FOR MY WordPress PLUGIN sentinel.
+6. THEN THE LAST DIGIT RETURNED BY THE PHP FUNCTION [PREVIOUSLY JS FUNCTION ] (RESULTANT DIGIT WILL BE EITHER 1,2,3,4,5,6,7,8 OR 9) IS MATCHED AGAINST THE "Legion Number" AND THE MATCHING LEGION 
+NUMBER'S SCORE IS ITERATED WITH 1 POINT OR 20 POINTS DEPENDING ON WHETHER OPTION A or OPTION B WAS CHOSEN. THE STARTING SCORE OF EACH LEGION IS ZERO.
+7. ANOTHER DATABASE TABLE "result" IS CREATED THAT TAKES A SNAPSHOT OF THE HIGHEST SCORING LEGION(S) AT 23:59:59 HOURS DAILY (New York City time) AND STORES THESE UNDER COLUMNS: 
+"Winning Legions(s)", "Date", "Points Achieved".
+8. A SEPARATE PLUGIN CALLED recognize-sentinel DISPLAYS A COLORED "Hall Of Fame" MATRIX SHOWING THE WINNER EACH DAY. TODAY, "SUNDAY 18 JUN 2023AD", ALL LEGIONS ARE LISTED AS WINNERS BUT WITH 
+"Points Achieved" OF 0.
+9. REGISTERED USERS WITH "Editor" WORDPRESS PRIVILEGE CAN DELETE THE A OR B RESPONSE OF ANY USER GOING BACK UPTO 7 WEEKS AND THE "Hall Of Fame" WOULD BE ADJUSTED ACCORDINGLY 
+RETROACTIVELY VIA PAGINATION.  
+
 
 -2- Write Code in Dart for Flutter with the following pseudocode (please ensure attractive graphics):
 + Ask the user to enter his/her three-character City Area Code [CAC] part of his/her telephone number.
@@ -284,3 +502,12 @@ The submission.zip file contains the public EDGAR filing history for all filers 
 
 Update schedule
 The APIs are updated in real-time as filings are disseminated. The submissions API is updated with a typical processing delay of less than a second; the xbrl APIs are updated with a typical processing delay of under a minute. However these processing delays may be longer during peak filing times.
+
+-1- I am simplifying the following gameplay (script: sentinelCOGS.dart); please make the following edits to sentinelCOGS.dart to produce a new script sentinel.dart:
++ Keep the part in  sentinelCOGS.dart where user enters his CAC (City Area Code).
++ Ask the user to enter amount donated to Homeless (ask this alongside when we ask for CAC).
++ Keep the part in  sentinelCOGS.dart where the CAC is condensed into a single digit which we call the Legion Number.
++ Erase the rest of the code in sentinelCOGS.dart.
++ For each entry of amount donated ("Act Of Kindness"), a point is earned by the user's respective Legion.
++ A scoreboard displays the current scores of each Legion.
++ Winning Legion every WEEK is highlighted in PINK and advised next week off from donating to those Homeless. 
