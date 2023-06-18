@@ -51,15 +51,19 @@ function garden_gallery_shortcode($atts) {
     // Display the gallery images
     if ($images) {
         echo '<div class="garden-gallery">';
-
+        
+        $counter = 0;
         foreach ($images as $image) {
-            $image_url = wp_get_attachment_image_url($image->ID, 'full');
-
+            $image_url = wp_get_attachment_image_url($image->ID, 'thumbnail');
+            
+            // Display the gallery item
             echo '<div class="gallery-item">';
             echo '<a href="' . $image_url . '">';
-            echo wp_get_attachment_image($image->ID, 'full'); // Fetch the full-size image
+            echo '<img src="' . $image_url . '" alt="">';
             echo '</a>';
             echo '</div>';
+            
+            $counter++;
         }
 
         echo '</div>';
@@ -78,11 +82,23 @@ function garden_gallery_shortcode($atts) {
 }
 add_shortcode('garden_gallery', 'garden_gallery_shortcode');
 
-// Add custom CSS to center the "No images found" message
+// Add custom CSS to style the gallery layout
 function garden_gallery_custom_css() {
     echo '<style>
-        .garden-gallery .no-images {
+        .garden-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
             text-align: center;
+        }
+
+        .garden-gallery .gallery-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .garden-gallery .empty-gallery-item {
+            visibility: hidden;
         }
     </style>';
 }
