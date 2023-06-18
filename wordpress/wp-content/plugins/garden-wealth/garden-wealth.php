@@ -57,7 +57,7 @@ function garden_gallery_shortcode($atts) {
 
             echo '<div class="gallery-item">';
             echo '<a href="' . $image_url . '">';
-            echo wp_get_attachment_image($image->ID, 'thumbnail');
+            echo wp_get_attachment_image($image->ID, 'full'); // Fetch the full-size image
             echo '</a>';
             echo '</div>';
         }
