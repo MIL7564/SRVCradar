@@ -43,30 +43,54 @@ function garden_gallery_shortcode($atts) {
     $images = get_posts($args);
 
     // Display the search form
+    echo '<div class="garden-gallery-search-container">';
     echo '<form class="garden-gallery-search" action="" method="get">';
     echo '<input type="text" name="gallery_search" placeholder="Search gallery..." value="' . esc_attr($_GET['gallery_search'] ?? '') . '">';
     echo '<input type="submit" value="Search">';
     echo '</form>';
+    echo '</div>';
+
+    // Set the number of images per page
+    $images_per_page = 9;
+
+    // Calculate the total number of pages
+    $total_pages = ceil(count($images) / $images_per_page);
+
+    // Get the current page number
+    $current_page = isset($_GET['gallery_page']) ? absint($_GET['gallery_page']) : 1;
+
+    // Calculate the offset for the images query
+    $offset = ($current_page - 1) * $images_per_page;
+
+    // Slice the images array to display the images on the current page
+    $images_to_display = array_slice($images, $offset, $images_per_page);
 
     // Display the gallery images
-    if ($images) {
+    if ($images_to_display) {
         echo '<div class="garden-gallery">';
-        
-        $counter = 0;
-        foreach ($images as $image) {
+
+        foreach ($images_to_display as $image) {
             $image_url = wp_get_attachment_image_url($image->ID, 'thumbnail');
-            
+
             // Display the gallery item
             echo '<div class="gallery-item">';
             echo '<a href="' . $image_url . '">';
             echo '<img src="' . $image_url . '" alt="">';
             echo '</a>';
             echo '</div>';
-            
-            $counter++;
         }
 
         echo '</div>';
+
+        // Display pagination links
+        if ($total_pages > 1) {
+            echo '<div class="garden-gallery-pagination">';
+            for ($i = 1; $i <= $total_pages; $i++) {
+                $active_class = ($i === $current_page) ? 'active' : '';
+                echo '<a class="' . $active_class . '" href="?gallery_page=' . $i . '">' . $i . '</a>';
+            }
+            echo '</div>';
+        }
     } else {
         echo '<div class="no-images">No images found.</div>';
     }
@@ -99,6 +123,40 @@ function garden_gallery_custom_css() {
 
         .garden-gallery .empty-gallery-item {
             visibility: hidden;
+        }
+
+        .garden-gallery-search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .garden-gallery-search {
+            display: inline-block;
+        }
+
+        .garden-gallery-search input[type="text"],
+        .garden-gallery-search input[type="submit"] {
+            vertical-align: middle;
+        }
+
+        .garden-gallery-pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .garden-gallery-pagination a {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .garden-gallery-pagination a.active {
+            background-color: #333;
+            color: #fff;
         }
     </style>';
 }
