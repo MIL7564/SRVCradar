@@ -74,10 +74,11 @@ function garden_gallery_shortcode($atts) {
 
             // Display the gallery item
             echo '<div class="gallery-item">';
-            echo '<a href="' . $image_url . '">';
+            echo '<a href="' . wp_get_attachment_image_url($image->ID, 'full') . '">';
             echo '<img src="' . $image_url . '" alt="">';
             echo '</a>';
             echo '</div>';
+
         }
 
         echo '</div>';
@@ -134,10 +135,16 @@ function garden_gallery_custom_css() {
             display: inline-block;
         }
 
-        .garden-gallery-search input[type="text"],
+        .garden-gallery-search input[type="text"] {
+            vertical-align: middle;
+            height: 100%;
+        }
         .garden-gallery-search input[type="submit"] {
             vertical-align: middle;
+            height: 53px; /* Adjust the value as needed */
+            line-height: 20px; /* Adjust the value as needed */
         }
+        
 
         .garden-gallery-pagination {
             text-align: center;
