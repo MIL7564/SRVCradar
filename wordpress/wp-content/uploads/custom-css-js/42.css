@@ -1,0 +1,14 @@
+<!-- start Simple Custom CSS and JS -->
+<style type="text/css">
+.shortcode-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.shortcode {
+  flex: 1;
+}
+
+
+</style>
+<!-- end Simple Custom CSS and JS -->
