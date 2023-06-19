@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Garden Wealth
+ * Plugin Name: garden-gallery
  * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
- * Description: garden-wealth gets gardens' produce to customers via pedestrians.
+ * Description: garden-gallery displays a photogallery of uploaded proofs of what broadly qualify as Acts Of Kindess.
  * Version: 1.0.0
  * Author: Salman Shuaib and ChatGPT
  * Author URI: FLOWEReconomics.com
