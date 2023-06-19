@@ -1,3 +1,5 @@
+-4- The differential areas of the code, particularly as specified by shortcodes: should have a light colored backgrouned - each of a different color for aesthetics.
+
 -3- 
 1. I NEED AN INPUT FIELD ON MY WordPress HOME PAGE WITH A SUBMIT BUTTON IN A PHP PLUGIN CALLED sentinel. THE INPUT FIELD ASKS FOR THE "City Area Code" PART OF AN UNAUTHENTICATED WORDPRESS 
 USER'S TELEPHONE NUMBER. E.G. MY City Area Code IS 437 [KINDLY SHOW THIS AS A FADED EXAMPLE IN THE INPUT FIELD].
