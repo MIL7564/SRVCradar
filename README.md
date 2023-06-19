@@ -13,7 +13,8 @@ _sentinel enables individuals in need to issue alerts - particularly to their re
 can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resourcing Climate Mitigation Strategies and treatments for the numerous diseases facing Humanity including such as AIDS, Cancer and Death.
 
 ## ACKNOWLEDGMENTS
-+ Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references, such as StackOverflow.
++ Please see [TROUBLESHOOT](https://github.com/salmanshuaib/sentinel/tree/main/%2B2_TROUBLESHOOT) for a running list of references.
++ StackOverflow.
 + ChatGPT.
 
 ## PLAN
