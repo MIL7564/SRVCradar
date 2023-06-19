@@ -22,4 +22,5 @@ can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resou
 
 ## DELICENSING
 Copyright and related rights waived via CC0, by Salman Shuaib.
+
 <img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B2_TROUBLESHOOT/CC0%20-%2068747470733a2f2f6c6963656e7365627574746f6e732e6e65742f702f7a65726f2f312e302f38387833312e706e67.png">
