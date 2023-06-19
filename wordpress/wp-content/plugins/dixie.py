@@ -5,14 +5,14 @@
 4. A TEXT FILE "file_contents.txt" WILL BE GENERATED THAT YOU CAN USE TO CONVERSE IN CODE WITH ChatGPT.
 '''
 
-
 import os
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 
 # Connect to the SQLite database file
-conn = sqlite3.connect('file_search.db')
+db_file_path = os.path.join(os.getcwd(), 'file_search.db')
+conn = sqlite3.connect(db_file_path)
 cursor = conn.cursor()
 
 # Create the table if it doesn't exist
@@ -40,7 +40,8 @@ def write_contents_to_file(file_contents):
     Writes the contents of the files to a text file named 'file_contents.txt'.
     Each file's content is preceded by the file name.
     """
-    with open('file_contents.txt', 'w') as f:
+    file_path = os.path.join(os.getcwd(), 'file_contents.txt')
+    with open(file_path, 'w') as f:
         f.write("***Codebase:")
         for file, content in file_contents.items():
             f.write(f"\n\n**{file}:-\n{content.strip()}")

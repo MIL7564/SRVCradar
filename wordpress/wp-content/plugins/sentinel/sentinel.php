@@ -20,7 +20,7 @@
      ob_start();
      ?>
      <form method="post">
-         <input type="text" name="city_area_code" placeholder="Enter City Area Code" value="437" readonly>
+         <input type="text" name="city_area_code" placeholder="City Area Code" value="Enter Your City Area Code e.g. 437" readonly style="width: 335px;">
          <input type="submit" name="sentinel_submit" value="Submit">
      </form>
      <?php
