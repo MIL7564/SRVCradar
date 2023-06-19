@@ -18,7 +18,7 @@ can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resou
 + ChatGPT.
 
 ## PLAN
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B7_BREAKTHROUGH/Flow_PXL_2.jpg" alt="sentinel application plan" width="815" height="450">
+<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B7_BREAKTHROUGH/Flow_PXL_2.jpg" alt="sentinel application plan" width="825" height="500">
 
 ## DELICENSING
 Copyright and related rights waived via CC0, by Salman Shuaib.
