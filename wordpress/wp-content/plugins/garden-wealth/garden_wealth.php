@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Garden Wealth
+ * Plugin Name: Garden Gallery
  * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
- * Description: garden-wealth gets gardens' produce to customers via pedestrians.
+ * Description: Garden Gallery can get gardens' produce to customers via pedestrians.
  * Version: 1.0.0
  * Author: Salman Shuaib and ChatGPT
  * Author URI: FLOWEReconomics.com

@@ -1,305 +1,54 @@
 ***Codebase:
 
-**garden-gallery.php:-
+**sentinel-resurgence.php:-
 <?php
-/**
- * Plugin Name: garden-gallery
- * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
- * Description: garden-gallery displays a photogallery of uploaded proofs of what broadly qualify as Acts Of Kindess.
- * Version: 1.0.0
- * Author: Salman Shuaib and ChatGPT
- * Author URI: FLOWEReconomics.com
- * License: Creative Commons Zero v1.0 Universal
- */
+/*
+Plugin Name: Sentinel Resurgence
+Description: Plugin to handle Sentinel Resurgence functionality.
+Version: 1.0.0
+Author: Salman Shuaib and ChatGPT
+*/
 
- // Define a shortcode for the photo gallery
- function garden_gallery_shortcode($atts) {
-     ob_start();
- 
-     // Get attributes
-     $atts = shortcode_atts(
-         array(
-             'category' => 'all', // Default to show all categories
-         ),
-         $atts
-     );
- 
-     // Prepare arguments for querying images
-     $args = array(
-         'post_type'      => 'attachment',
-         'post_mime_type' => 'image',
-         'posts_per_page' => -1,
-     );
- 
-     // If a specific category is specified, filter the images by that category
-     if ($atts['category'] !== 'all') {
-         $args['tax_query'] = array(
-             array(
-                 'taxonomy' => 'category',
-                 'field'    => 'slug',
-                 'terms'    => $atts['category'],
-             ),
-         );
-     }
- 
-     // Query images
-     $images = get_posts($args);
- 
-     // Display the search form
-     echo '<div class="garden-gallery-search-container">';
-     echo '<form class="garden-gallery-search" action="" method="get">';
-     echo '<input type="text" name="gallery_search" placeholder="Search gallery..." value="' . esc_attr($_GET['gallery_search'] ?? '') . '">';
-     echo '<input type="submit" value="Search">';
-     echo '</form>';
-     echo '</div>';
- 
-     // Set the number of images per page
-     $images_per_page = 9;
- 
-     // Calculate the total number of pages
-     $total_pages = ceil(count($images) / $images_per_page);
- 
-     // Get the current page number
-     $current_page = isset($_GET['gallery_page']) ? absint($_GET['gallery_page']) : 1;
- 
-     // Calculate the offset for the images query
-     $offset = ($current_page - 1) * $images_per_page;
- 
-     // Slice the images array to display the images on the current page
-     $images_to_display = array_slice($images, $offset, $images_per_page);
- 
-     // Display the gallery images
-     if ($images_to_display) {
-         echo '<div class="garden-gallery">';
- 
-         foreach ($images_to_display as $image) {
-             $image_url = wp_get_attachment_image_url($image->ID, 'thumbnail');
- 
-             // Display the gallery item
-             echo '<div class="gallery-item">';
-             echo '<a href="' . wp_get_attachment_image_url($image->ID, 'full') . '">';
-             echo '<img src="' . $image_url . '" alt="">';
-             echo '</a>';
-             echo '</div>';
- 
-         }
- 
-         echo '</div>';
- 
-         // Display pagination links
-         if ($total_pages > 1) {
-             echo '<div class="garden-gallery-pagination">';
-             for ($i = 1; $i <= $total_pages; $i++) {
-                 $active_class = ($i === $current_page) ? 'active' : '';
-                 echo '<a class="' . $active_class . '" href="?gallery_page=' . $i . '">' . $i . '</a>';
-             }
-             echo '</div>';
-         }
-     } else {
-         echo '<div class="no-images">No images found.</div>';
-     }
- 
-     return ob_get_clean();
- }
- add_shortcode('garden_gallery', 'garden_gallery_shortcode');
- 
- // Add custom CSS to style the gallery layout
- function garden_gallery_custom_css() {
-     echo '<style>
-         .garden-gallery {
-             display: grid;
-             grid-template-columns: repeat(3, 1fr);
-             grid-gap: 10px;
-             text-align: center;
-         }
- 
-         .garden-gallery .gallery-item img {
-             max-width: 100%;
-             height: auto;
-         }
- 
-         .garden-gallery .empty-gallery-item {
-             visibility: hidden;
-         }
- 
-         .garden-gallery-search-container {
-             text-align: center;
-             margin-bottom: 20px;
-         }
- 
-         .garden-gallery-search {
-             display: inline-block;
-         }
- 
-         .garden-gallery-search input[type="text"] {
-             vertical-align: middle;
-             height: 100%;
-         }
-         .garden-gallery-search input[type="submit"] {
-             vertical-align: middle;
-             height: 53px; /* Adjust the value as needed */
-             line-height: 20px; /* Adjust the value as needed */
-         }
- 
-         .garden-gallery-pagination {
-             text-align: center;
-             margin-top: 20px;
-         }
- 
-         .garden-gallery-pagination a {
-             display: inline-block;
-             margin-right: 5px;
-             padding: 5px 10px;
-             text-decoration: none;
-             background-color: #f1f1f1;
-             border: 1px solid #ddd;
-             color: #333;
-         }
- 
-         .garden-gallery-pagination a.active {
-             background-color: #333;
-             color: #fff;
-         }
-     </style>';
- }
- add_action('wp_head', 'garden_gallery_custom_css');
- 
- // Remove the default shortcode for the gallery
- remove_shortcode('gallery');
- 
- // Handle the image upload form submission
- add_action('admin_post_garden_gallery_upload', 'garden_gallery_handle_upload');
- function garden_gallery_handle_upload() {
-     $uploaded_image = $_FILES['gallery_image'];
- 
-     // Set the upload directory
-     $upload_dir = wp_upload_dir();
- 
-     // Prepare the file name
-     $file_name = basename($uploaded_image['name']);
-     $file_path = $upload_dir['path'] . '/' . $file_name;
- 
-     // Move the uploaded image to the upload directory
-     move_uploaded_file($uploaded_image['tmp_name'], $file_path);
- 
-     // Create the attachment post
-     $attachment = array(
-         'post_mime_type' => $uploaded_image['type'],
-         'post_title'     => $file_name,
-         'post_content'   => '',
-         'post_status'    => 'inherit',
-     );
-     $attachment_id = wp_insert_attachment($attachment, $file_path);
- 
-     // Generate attachment metadata
-     $attachment_data = wp_generate_attachment_metadata($attachment_id, $file_path);
-     wp_update_attachment_metadata($attachment_id, $attachment_data);
- 
-     // Redirect back to the gallery page after uploading
-     wp_redirect(wp_get_referer());
-     exit;
- }
-
-**sentinel-game.php:-
-<?php
-/**
- * Plugin Name: sentinel-game
- * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
- * Description: sentinel-game enables individuals to report their Acts Of Kindness to achieve points for their Legion.
- * Version: 1.0.0
- * Author: Salman Shuaib and ChatGPT
- * Author URI: FLOWEReconomics.com
- * License: Creative Commons Zero v1.0 Universal
- */
-
-// Enqueue the plugin's CSS file
-function sentinel_enqueue_styles() {
-    wp_enqueue_style('sentinel-style', plugins_url('css/sentinel.css', __FILE__));
+function resolute($phNum) {
+  $digits = str_split($phNum);
+  while (count($digits) > 1) {
+    $digits = str_split(array_sum($digits));
+  }
+  return intval($digits[0]);
 }
-add_action('wp_enqueue_scripts', 'sentinel_enqueue_styles');
 
-// Add the input field and submit button using a shortcode
-function sentinel_add_input_field_shortcode() {
-    ob_start();
-    ?>
-    <form method="post">
-        <input type="text" name="city_area_code" placeholder="City Area Code" value="Enter Your City Area Code e.g. 437" readonly style="width: 335px;">
-        <input type="submit" name="sentinel_submit" value="Submit">
-    </form>
-    <?php
-    return ob_get_clean();
+function resolute_shortcode($atts) {
+  $a = shortcode_atts( array(
+    'phNum' => '',
+  ), $atts );
+
+  // Validate the input as a number
+  $phNum = intval($a['phNum']);
+  if (!is_numeric($phNum)) {
+    return 'Invalid input. Please enter a valid number.';
+  }
+
+  // Retrieve data from the database
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'league';
+  $result = $wpdb->get_row("SELECT * FROM $table_name WHERE `Legion Numer` = $phNum");
+
+  // Check if a matching record is found
+  if ($result) {
+    // Perform the tally calculation
+    $tally = resolute($phNum);
+
+    // Update the score column for the matching Legion Number
+    $score = intval($result->Score) + $tally;
+    $wpdb->update(
+      $table_name,
+      array('Score' => $score),
+      array('Legion Numer' => $phNum)
+    );
+
+    return "Tally performed and score updated for Legion Number: $phNum";
+  } else {
+    return "No record found for Legion Number: $phNum";
+  }
 }
-add_shortcode('sentinel_input_field', 'sentinel_add_input_field_shortcode');
-
-// Handle form submission
-function sentinel_handle_form_submission() {
-    if (isset($_POST['sentinel_submit'])) {
-        $city_area_code = sanitize_text_field($_POST['city_area_code']);
-
-        // Do something with the city area code, e.g., save it to the database
-
-        // Redirect back to the home page
-        wp_redirect(home_url());
-        exit;
-    }
-}
-add_action('init', 'sentinel_handle_form_submission');
-
-// Add the statement and options below the input field using a shortcode
-function sentinel_add_statement_and_options_shortcode() {
-    ob_start();
-    ?>
-    <p>IF YOU CARRIED OUT AN ACT OF KINDNESS, SELECT FROM AMONG THE FOLLOWING OPTIONS:</p>
-    <form method="post">
-        <label><input type="radio" name="kindness_option" value="option_a"> Take my word for it [1 Point]</label><br>
-        <label><input type="radio" name="kindness_option" value="option_b"> Let me upload proof [20 Points]</label><br>
-        <input type="submit" name="sentinel_kindness_submit" value="Submit">
-    </form>
-
-    <?php
-    // Check if the second radial button is selected
-    if (isset($_POST['sentinel_kindness_submit']) && $_POST['kindness_option'] === 'option_b') {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_FILES['gallery_image']) && $_FILES['gallery_image']['error'] === UPLOAD_ERR_OK) {
-                // Process the uploaded file here
-                $uploaded_image = $_FILES['gallery_image'];
-
-                // Set the upload directory
-                $upload_dir = wp_upload_dir();
-
-                // Prepare the file name
-                $file_name = basename($uploaded_image['name']);
-                $file_path = $upload_dir['path'] . '/' . $file_name;
-
-                // Move the uploaded image to the upload directory
-                move_uploaded_file($uploaded_image['tmp_name'], $file_path);
-
-                // Create the attachment post
-                $attachment = array(
-                    'post_mime_type' => $uploaded_image['type'],
-                    'post_title'     => $file_name,
-                    'post_content'   => '',
-                    'post_status'    => 'inherit',
-                );
-                $attachment_id = wp_insert_attachment($attachment, $file_path);
-
-                // Generate attachment metadata
-                $attachment_data = wp_generate_attachment_metadata($attachment_id, $file_path);
-                wp_update_attachment_metadata($attachment_id, $attachment_data);
-
-                // Redirect back to the gallery page after uploading
-                wp_redirect(wp_get_referer());
-                exit;
-            }
-        }
-        ?>
-        <form class="garden-gallery-upload" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="action" value="garden_gallery_upload">
-            <input type="file" name="gallery_image">
-            <input type="submit" value="Upload">
-        </form>
-        <?php
-    }
-    return ob_get_clean();
-}
-add_shortcode('sentinel_statement_and_options', 'sentinel_add_statement_and_options_shortcode');
+add_shortcode('resolute', 'resolute_shortcode');
