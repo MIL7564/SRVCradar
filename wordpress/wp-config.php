@@ -48,13 +48,13 @@ define( 'DB_NAME', 'dbyntcablwz2fz' );
 
 /** Database username */
 
-define( 'DB_USER', 'uuow2rmglteoy' );
+define( 'DB_USER', 'root' );
 
 
 
 /** Database password */
 
-define( 'DB_PASSWORD', 'felixLG;22BLUE' );
+define( 'DB_PASSWORD', 'felixLG;4BLUE' );
 
 
 
