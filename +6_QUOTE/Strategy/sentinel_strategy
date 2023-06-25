@@ -1,3 +1,10 @@
+- A TICKET can be included by System alongside Sender text on website. This constant TICKET can be used by Sender and Responder to converse with eachother over the website under the 'TOPIC' ("TICKET") dedicated to them.
++ This solves the problem of coordination between Sender and Responder.
++ This Ticketing system also preserves the privacy of the Sender and Responder as we only will need their CACs [City Areas Codes] for ascribing Penalty to the respective Legion.
+
+- Area Codes for the SAME City can be clubbed under the same "City Names" so that if Sender is in another City; the Responder can 
+check that City for NEEDS [obviously, a Responder in Beirut can not help a Sender in Toronto]. 
+
 - sentinel alerts relies on Group Dynamics (Loyalty + Peer Pressure) to curtail the problem of Free Ridership.
 
 - Those who wish to deploy garden-wealth must download a zip of the entire WordPress folder on our GITHUb.Com/salmanshuaib/sentinel because the Pluging....

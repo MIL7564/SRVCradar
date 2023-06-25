@@ -654,3 +654,16 @@ if ( ! function_exists( 'wp_get_list_item_separator' ) ) :
 		return __( ', ', 'twentytwentyone' );
 	}
 endif;
+
+function check_active_theme() {
+    $active_theme = wp_get_theme();
+
+    if ($active_theme->get('TextDomain') === 'twentytwentyone') {
+        // The Twenty Twenty-One theme is active
+        // Your code for when the theme is active
+    } else {
+        // The Twenty Twenty-One theme is not active
+        // Your code for when the theme is not active
+    }
+}
+add_action('after_setup_theme', 'check_active_theme');
