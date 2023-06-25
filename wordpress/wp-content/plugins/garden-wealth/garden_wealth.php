@@ -4,8 +4,6 @@
  * Plugin URI: https://GITHub.Com/salmanshuaib/sentinel
  * Description: Garden Gallery can get gardens' produce to customers via pedestrians.
  * Version: 1.0.0
- * Author: Salman Shuaib and ChatGPT
- * Author URI: FLOWEReconomics.com
  * License: Creative Commons Zero v1.0 Universal
  */
 

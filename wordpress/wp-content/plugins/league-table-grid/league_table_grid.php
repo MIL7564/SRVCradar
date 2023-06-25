@@ -3,8 +3,6 @@
 Plugin Name: League Table Grid
 Description: Plugin to display the league table in a grid.
 Version: 1.0.0
-Author: Salman Shuaib and ChatGPT
-Author URI: FLOWEReconomics.com
 License: Creative Commons Zero v1.0 Universal
 */
 
