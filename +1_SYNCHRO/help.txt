@@ -1,0 +1,2 @@
+- ChatGPT: The adb shell install command is specifically used to install Android application packages (APK files) onto an 
+Android device or emulator.

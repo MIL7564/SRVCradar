@@ -1,3 +1,70 @@
+-5- 
+- COMMANDS:
+adb -s emulator-5554 shell
+telnet
+o localhost 5554
+sms send <sender> <message>
+
+
+Salman Shuaib: LETS DEVELOP A MOBILE SCRIPT THAT CAN ACCOMPLISH THE FOLLOWING ON MY OWN PHONE:
+//Implement a mobile app or script:
+
+Develop a mobile app or script that runs on your Android device and continuously monitors the "Messages by Google" app for incoming messages.
+This app or script should detect messages containing the keyword "sentinel."//
+
+-------------------------------------------------------------------------------
+
+
+ChatGPT: To implement the message monitoring functionality in your Android Studio project, you can follow these steps:
+
+1. Create a Service or Background Task:
+
+In your Android Studio project, create a new Java class that extends either the Service class or the IntentService class. These classes allow you to run tasks in the background.
+
+
+2. Set up the necessary permissions:
+
+Open the AndroidManifest.xml file in your project.
+
+Add the necessary permissions for accessing SMS messages to the <manifest> element. Include the following lines:
+
+<uses-permission android:name="android.permission.READ_SMS" />
+<uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+
+3. Register a BroadcastReceiver:
+In your service or background task class, create a new class that extends BroadcastReceiver. This class will be responsible for receiving and processing SMS messages.
+Override the onReceive() method to handle incoming SMS messages.
+
+
+4. Implement SMS message handling:
+Within the onReceive() method, extract the necessary information from the received SMS message, such as the message content, sender information, and timestamp.
+Check if the message contains the keyword "sentinel" (case-insensitive) using string manipulation or regular expressions.
+
+
+5. Perform desired actions:
+If the message contains the keyword "sentinel," perform the desired actions, such as sending the message data to your WordPress website or triggering a webhook request to the WordPress plugin.
+
+6. Register the BroadcastReceiver:
+In your service or background task class, register the BroadcastReceiver to listen for SMS messages.
+You can do this in the onCreate() method of your service or background task class by creating an instance of the IntentFilter class and adding the appropriate action for receiving SMS messages.
+
+IntentFilter intentFilter = new IntentFilter();
+intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+registerReceiver(yourBroadcastReceiver, intentFilter);
+Unregister the BroadcastReceiver:
+
+In the onDestroy() method of your service or background task class, unregister the BroadcastReceiver to stop listening for SMS messages.
+
+
+unregisterReceiver(yourBroadcastReceiver);
+Remember to handle any necessary exception handling, thread management, and permissions when implementing the message monitoring functionality.
+
+Note: The above steps provide a general guideline for implementing message monitoring in Android Studio. The actual implementation may vary based on your specific requirements and the structure of your project.
+
+
+
+
 -4- The differential areas of the code, particularly as specified by shortcodes: should have a light colored backgrouned - each of a different color for aesthetics.
 
 -3- 
