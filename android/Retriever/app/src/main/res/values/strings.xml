@@ -1,3 +1,4 @@
 <resources>
+    <string name="app_running">App is running...</string>
     <string name="app_name">Retriever</string>
 </resources>

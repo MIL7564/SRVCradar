@@ -10,31 +10,32 @@ import android.widget.Toast;
 public class SMSReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Object[] pdus = (Object[]) extras.get("pdus");
-            if (pdus != null && pdus.length > 0) {
-                SmsMessage[] messages = new SmsMessage[pdus.length];
-                for (int i = 0; i < pdus.length; i++) {
-                    messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                }
+        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                Object[] pdus = (Object[]) extras.get("pdus");
+                if (pdus != null && pdus.length > 0) {
+                    SmsMessage[] messages = new SmsMessage[pdus.length];
+                    for (int i = 0; i < pdus.length; i++) {
+                        messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                    }
 
-                // Extract necessary information from the messages
-                String messageBody = messages[0].getMessageBody();
-                String sender = messages[0].getOriginatingAddress();
-                // Extract other relevant information as needed
+                    // Extract necessary information from the messages
+                    String messageBody = messages[0].getMessageBody();
+                    // String sender = messages[0].getOriginatingAddress();  // Removed as it is unused
 
-                // Convert the message body and keyword to lowercase for case-insensitive comparison
-                String lowerCaseMessageBody = messageBody.toLowerCase();
-                String lowerCaseKeyword = "sentinel".toLowerCase();
+                    // Convert the message body and keyword to lowercase for case-insensitive comparison
+                    String lowerCaseMessageBody = messageBody.toLowerCase();
+                    String lowerCaseKeyword = "sentinel".toLowerCase();
 
-                if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
-                    // Keyword "sentinel" (case-insensitive) found in the message
-                    // Perform desired action here
-                    // ...
+                    if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
+                        // Keyword "sentinel" (case-insensitive) found in the message
+                        // Perform desired action here
+                        // ...
 
-                    // Display a toast message on the screen
-                    Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
+                        // Display a toast message on the screen
+                        Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
