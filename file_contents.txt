@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
+    <!-- Add the uses-feature entries here -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -19,8 +22,8 @@
         android:theme="@style/Theme.Retriever"
         tools:targetApi="31">
 
-        <service android:name="com.text.retriever.MessageMonitoringService" android:exported="true"/>
-        <receiver android:name="com.text.retriever.SMSReceiver" android:exported="true">
+        <service android:name="com.text.retriever.MessageMonitoringService" android:exported="false"/>
+        <receiver android:name="com.text.retriever.SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -51,7 +54,7 @@
         android:id="@+id/app_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="App is running..."
+        android:text="@string/app_running"
         android:textSize="24sp"/>
 
 </LinearLayout>
@@ -59,15 +62,34 @@
 **MainActivity.java:-
 package com.text.retriever;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int SMS_PERMISSION_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!hasSmsPermission()) {
+            requestSmsPermission();
+        }
+    }
+
+    private boolean hasSmsPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestSmsPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
     }
 }
 
@@ -125,33 +147,40 @@ import android.widget.Toast;
 public class SMSReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Object[] pdus = (Object[]) extras.get("pdus");
-            if (pdus != null && pdus.length > 0) {
-                SmsMessage[] messages = new SmsMessage[pdus.length];
-                for (int i = 0; i < pdus.length; i++) {
-                    messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                }
+        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                Object[] pdus = (Object[]) extras.get("pdus");
+                if (pdus != null && pdus.length > 0) {
+                    SmsMessage[] messages = new SmsMessage[pdus.length];
+                    for (int i = 0; i < pdus.length; i++) {
+                        messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                    }
 
-                // Extract necessary information from the messages
-                String messageBody = messages[0].getMessageBody();
-                String sender = messages[0].getOriginatingAddress();
-                // Extract other relevant information as needed
+                    // Extract necessary information from the messages
+                    String messageBody = messages[0].getMessageBody();
+                    // String sender = messages[0].getOriginatingAddress();  // Removed as it is unused
 
-                // Convert the message body and keyword to lowercase for case-insensitive comparison
-                String lowerCaseMessageBody = messageBody.toLowerCase();
-                String lowerCaseKeyword = "sentinel".toLowerCase();
+                    // Convert the message body and keyword to lowercase for case-insensitive comparison
+                    String lowerCaseMessageBody = messageBody.toLowerCase();
+                    String lowerCaseKeyword = "sentinel".toLowerCase();
 
-                if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
-                    // Keyword "sentinel" (case-insensitive) found in the message
-                    // Perform desired action here
-                    // ...
+                    if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
+                        // Keyword "sentinel" (case-insensitive) found in the message
+                        // Perform desired action here
+                        // ...
 
-                    // Display a toast message on the screen
-                    Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
+                        // Display a toast message on the screen
+                        Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
     }
 }
+
+**strings.xml:-
+<resources>
+    <string name="app_running">App is running...</string>
+    <string name="app_name">Retriever</string>
+</resources>
