@@ -32,6 +32,38 @@
     </application>
 </manifest>
 
+**activity_main.xml:-
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/app_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="App is running..."
+        android:textSize="24sp"/>
+
+</LinearLayout>
+
+**MainActivity.java:-
+package com.text.retriever;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+
 **MessageMonitoringService.java:-
 package com.text.retriever;
 
@@ -74,6 +106,8 @@ public class MessageMonitoringService extends Service {
 }
 
 **SMSReceiver.java:-
+package com.text.retriever;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -114,20 +148,3 @@ public class SMSReceiver extends BroadcastReceiver {
         }
     }
 }
-
-**activity_main.xml:-
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
-
-    <TextView
-        android:id="@+id/app_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="App is running..."
-        android:textSize="24sp"/>
-
-</LinearLayout>
