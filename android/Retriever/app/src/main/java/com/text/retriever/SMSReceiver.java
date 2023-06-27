@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.widget.Toast;
 
 public class SMSReceiver extends BroadcastReceiver {
     @Override
@@ -31,6 +32,9 @@ public class SMSReceiver extends BroadcastReceiver {
                     // Keyword "sentinel" (case-insensitive) found in the message
                     // Perform desired action here
                     // ...
+
+                    // Display a toast message on the screen
+                    Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
                 }
             }
         }
