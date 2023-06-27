@@ -17,6 +17,13 @@
         android:theme="@style/Theme.Retriever"
         tools:targetApi="31">
 
+        <service android:name="com.text.retriever.MessageMonitoringService" />
+        <receiver android:name="com.text.retriever.SMSReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Other elements in the manifest file -->
 
     </application>

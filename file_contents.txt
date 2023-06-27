@@ -1,54 +1,93 @@
 ***Codebase:
 
-**sentinel-resurgence.php:-
-<?php
-/*
-Plugin Name: Sentinel Resurgence
-Description: Plugin to handle Sentinel Resurgence functionality.
-Version: 1.0.0
-Author: Salman Shuaib and ChatGPT
-*/
+**AndroidManifest.xml:-
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-function resolute($phNum) {
-  $digits = str_split($phNum);
-  while (count($digits) > 1) {
-    $digits = str_split(array_sum($digits));
-  }
-  return intval($digits[0]);
+    <!-- Add the permission entries here -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Retriever"
+        tools:targetApi="31">
+
+        <!-- Other elements in the manifest file -->
+
+    </application>
+</manifest>
+
+**MessageMonitoringService.java:-
+package com.text.retriever;
+
+public class MessageMonitoringService extends Service {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Perform initialization tasks here
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(yourBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Perform tasks when the service starts here
+        return START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // Return null for a simple Service
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        // Perform cleanup tasks here
+        super.onDestroy();
+        unregisterReceiver(yourBroadcastReceiver);
+    }
 }
 
-function resolute_shortcode($atts) {
-  $a = shortcode_atts( array(
-    'phNum' => '',
-  ), $atts );
+public class SMSReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            Object[] pdus = (Object[]) extras.get("pdus");
+            if (pdus != null && pdus.length > 0) {
+                SmsMessage[] messages = new SmsMessage[pdus.length];
+                for (int i = 0; i < pdus.length; i++) {
+                    messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                }
 
-  // Validate the input as a number
-  $phNum = intval($a['phNum']);
-  if (!is_numeric($phNum)) {
-    return 'Invalid input. Please enter a valid number.';
-  }
+                // Extract necessary information from the messages
+                String messageBody = messages[0].getMessageBody();
+                String sender = messages[0].getOriginatingAddress();
+                // Extract other relevant information as needed
 
-  // Retrieve data from the database
-  global $wpdb;
-  $table_name = $wpdb->prefix . 'league';
-  $result = $wpdb->get_row("SELECT * FROM $table_name WHERE `Legion Numer` = $phNum");
+                // Convert the message body and keyword to lowercase for case-insensitive comparison
+                String lowerCaseMessageBody = messageBody.toLowerCase();
+                String lowerCaseKeyword = "sentinel".toLowerCase();
 
-  // Check if a matching record is found
-  if ($result) {
-    // Perform the tally calculation
-    $tally = resolute($phNum);
+                if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
+                    // Keyword "sentinel" (case-insensitive) found in the message
+                    // Perform desired action here
+                    // ...
+                }
+            }
+        }
+    }
 
-    // Update the score column for the matching Legion Number
-    $score = intval($result->Score) + $tally;
-    $wpdb->update(
-      $table_name,
-      array('Score' => $score),
-      array('Legion Numer' => $phNum)
-    );
 
-    return "Tally performed and score updated for Legion Number: $phNum";
-  } else {
-    return "No record found for Legion Number: $phNum";
-  }
 }
-add_shortcode('resolute', 'resolute_shortcode');
