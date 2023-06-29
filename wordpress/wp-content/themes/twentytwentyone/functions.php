@@ -667,3 +667,9 @@ function check_active_theme() {
     }
 }
 add_action('after_setup_theme', 'check_active_theme');
+
+function allow_apk_uploads( $existing_mimes ) {
+    $existing_mimes['apk'] = 'application/vnd.android.package-archive';
+    return $existing_mimes;
+}
+add_filter( 'upload_mimes', 'allow_apk_uploads' );

@@ -1,3 +1,5 @@
+![Temporary APK Installation Link courtesy czlucius](http://flowereconomics.com/wp-content/uploads/2023/06/code-scanner-1.9.apk)
+
 <img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B9_WORK/Screenshot_20230407-234139.png" alt="sentinel app screenshot" align="left" width="305" height="611"> 
 
 ## INTRODUCTION
