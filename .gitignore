@@ -125,3 +125,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/wordpress/wp-config.php
