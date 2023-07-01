@@ -129,6 +129,7 @@ dmypy.json
 
 # Ignore everything in the android directory
 /android/*
+
 # Don't ignore these specific android Retriever project files
 !/android/Retriever/app/src/main/AndroidManifest.xml
 !/android/Retriever/app/src/main/java/com/text/retriever/MainActivity.java
@@ -136,3 +137,4 @@ dmypy.json
 !/android/Retriever/app/src/main/java/com/text/retriever/SMSReceiver.java
 !/android/Retriever/app/src/main/res/layout/activity_main.xml
 !/android/Retriever/app/src/main/res/values/strings.xml
+!/android/Retriever/app/build/outputs/apk/debug/app-debug.apk

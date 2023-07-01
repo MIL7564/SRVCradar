@@ -3,6 +3,7 @@ package com.text.retriever;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
@@ -17,12 +18,16 @@ public class SMSReceiver extends BroadcastReceiver {
                 if (pdus != null && pdus.length > 0) {
                     SmsMessage[] messages = new SmsMessage[pdus.length];
                     for (int i = 0; i < pdus.length; i++) {
-                        messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            String format = extras.getString("format");
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
+                        } else {
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        }
                     }
 
                     // Extract necessary information from the messages
                     String messageBody = messages[0].getMessageBody();
-                    // String sender = messages[0].getOriginatingAddress();  // Removed as it is unused
 
                     // Convert the message body and keyword to lowercase for case-insensitive comparison
                     String lowerCaseMessageBody = messageBody.toLowerCase();

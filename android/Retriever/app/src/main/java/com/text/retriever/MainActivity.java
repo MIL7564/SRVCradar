@@ -1,6 +1,7 @@
 package com.text.retriever;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
         if (!hasSmsPermission()) {
             requestSmsPermission();
         }
+
+        // Directs the user to the notification access settings page
+        Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        startActivity(intent);
     }
 
     private boolean hasSmsPermission() {

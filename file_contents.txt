@@ -2,14 +2,15 @@
 
 **AndroidManifest.xml:-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.text.retriever">
 
-    <!-- Add the permission entries here -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.NOTIFICATION_POLICY" />
 
-    <!-- Add the uses-feature entries here -->
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Retriever"
-        tools:targetApi="31">
+        android:usesNotificationListener="true"
+        tools:targetApi="33">
 
         <service android:name="com.text.retriever.MessageMonitoringService" android:exported="false"/>
         <receiver android:name="com.text.retriever.SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
@@ -29,7 +31,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Declare your MainActivity here -->
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +42,46 @@
 
     </application>
 </manifest>
+
+**build.gradle:-
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.text.retriever'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.text.retriever"
+        minSdk 30
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
 
 **activity_main.xml:-
 <?xml version="1.0" encoding="utf-8"?>
