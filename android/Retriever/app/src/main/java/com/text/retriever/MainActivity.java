@@ -20,10 +20,6 @@ public class MainActivity extends AppCompatActivity {
         if (!hasSmsPermission()) {
             requestSmsPermission();
         }
-
-        // Directs the user to the notification access settings page
-        Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-        startActivity(intent);
     }
 
     private boolean hasSmsPermission() {
