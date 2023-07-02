@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (!hasSmsPermission()) {
             requestSmsPermission();
+        } else {
+            startMessageMonitoringService();
         }
     }
 
@@ -29,5 +31,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestSmsPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
+    }
+
+    private void startMessageMonitoringService() {
+        Intent intent = new Intent(this, MessageMonitoringService.class);
+        startService(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == SMS_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startMessageMonitoringService();
+            }
+        }
     }
 }

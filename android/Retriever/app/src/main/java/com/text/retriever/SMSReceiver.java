@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.widget.Toast;
+import android.util.Log;  // <-- import the Log class
 
 public class SMSReceiver extends BroadcastReceiver {
+    private static final String TAG = "SMSReceiver";  // <-- define a TAG for your logs
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
@@ -35,11 +37,8 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
                         // Keyword "sentinel" (case-insensitive) found in the message
-                        // Perform desired action here
-                        // ...
-
-                        // Display a toast message on the screen
-                        Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
+                        // Log the fact that the keyword "sentinel" was found in the SMS
+                        Log.i(TAG, "SMS contained the word 'sentinel'");  // <-- log message
                     }
                 }
             }
