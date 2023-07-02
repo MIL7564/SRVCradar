@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;  // <-- import the Log class
+import android.util.Log;
 
 public class SMSReceiver extends BroadcastReceiver {
-    private static final String TAG = "SMSReceiver";  // <-- define a TAG for your logs
+    private static final String TAG = "SMSReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,6 +30,7 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     // Extract necessary information from the messages
                     String messageBody = messages[0].getMessageBody();
+                    String sender = messages[0].getOriginatingAddress();
 
                     // Convert the message body and keyword to lowercase for case-insensitive comparison
                     String lowerCaseMessageBody = messageBody.toLowerCase();
@@ -37,8 +38,13 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
                         // Keyword "sentinel" (case-insensitive) found in the message
-                        // Log the fact that the keyword "sentinel" was found in the SMS
-                        Log.i(TAG, "SMS contained the word 'sentinel'");  // <-- log message
+                        // Log the entire message and sender's number (second, third, and fourth digits)
+                        Log.i(TAG, "SMS contained the word 'sentinel': " + messageBody);
+                        if (sender != null && sender.length() > 4) {
+                            Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
+                        } else {
+                            Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
+                        }
                     }
                 }
             }
