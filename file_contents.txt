@@ -1,232 +1,73 @@
 ***Codebase:
 
-**AndroidManifest.xml:-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.text.retriever">
+**my-webhooks.php:-
+<?php
+/*
+Plugin Name: My Webhooks
+Description: Custom plugin to handle incoming webhooks.
+Version: 1.0.0
+License: CC0
+*/
 
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+// Include the file containing the resolute function
+require_once dirname(__FILE__) . '\..\league-table-grid\league-table-grid.php';
 
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
-    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+// Webhook handler function
+function handle_webhook_request(WP_REST_Request $request) {
+    // Extract the necessary information from the request
+    $headers = $request->get_headers();
+    $request_body = $request->get_body();
+    $content_type = $headers['Content-Type'];
 
-    <application
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.Retriever"
-        tools:targetApi="33">
+    // Process the request data as needed
+    $occurred_at = $headers['OccurredAt'];
+    $from_number = $headers['FromNumber'];
+    $text = '';
 
-        <service android:name="com.text.retriever.MessageMonitoringService" android:exported="false"/>
-        <receiver android:name="com.text.retriever.SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
-
-        <activity android:name=".MainActivity" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- Other elements in the manifest file -->
-
-    </application>
-</manifest>
-
-**build.gradle:-
-plugins {
-    id 'com.android.application'
-}
-
-android {
-    namespace 'com.text.retriever'
-    compileSdk 33
-
-    defaultConfig {
-        applicationId "com.text.retriever"
-        minSdk 30
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    // Handle plain text content
+    if ($content_type === 'text/plain') {
+        $text = $request_body;
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-dependencies {
-
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-}
-
-**activity_main.xml:-
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
-
-    <TextView
-        android:id="@+id/app_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_running"
-        android:textSize="24sp"/>
-
-</LinearLayout>
-
-**MainActivity.java:-
-package com.text.retriever;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-public class MainActivity extends AppCompatActivity {
-
-    private static final int SMS_PERMISSION_CODE = 0;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        if (!hasSmsPermission()) {
-            requestSmsPermission();
+    // Handle JSON content
+    elseif ($content_type === 'application/json') {
+        $json_data = json_decode($request_body, true);
+        if ($json_data !== null) {
+            $text = isset($json_data['text']) ? $json_data['text'] : '';
         }
     }
 
-    private boolean hasSmsPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
-    }
+    // Check if the text contains the keyword "sentinel" (case-insensitive)
+    if (stripos($text, 'sentinel') !== false) {
+        // Perform actions based on the webhook data
+        // Create a new post with the received data
+        $post_data = array(
+            'post_title'   => 'Legion Number: ' . resolute($from_number),
+            'post_content' => $text,
+            'post_status'  => 'publish',
+            'post_author'  => 1, // Change this to the desired author ID
+        );
 
-    private void requestSmsPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
-    }
-}
+        $post_id = wp_insert_post($post_data);
 
-**MessageMonitoringService.java:-
-package com.text.retriever;
-
-import android.app.Service;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.IBinder;
-
-public class MessageMonitoringService extends Service {
-
-    private SMSReceiver yourBroadcastReceiver;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        // Perform initialization tasks here
-        yourBroadcastReceiver = new SMSReceiver();
-        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-        registerReceiver(yourBroadcastReceiver, intentFilter);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // Perform tasks when the service starts here
-        return Service.START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        // Return null for a simple Service
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        // Perform cleanup tasks here
-        super.onDestroy();
-        unregisterReceiver(yourBroadcastReceiver);
-    }
-}
-
-**SMSReceiver.java:-
-package com.text.retriever;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.telephony.SmsMessage;
-import android.widget.Toast;
-
-public class SMSReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                Object[] pdus = (Object[]) extras.get("pdus");
-                if (pdus != null && pdus.length > 0) {
-                    SmsMessage[] messages = new SmsMessage[pdus.length];
-                    for (int i = 0; i < pdus.length; i++) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            String format = extras.getString("format");
-                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
-                        } else {
-                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                        }
-                    }
-
-                    // Extract necessary information from the messages
-                    String messageBody = messages[0].getMessageBody();
-
-                    // Convert the message body and keyword to lowercase for case-insensitive comparison
-                    String lowerCaseMessageBody = messageBody.toLowerCase();
-                    String lowerCaseKeyword = "sentinel".toLowerCase();
-
-                    if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
-                        // Keyword "sentinel" (case-insensitive) found in the message
-                        // Perform desired action here
-                        // ...
-
-                        // Display a toast message on the screen
-                        Toast.makeText(context, "SMS contained the word 'sentinel'", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
+        // Send a response if necessary
+        if ($post_id) {
+            // Post created successfully
+            return new WP_REST_Response('Post created', 200);
+        } else {
+            // Error occurred while creating the post
+            return new WP_REST_Response('Error creating post', 500);
         }
+    } else {
+        // Text does not contain the keyword, no action needed
+        return new WP_REST_Response('Keyword not found', 200);
     }
 }
 
-**strings.xml:-
-<resources>
-    <string name="app_running">App is running...</string>
-    <string name="app_name">Retriever</string>
-    <string name="service_name">Retriever Notification Listener</string>
-</resources>
+// Register the custom webhook route
+function register_custom_webhook_route() {
+    register_rest_route('my-webhooks-plugin/v1', '/webhook/text', array(
+        'methods' => 'POST',
+        'callback' => 'handle_webhook_request',
+    ));
+}
+add_action('rest_api_init', 'register_custom_webhook_route');
