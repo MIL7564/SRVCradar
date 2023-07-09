@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.text.retriever">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
@@ -19,8 +18,8 @@
         android:theme="@style/Theme.Retriever"
         tools:targetApi="33">
 
-        <service android:name="com.text.retriever.MessageMonitoringService" android:exported="false"/>
-        <receiver android:name="com.text.retriever.SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
+        <service android:name=".MessageMonitoringService" android:exported="false"/>
+        <receiver android:name=".SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -36,4 +35,5 @@
         <!-- Other elements in the manifest file -->
 
     </application>
+
 </manifest>

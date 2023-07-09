@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace 'com.text.retriever'
-    compileSdk 33
+    compileSdkVersion 33
+    namespace "com.text.retriever"  // <-- update this line
 
     defaultConfig {
-        applicationId "com.text.retriever"
-        minSdk 30
-        targetSdk 33
+        applicationId "com.text.retriever"  // <-- update this line
+        minSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
