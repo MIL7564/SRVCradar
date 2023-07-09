@@ -62,7 +62,7 @@ function handle_webhook_request(WP_REST_Request $request) {
 
 // Register the custom webhook route
 function register_custom_webhook_route() {
-    register_rest_route('my-webhooks-plugin/v1', '/webhook/text', array(
+    register_rest_route('my-webhooks/v1', '/webhook/text', array(
         'methods' => 'POST',
         'callback' => 'handle_webhook_request',
     ));
