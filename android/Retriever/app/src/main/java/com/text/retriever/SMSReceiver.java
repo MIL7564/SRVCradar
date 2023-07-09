@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
-    private static final String WEBHOOK_URL = "https://your-website.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
+    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     public SMSReceiver() {

@@ -7,7 +7,7 @@ License: CC0
 */
 
 // Include the file containing the resolute function
-require_once dirname(__FILE__) . '\..\league-table-grid\league-table-grid.php';
+require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
