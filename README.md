@@ -19,7 +19,7 @@ can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resou
 ## PLAN
 <img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B7_BREAKTHROUGH/Screenshot%202023-06-19%20at%204.12.20%20AM.png" alt="sentinel application plan" width="825" height="500">
 
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B5_PILOTING/9%20UKRAINE%20-%20FLOWEReconomicsDOTcom%20-%20zeitgeist.jpg" alt="a zeitgeist wristband>
+<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B5_PILOTING/9%20UKRAINE%20-%20FLOWEReconomicsDOTcom%20-%20zeitgeist.jpg" alt="a zeitgeist wristband">
 
 ## DELICENSING
 Copyright and related rights waived via CC0, by Salman Shuaib.
