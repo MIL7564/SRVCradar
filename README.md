@@ -10,7 +10,7 @@ _sentinel enables individuals in need to issue alerts - particularly to their re
 can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resourcing Climate Mitigation Strategies and treatments for the numerous diseases facing Humanity including such as AIDS, Cancer and Death.
 - [Safety](): To ensure safety of both the person in need and person helping him; both parties are recommended to meet at a public coffee shop near the person in need.
 - [Incentive](): Incentives for gamers will include recognition on website and free wristbands that mention a present cause (zeitgeist). Premium wristbands can be purchased as well.
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B5_PILOTING/9%20UKRAINE%20-%20FLOWEReconomicsDOTcom%20-%20zeitgeist.png" alt="a zeitgeist wristband">
+<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B5_PILOTING/FE%20Wristband%20Zeitgeist%20-%209%20UKRAINE.png" alt="a zeitgeist wristband">
 
 
 ## ACKNOWLEDGMENTS
