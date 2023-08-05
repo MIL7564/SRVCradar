@@ -33,30 +33,24 @@ function handle_webhook_request(WP_REST_Request $request) {
         }
     }
 
-    // Check if the text contains the keyword "sentinel" (case-insensitive)
-    if (stripos($text, 'sentinel') !== false) {
-        // Perform actions based on the webhook data
-        // Create a new post with the received data
-        $post_data = array(
-            'post_title'   => 'Legion Number: ' . resolute($from_number),
-            'post_content' => $text,
-            'post_status'  => 'publish',
-            'post_author'  => 1, // Change this to the desired author ID
-        );
+    // Perform actions based on the webhook data
+    // Create a new post with the received data
+    $post_data = array(
+        'post_title'   => 'Legion Number: ' . resolute($from_number),
+        'post_content' => $text,
+        'post_status'  => 'publish',
+        'post_author'  => 1, // Change this to the desired author ID
+    );
 
-        $post_id = wp_insert_post($post_data);
+    $post_id = wp_insert_post($post_data);
 
-        // Send a response if necessary
-        if ($post_id) {
-            // Post created successfully
-            return new WP_REST_Response('Post created', 200);
-        } else {
-            // Error occurred while creating the post
-            return new WP_REST_Response('Error creating post', 500);
-        }
+    // Send a response if necessary
+    if ($post_id) {
+        // Post created successfully
+        return new WP_REST_Response('Post created', 200);
     } else {
-        // Text does not contain the keyword, no action needed
-        return new WP_REST_Response('Keyword not found', 200);
+        // Error occurred while creating the post
+        return new WP_REST_Response('Error creating post', 500);
     }
 }
 
