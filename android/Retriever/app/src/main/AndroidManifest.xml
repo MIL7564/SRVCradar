@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
@@ -19,7 +20,7 @@
         tools:targetApi="33">
 
         <service android:name=".MessageMonitoringService" android:exported="false"/>
-        <receiver android:name=".SMSReceiver" android:exported="false" android:permission="android.permission.BROADCAST_SMS">
+        <receiver android:name=".SMSReceiver" android:exported="true" android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
