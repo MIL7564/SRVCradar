@@ -1,5 +1,97 @@
 ***Codebase:
 
+**MainActivity.java:-
+package com.text.retriever;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int SMS_PERMISSION_CODE = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if (!hasSmsPermission()) {
+            requestSmsPermission();
+        } else {
+            startMessageMonitoringService();
+        }
+    }
+
+    private boolean hasSmsPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestSmsPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
+    }
+
+    private void startMessageMonitoringService() {
+        Intent intent = new Intent(this, MessageMonitoringService.class);
+        startService(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == SMS_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startMessageMonitoringService();
+            }
+        }
+    }
+}
+
+**MessageMonitoringService.java:-
+package com.text.retriever;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.IBinder;
+
+public class MessageMonitoringService extends Service {
+
+    private SMSReceiver yourBroadcastReceiver;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Perform initialization tasks here
+        yourBroadcastReceiver = new SMSReceiver();
+        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(yourBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Perform tasks when the service starts here
+        return Service.START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // Return null for a simple Service
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        // Perform cleanup tasks here
+        super.onDestroy();
+        unregisterReceiver(yourBroadcastReceiver);
+    }
+}
+
 **SMSReceiver.java:-
 package com.text.retriever;
 
@@ -22,7 +114,7 @@ import java.util.concurrent.TimeUnit;
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
-    private static final String WEBHOOK_URL = "https://your-website.com/wp-json/my-webhooks-plugin/v1/webhook/text";  // replace this with your actual URL
+    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     public SMSReceiver() {
@@ -181,7 +273,7 @@ License: CC0
 */
 
 // Include the file containing the resolute function
-require_once dirname(__FILE__) . '\..\league-table-grid\league-table-grid.php';
+require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
@@ -236,7 +328,7 @@ function handle_webhook_request(WP_REST_Request $request) {
 
 // Register the custom webhook route
 function register_custom_webhook_route() {
-    register_rest_route('my-webhooks-plugin/v1', '/webhook/text', array(
+    register_rest_route('my-webhooks/v1', '/webhook/text', array(
         'methods' => 'POST',
         'callback' => 'handle_webhook_request',
     ));

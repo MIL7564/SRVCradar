@@ -3,6 +3,7 @@ package com.text.retriever;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
@@ -60,33 +61,45 @@ public class SMSReceiver extends BroadcastReceiver {
                         Log.i(TAG, "SMS contained the word 'sentinel': " + messageBody);
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
-                            // Trigger the webhook
-                            try {
-                                JSONObject payload = new JSONObject();
-                                payload.put("text", messageBody);
-                                payload.put("FromNumber", sender.substring(1, 4));
-                                payload.put("OccurredAt", System.currentTimeMillis());
-
-                                RequestBody body = RequestBody.create(payload.toString(), JSON);
-                                Request request = new Request.Builder()
-                                        .url(WEBHOOK_URL)
-                                        .post(body)
-                                        .addHeader("Content-Type", "application/json")
-                                        .build();
-
-                                // Execute the request
-                                Response response = client.newCall(request).execute();
-
-                                Log.i(TAG, "Webhook response: " + response.body().string());
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error in sending request", e);
-                            }
+                            // Trigger the webhook asynchronously using AsyncTask
+                            new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
                         }
                     }
                 }
             }
+        }
+    }
+
+    private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            String messageBody = params[0];
+            String fromNumber = params[1];
+
+            try {
+                JSONObject payload = new JSONObject();
+                payload.put("text", messageBody);
+                payload.put("FromNumber", fromNumber);
+                payload.put("OccurredAt", System.currentTimeMillis());
+
+                RequestBody body = RequestBody.create(payload.toString(), JSON);
+                Request request = new Request.Builder()
+                        .url(WEBHOOK_URL)
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+
+                // Execute the request
+                Response response = client.newCall(request).execute();
+
+                Log.i(TAG, "Webhook response: " + response.body().string());
+            } catch (Exception e) {
+                Log.e(TAG, "Error in sending request", e);
+            }
+
+            return null;
         }
     }
 }
