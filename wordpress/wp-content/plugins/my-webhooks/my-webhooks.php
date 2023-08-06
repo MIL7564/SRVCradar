@@ -1,13 +1,22 @@
 <?php
 /*
 Plugin Name: My Webhooks
-Description: Custom plugin to handle incoming webhooks.
-Version: 1.0.0
-License: CC0
+Description: Custom plugin to handle incoming webhooks from Mobilephones. 
+Requisites: "WP REST API" plugin and "League Table Grid" plugin.
+Version: 0.0.9
+Delicensed: CC0 by Salman SHUAIB.
 */
 
 // Include the file containing the resolute function
-require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
+// require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
+
+function resolute($phNum) {
+    $digits = str_split($phNum);
+    while (count($digits) > 1) {
+      $digits = str_split(array_sum($digits));
+    }
+    return intval($digits[0]);
+  }
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {

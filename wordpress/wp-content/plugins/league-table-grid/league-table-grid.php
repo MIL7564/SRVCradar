@@ -1,18 +1,11 @@
 <?php
 /*
 Plugin Name: League Table Grid
-Description: Plugin to display the league table in a grid.
-Version: 1.0.0
-License: Creative Commons Zero v1.0 Universal
+Description: Plugin to display the league table in a grid - solves freeridership.
+Version: 0.0.9
+Delicensed via Creative Commons Zero v1.0 Universal by: Salman SHUAIB.
 */
 
-function resolute($phNum) {
-  $digits = str_split($phNum);
-  while (count($digits) > 1) {
-    $digits = str_split(array_sum($digits));
-  }
-  return intval($digits[0]);
-}
 
 function insert_initial_records() {
   global $wpdb;
