@@ -3,7 +3,7 @@
 Plugin Name: Default Public Posts
 Description: Sets the default visibility of new posts to "Public" and displays all posts by default.
 Version: 1.0.0
-License: CC0
+Delicensed: CC0
 */
 
 // Set the default post visibility to "Public"
