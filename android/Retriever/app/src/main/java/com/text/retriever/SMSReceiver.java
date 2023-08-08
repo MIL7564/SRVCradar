@@ -51,14 +51,15 @@ public class SMSReceiver extends BroadcastReceiver {
                     String messageBody = messages[0].getMessageBody();
                     String sender = messages[0].getOriginatingAddress();
 
-                    // Convert the message body and keyword to lowercase for case-insensitive comparison
+                    // Convert the message body and keywords to lowercase for case-insensitive comparison
                     String lowerCaseMessageBody = messageBody.toLowerCase();
-                    String lowerCaseKeyword = "sentinel".toLowerCase();
+                    String keyword1 = "cellnet";
+                    String keyword2 = "opa";
 
-                    if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
-                        // Keyword "sentinel" (case-insensitive) found in the message
+                    if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
+                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
                         // Log the entire message and sender's number (second, third, and fourth digits)
-                        Log.i(TAG, "SMS contained the word 'sentinel': " + messageBody);
+                        Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
                             // Trigger the webhook asynchronously using AsyncTask

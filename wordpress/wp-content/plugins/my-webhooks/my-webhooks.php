@@ -7,16 +7,13 @@ Version: 0.0.9
 Delicensed: CC0 by Salman SHUAIB.
 */
 
-// Include the file containing the resolute function
-// require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
-
 function resolute($phNum) {
     $digits = str_split($phNum);
     while (count($digits) > 1) {
-      $digits = str_split(array_sum($digits));
+        $digits = str_split(array_sum($digits));
     }
     return intval($digits[0]);
-  }
+}
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
@@ -39,6 +36,7 @@ function handle_webhook_request(WP_REST_Request $request) {
         $json_data = json_decode($request_body, true);
         if ($json_data !== null) {
             $text = isset($json_data['text']) ? $json_data['text'] : '';
+            $from_number = isset($json_data['FromNumber']) ? $json_data['FromNumber'] : '';
         }
     }
 
