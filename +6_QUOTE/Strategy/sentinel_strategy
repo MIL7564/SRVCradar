@@ -1,3 +1,6 @@
+- We will later have a barebones release for cellnet - for univeresal usage by anyone. Currently, i am focused on utilizing 
+cellnet to help those in need and so the first few releases will be along those lines (functional, not barebones).
++ The functional versions will later be able to be plugged in like Modules (Applications) into cellnet.
 -X["Belief in death is a self-fulfilling prophecy": we will remain a public repo; both sentinel and cellnet - considering also the 
 competition b/w cellphone hardware developers, given particularly open-source OS like Android] At this point; where cellphone hardware development is centralized, it is not advisable for me to release "cellnet": the isoalted 
 code for posting texts from mobilephone to website; as these centralized organizations will come under pressure to regulate a disruptive 

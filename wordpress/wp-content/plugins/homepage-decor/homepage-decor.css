@@ -1,0 +1,33 @@
+.post:nth-child(even) {
+    background-color: blue;
+    color: white;
+}
+
+.post:nth-child(odd) {
+    background-color: red;
+    color: white;
+}
+
+/* Hide separators between posts on the homepage */
+.archive .separator {
+    display: none;
+}
+
+/* Adjust white space for compact design (example values, adjust as needed) */
+.post {
+    margin: 5px 0;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.post-title {
+    margin-bottom: 0px;
+}
+
+.post-summary {
+    margin-bottom: 0px;
+}
+
+.post-date {
+    margin-bottom: 0px;
+}

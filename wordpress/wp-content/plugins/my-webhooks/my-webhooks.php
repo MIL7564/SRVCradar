@@ -25,7 +25,7 @@ function handle_webhook_request(WP_REST_Request $request) {
     // Process the request data as needed
     $occurred_at = $headers['OccurredAt'];
     $from_number = $headers['FromNumber'];
-    $text = '';
+    $text = $headers['text'];
 
     // Handle plain text content
     if ($content_type === 'text/plain') {
@@ -43,8 +43,8 @@ function handle_webhook_request(WP_REST_Request $request) {
     // Perform actions based on the webhook data
     // Create a new post with the received data
     $post_data = array(
-        'post_title'   => 'Legion Number: ' . resolute($from_number),
-        'post_content' => $text,
+        'post_title'   => 'USA Scores A Penalty VS Legion Number ' . resolute($from_number),
+        'post_content' => $text,   // Use the extracted text here
         'post_status'  => 'publish',
         'post_author'  => 1, // Change this to the desired author ID
     );

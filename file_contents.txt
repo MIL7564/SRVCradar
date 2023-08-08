@@ -1,5 +1,47 @@
 ***Codebase:
 
+**AndroidManifest.xml:-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Retriever"
+        tools:targetApi="33">
+
+        <service android:name=".MessageMonitoringService" android:exported="false"/>
+        <receiver android:name=".SMSReceiver" android:exported="true" android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Other elements in the manifest file -->
+
+    </application>
+
+</manifest>
+
 **MainActivity.java:-
 package com.text.retriever;
 
@@ -98,6 +140,7 @@ package com.text.retriever;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
@@ -145,37 +188,19 @@ public class SMSReceiver extends BroadcastReceiver {
                     String messageBody = messages[0].getMessageBody();
                     String sender = messages[0].getOriginatingAddress();
 
-                    // Convert the message body and keyword to lowercase for case-insensitive comparison
+                    // Convert the message body and keywords to lowercase for case-insensitive comparison
                     String lowerCaseMessageBody = messageBody.toLowerCase();
-                    String lowerCaseKeyword = "sentinel".toLowerCase();
+                    String keyword1 = "cellnet";
+                    String keyword2 = "opa";
 
-                    if (lowerCaseMessageBody.contains(lowerCaseKeyword)) {
-                        // Keyword "sentinel" (case-insensitive) found in the message
+                    if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
+                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
                         // Log the entire message and sender's number (second, third, and fourth digits)
-                        Log.i(TAG, "SMS contained the word 'sentinel': " + messageBody);
+                        Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
-                            // Trigger the webhook
-                            try {
-                                JSONObject payload = new JSONObject();
-                                payload.put("text", messageBody);
-                                payload.put("FromNumber", sender.substring(1, 4));
-                                payload.put("OccurredAt", System.currentTimeMillis());
-
-                                RequestBody body = RequestBody.create(payload.toString(), JSON);
-                                Request request = new Request.Builder()
-                                        .url(WEBHOOK_URL)
-                                        .post(body)
-                                        .addHeader("Content-Type", "application/json")
-                                        .build();
-
-                                // Execute the request
-                                Response response = client.newCall(request).execute();
-
-                                Log.i(TAG, "Webhook response: " + response.body().string());
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error in sending request", e);
-                            }
+                            // Trigger the webhook asynchronously using AsyncTask
+                            new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
                         }
@@ -184,24 +209,48 @@ public class SMSReceiver extends BroadcastReceiver {
             }
         }
     }
+
+    private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            String messageBody = params[0];
+            String fromNumber = params[1];
+
+            try {
+                JSONObject payload = new JSONObject();
+                payload.put("text", messageBody);
+                payload.put("FromNumber", fromNumber);
+                payload.put("OccurredAt", System.currentTimeMillis());
+
+                RequestBody body = RequestBody.create(payload.toString(), JSON);
+                Request request = new Request.Builder()
+                        .url(WEBHOOK_URL)
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+
+                // Execute the request
+                Response response = client.newCall(request).execute();
+
+                Log.i(TAG, "Webhook response: " + response.body().string());
+            } catch (Exception e) {
+                Log.e(TAG, "Error in sending request", e);
+            }
+
+            return null;
+        }
+    }
 }
 
 **league-table-grid.php:-
 <?php
 /*
 Plugin Name: League Table Grid
-Description: Plugin to display the league table in a grid.
-Version: 1.0.0
-License: Creative Commons Zero v1.0 Universal
+Description: Plugin to display the league table in a grid - solves freeridership.
+Version: 0.0.9
+Delicensed via Creative Commons Zero v1.0 Universal by: Salman SHUAIB.
 */
 
-function resolute($phNum) {
-  $digits = str_split($phNum);
-  while (count($digits) > 1) {
-    $digits = str_split(array_sum($digits));
-  }
-  return intval($digits[0]);
-}
 
 function insert_initial_records() {
   global $wpdb;
@@ -267,13 +316,19 @@ add_shortcode('resolute', 'resolute_shortcode');
 <?php
 /*
 Plugin Name: My Webhooks
-Description: Custom plugin to handle incoming webhooks.
-Version: 1.0.0
-License: CC0
+Description: Custom plugin to handle incoming webhooks from Mobilephones. 
+Requisites: "WP REST API" plugin and "League Table Grid" plugin.
+Version: 0.0.9
+Delicensed: CC0 by Salman SHUAIB.
 */
 
-// Include the file containing the resolute function
-require_once dirname(__FILE__) . '/../league-table-grid/league-table-grid.php';
+function resolute($phNum) {
+    $digits = str_split($phNum);
+    while (count($digits) > 1) {
+        $digits = str_split(array_sum($digits));
+    }
+    return intval($digits[0]);
+}
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
@@ -296,33 +351,28 @@ function handle_webhook_request(WP_REST_Request $request) {
         $json_data = json_decode($request_body, true);
         if ($json_data !== null) {
             $text = isset($json_data['text']) ? $json_data['text'] : '';
+            $from_number = isset($json_data['FromNumber']) ? $json_data['FromNumber'] : '';
         }
     }
 
-    // Check if the text contains the keyword "sentinel" (case-insensitive)
-    if (stripos($text, 'sentinel') !== false) {
-        // Perform actions based on the webhook data
-        // Create a new post with the received data
-        $post_data = array(
-            'post_title'   => 'Legion Number: ' . resolute($from_number),
-            'post_content' => $text,
-            'post_status'  => 'publish',
-            'post_author'  => 1, // Change this to the desired author ID
-        );
+    // Perform actions based on the webhook data
+    // Create a new post with the received data
+    $post_data = array(
+        'post_title'   => 'Legion Number: ' . resolute($from_number),
+        'post_content' => $text,
+        'post_status'  => 'publish',
+        'post_author'  => 1, // Change this to the desired author ID
+    );
 
-        $post_id = wp_insert_post($post_data);
+    $post_id = wp_insert_post($post_data);
 
-        // Send a response if necessary
-        if ($post_id) {
-            // Post created successfully
-            return new WP_REST_Response('Post created', 200);
-        } else {
-            // Error occurred while creating the post
-            return new WP_REST_Response('Error creating post', 500);
-        }
+    // Send a response if necessary
+    if ($post_id) {
+        // Post created successfully
+        return new WP_REST_Response('Post created', 200);
     } else {
-        // Text does not contain the keyword, no action needed
-        return new WP_REST_Response('Keyword not found', 200);
+        // Error occurred while creating the post
+        return new WP_REST_Response('Error creating post', 500);
     }
 }
 
