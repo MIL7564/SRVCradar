@@ -1,3 +1,13 @@
+# SSH Key (Signing)
+SYNCHRO.pub
+SYNCHRO
+SSH keygen --signing- SYNCHRO.txt
+
+# SSH Key (Authentication)
+BREAKTHROUGH.pub
+BREAKTHROUGH
+SSH keygen --authentication- BREAKTHROUGH.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
