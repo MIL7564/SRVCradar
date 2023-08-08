@@ -1,4 +1,4 @@
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B9_WORK/Screenshot_20230407-234139.png" alt="sentinel app screenshot" align="left" width="305" height="611"> 
+<img src="https://github.com/salmanshuaib/cellnet/blob/main/%2B7_BREAKTHROUGH/applications/sentinel/Screenshot_20230407-234139.png" alt="sentinel app screenshot" align="left" width="305" height="611"> 
 
 ## INTRODUCTION
 _sentinel enables individuals in need to issue alerts - particularly to their repsective Legions (each person is assigned to a Legion based on their telephone area code)._
@@ -19,7 +19,7 @@ can remodel the world economy and solve UNSDG #1: "No Poverty" in time for resou
 + ChatGPT.
 
 ## PLAN
-<img src="https://github.com/salmanshuaib/sentinel/blob/main/%2B7_BREAKTHROUGH/PLAN_sentinel.JPG" width="825" height="500">
+<img src="https://github.com/salmanshuaib/cellnet/blob/main/%2B7_BREAKTHROUGH/applications/sentinel/PLAN_sentinel.JPG" width="825" height="500">
 
 ## DELICENSING
 Copyright and related rights waived via CC0, by Salman Shuaib.
