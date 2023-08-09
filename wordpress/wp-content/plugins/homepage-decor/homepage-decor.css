@@ -1,10 +1,10 @@
 .post:nth-child(even) {
-    background-color: blue;
-    color: white;
+    background-color: yellow;
+    color: black;
 }
 
 .post:nth-child(odd) {
-    background-color: red;
+    background-color: blue;
     color: white;
 }
 
