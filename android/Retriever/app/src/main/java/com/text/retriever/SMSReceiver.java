@@ -80,16 +80,16 @@ public class SMSReceiver extends BroadcastReceiver {
             String fromNumber = params[1];
 
             try {
-                JSONObject payload = new JSONObject();
-                payload.put("text", messageBody);
-                payload.put("FromNumber", fromNumber);
-                payload.put("OccurredAt", System.currentTimeMillis());
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"OccurredAt\":\"" + System.currentTimeMillis() + "\"}";
 
-                RequestBody body = RequestBody.create(payload.toString(), JSON);
+                RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
                         .post(body)
                         .addHeader("Content-Type", "application/json")
+                        .addHeader("FromNumber", fromNumber)
+                        .addHeader("text", messageBody)
+                        .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request

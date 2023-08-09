@@ -1,3 +1,8 @@
+- Remove SUBJECT from WP Posts
+- Time displayed ought to be based on the time provided by Mobilephone (Android Studio SMSReceiver.java)
+- There should be 9 Users: Legion 1 ~ 9 mentioned as 'post by', instead of each post being by me (salmanshuaib).
+
+
 - We will later have a barebones release for cellnet - for univeresal usage by anyone. Currently, i am focused on utilizing 
 cellnet to help those in need and so the first few releases will be along those lines (functional, not barebones).
 + The functional versions will later be able to be plugged in like Modules (Applications) into cellnet.
