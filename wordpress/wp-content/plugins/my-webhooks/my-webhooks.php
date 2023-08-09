@@ -17,15 +17,14 @@ function resolute($phNum) {
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
-    // Extract the necessary information from the request
-    $headers = $request->get_headers();
-    $request_body = $request->get_body();
-    $content_type = $headers['Content-Type'];
+    // Extract the necessary information from the request headers
+    $occurred_at = $_SERVER['HTTP_OCCURREDAT'];
+    $from_number = $_SERVER['HTTP_FROMNUMBER'];
+    $text = $_SERVER['HTTP_TEXT'];
 
     // Process the request data as needed
-    $occurred_at = $headers['OccurredAt'];
-    $from_number = $headers['FromNumber'];
-    $text = $headers['text'];
+    $content_type = $request->get_header('Content-Type');
+    $request_body = $request->get_body();
 
     // Handle plain text content
     if ($content_type === 'text/plain') {
@@ -69,3 +68,4 @@ function register_custom_webhook_route() {
     ));
 }
 add_action('rest_api_init', 'register_custom_webhook_route');
+?>
