@@ -78,11 +78,10 @@ public class SMSReceiver extends BroadcastReceiver {
         protected Void doInBackground(String... params) {
             String messageBody = params[0];
             String fromNumber = params[1];
-            String category = fromNumber + "Leigon";
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"OccurredAt\":\"" + System.currentTimeMillis() + "\"}";
-
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                // + System.currentTimeMillis()
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -90,8 +89,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
-                        .addHeader("Category", category)
+                        // .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request
