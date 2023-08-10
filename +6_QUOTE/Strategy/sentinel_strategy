@@ -1,3 +1,5 @@
+- We will use Categories on WP for Legion Numbers; and Tags on WP for Cities.
+
 - Remove SUBJECT from WP Posts
 - Time displayed ought to be based on the time provided by Mobilephone (Android Studio SMSReceiver.java)
 - There should be 9 Users: Legion 1 ~ 9 mentioned as 'post by', instead of each post being by me (salmanshuaib).
