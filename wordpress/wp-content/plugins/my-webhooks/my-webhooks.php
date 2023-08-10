@@ -39,6 +39,9 @@ function handle_webhook_request(WP_REST_Request $request) {
         }
     }
 
+    // Extract the cateogory based on the fromNumber
+    $category = $from_number . 'Legion';
+
     // Perform actions based on the webhook data
     // Create a new post with the received data
     $post_data = array(
@@ -46,6 +49,7 @@ function handle_webhook_request(WP_REST_Request $request) {
         'post_content' => $text,   // Use the extracted text here
         'post_status'  => 'publish',
         'post_author'  => 1, // Change this to the desired author ID
+        'post_category' => array(get_category_by_slug($category)->term_id), // Assign the category
     );
 
     $post_id = wp_insert_post($post_data);

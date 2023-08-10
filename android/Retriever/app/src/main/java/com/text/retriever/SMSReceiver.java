@@ -78,6 +78,7 @@ public class SMSReceiver extends BroadcastReceiver {
         protected Void doInBackground(String... params) {
             String messageBody = params[0];
             String fromNumber = params[1];
+            String category = fromNumber + "Leigon";
 
             try {
                 String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"OccurredAt\":\"" + System.currentTimeMillis() + "\"}";
@@ -90,6 +91,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
                         .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
+                        .addHeader("Category", category)
                         .build();
 
                 // Execute the request

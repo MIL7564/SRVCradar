@@ -217,16 +217,16 @@ public class SMSReceiver extends BroadcastReceiver {
             String fromNumber = params[1];
 
             try {
-                JSONObject payload = new JSONObject();
-                payload.put("text", messageBody);
-                payload.put("FromNumber", fromNumber);
-                payload.put("OccurredAt", System.currentTimeMillis());
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"OccurredAt\":\"" + System.currentTimeMillis() + "\"}";
 
-                RequestBody body = RequestBody.create(payload.toString(), JSON);
+                RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
                         .post(body)
                         .addHeader("Content-Type", "application/json")
+                        .addHeader("FromNumber", fromNumber)
+                        .addHeader("text", messageBody)
+                        .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request
@@ -332,15 +332,14 @@ function resolute($phNum) {
 
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
-    // Extract the necessary information from the request
-    $headers = $request->get_headers();
-    $request_body = $request->get_body();
-    $content_type = $headers['Content-Type'];
+    // Extract the necessary information from the request headers
+    $occurred_at = $_SERVER['HTTP_OCCURREDAT'];
+    $from_number = $_SERVER['HTTP_FROMNUMBER'];
+    $text = $_SERVER['HTTP_TEXT'];
 
     // Process the request data as needed
-    $occurred_at = $headers['OccurredAt'];
-    $from_number = $headers['FromNumber'];
-    $text = '';
+    $content_type = $request->get_header('Content-Type');
+    $request_body = $request->get_body();
 
     // Handle plain text content
     if ($content_type === 'text/plain') {
@@ -358,8 +357,8 @@ function handle_webhook_request(WP_REST_Request $request) {
     // Perform actions based on the webhook data
     // Create a new post with the received data
     $post_data = array(
-        'post_title'   => 'Legion Number: ' . resolute($from_number),
-        'post_content' => $text,
+        'post_title'   => 'USA Scores A Penalty VS Legion Number ' . resolute($from_number),
+        'post_content' => $text,   // Use the extracted text here
         'post_status'  => 'publish',
         'post_author'  => 1, // Change this to the desired author ID
     );
@@ -384,3 +383,4 @@ function register_custom_webhook_route() {
     ));
 }
 add_action('rest_api_init', 'register_custom_webhook_route');
+?>
