@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: My Webhooks
-Description: Custom plugin to handle incoming webhooks from Mobilephones. 
+Description: Custom plugin to handle incoming webhooks from Mobilephones.
 Requisites: "WP REST API" plugin and "League Table Grid" plugin.
 Version: 0.0.9
 Delicensed: CC0 by Salman SHUAIB.
@@ -18,29 +18,23 @@ function resolute($phNum) {
 // Webhook handler function
 function handle_webhook_request(WP_REST_Request $request) {
     // Extract the necessary information from the request headers
-    $occurred_at = $_SERVER['HTTP_OCCURREDAT'];
+    // $occurred_at = $_SERVER['HTTP_OCCURREDAT'];
     $from_number = $_SERVER['HTTP_FROMNUMBER'];
     $text = $_SERVER['HTTP_TEXT'];
+    // The Category is based on the sender's mobile phone number, which mobile phone number  is already extracted above
+    // ....Therefore, we do not need to program the Category into SMSReceiver.java which sends the HTTP request to the webhook
+    // .......We want to match the Resolute to the Child Category of the Parent Category "USA"
 
-    // Process the request data as needed
-    $content_type = $request->get_header('Content-Type');
-    $request_body = $request->get_body();
+    // Calculate the sub-category based on the sender's mobile phone number
+    $legion_num = resolute($from_number);
+    $child_category = get_categories(array('parent' => 17)); // 17 is the ID of the Parent Category "USA"
 
-    // Handle plain text content
-    if ($content_type === 'text/plain') {
-        $text = $request_body;
+    $sub_category = ''; // Initialize sub_category variable
+
+    if ($legion_num >= 1 && $legion_num <= 9) {
+    $property_name = $legion_num . 'legion'; // Example: 1legion, 2legion, ...
+    $sub_category = $child_category[0]->$property_name;
     }
-    // Handle JSON content
-    elseif ($content_type === 'application/json') {
-        $json_data = json_decode($request_body, true);
-        if ($json_data !== null) {
-            $text = isset($json_data['text']) ? $json_data['text'] : '';
-            $from_number = isset($json_data['FromNumber']) ? $json_data['FromNumber'] : '';
-        }
-    }
-
-    // Extract the cateogory based on the fromNumber
-    $category = $from_number . 'Legion';
 
     // Perform actions based on the webhook data
     // Create a new post with the received data
@@ -49,7 +43,7 @@ function handle_webhook_request(WP_REST_Request $request) {
         'post_content' => $text,   // Use the extracted text here
         'post_status'  => 'publish',
         'post_author'  => 1, // Change this to the desired author ID
-        'post_category' => array(get_category_by_slug($category)->term_id), // Assign the category
+        'post_category' => $sub_category
     );
 
     $post_id = wp_insert_post($post_data);
