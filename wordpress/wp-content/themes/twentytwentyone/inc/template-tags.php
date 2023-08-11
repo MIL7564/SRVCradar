@@ -8,7 +8,7 @@
  */
 
 // Include the bridge plugin file
-require_once(plugin_dir_path(__FILE__) . '/customs-bridge.php');
+require_once('wordpress/' . plugin_dir_path(__FILE__) . '/customs-bridge.php');
 
 if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**

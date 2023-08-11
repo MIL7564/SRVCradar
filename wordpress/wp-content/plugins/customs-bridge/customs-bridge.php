@@ -7,7 +7,7 @@ Declicensed: CC0 by Salman SHUAIB
 */
 
 // Include homepage-decor.php
-require_once(plugin_dir_path(__FILE__) . '/homepage-decor.php');
+require_once('wordpress/'. plugin_dir_path(__FILE__) . '/homepage-decor.php');
 
 // Define the custom filter function
 function custom_cats_ndogs_filter($value) {
