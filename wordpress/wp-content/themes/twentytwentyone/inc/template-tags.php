@@ -7,14 +7,10 @@
  * @since Twenty Twenty-One 1.0
  */
 
- // Edit: I am editing a theme file against recommended practice. Edited lines are highlighted via "Edit" succcessions
- // Original: Original lines are kept via "Original" successions
- // Replaced: Replaced lines are replaced via "Replaced" successions 
- // Now, adopting $catsNdogs from homepage-decor.php and replacing $categories_list with them.
- require_once(plugin_dir_path(__FILE__) . '../../../../../wordpress/wp-content/plugins/homepage-decor/homepage-decor.php');  //Edit
+// Include the bridge plugin file
+require_once(plugin_dir_path(__FILE__) . '/customs-bridge.php');
 
-
- if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
+if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
 	 *
@@ -71,6 +67,8 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 	 * @return void
 	 */
 	function twenty_twenty_one_entry_meta_footer() {
+		// Call the custom_cats_ndogs_filter function from the bridge plugin
+		custom_cats_ndogs_filter();
 
 		// Early exit if not a post.
 		if ( 'post' !== get_post_type() ) {
@@ -107,15 +105,14 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 
 				echo '<div class="post-taxonomies">';
 
-				$catsNdogs = get_the_category_list( wp_get_list_item_separator() );
-				if ( $catsNdogs ) {
+				$categories_list = get_the_category_list( wp_get_list_item_separator() );
+				if ( $categories_list ) {
 					printf(
 						/* translators: %s: List of categories. */
-						'<span class="cat-links">' . esc_html__( 'categorized as %s', 'twentytwentyone' ) . ' </span>',
-						$catsNdogs //phpscs:ignore WordPress.Security.EscapeOutput 
+						'<span class="cat-links">' . esc_html__( 'Categorized as %s', 'twentytwentyone' ) . ' </span>',
+						$categories_list // phpcs:ignore WordPress.Security.EscapeOutput
 					);
 				}
-				// Edit	
 
 				$tags_list = get_the_tag_list( '', wp_get_list_item_separator() );
 				if ( $tags_list ) {
@@ -172,6 +169,7 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 		}
 	}
 }
+
 
 if ( ! function_exists( 'twenty_twenty_one_post_thumbnail' ) ) {
 	/**
