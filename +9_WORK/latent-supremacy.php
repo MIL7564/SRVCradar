@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Latent Supremacy
- * Description: Prevasive Spider-modeled plugins wait for bugs to emerge! 
+ * Description: Prevasive Spider-modeled plugins (webs) wait for bugs to emerge! 
  * Version: 1.0.0
  * Delicensed CC0 by Salman SHUAIB
  */
