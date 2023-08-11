@@ -31,8 +31,11 @@ Woman is dying (of aging). sentinel, and application of cellnet, can resolve thi
 */
 
 // Include the necessary files
-require_once('https://flowereconomics.com/wp-content/plugins/my-webhooks/my-webhooks.php'); // Replace with the actual server path to my-webhooks.php
-require_once('https://flowereconomics.com/wp-content/themes/twentytwentyone/inc/template-tags.php'); // Replace with the actual server path to template-tags.php
+require_once('../my-webhooks/my-webhooks.php');
+require_once('../../themes/twentytwentyone/inc/template-tags.php');
+
+// require_once('https://flowereconomics.com/wp-content/plugins/my-webhooks/my-webhooks.php');
+// require_once('https://flowereconomics.com/wp-content/themes/twentytwentyone/inc/template-tags.php');
 
 
 

@@ -7,7 +7,12 @@
  * @since Twenty Twenty-One 1.0
  */
 
- require_once('https://flowereconomics.com/wp-content/plugins/homepage-decor/homepage-decor.php'); 
+ // Edit: I am editing a theme file against recommended practice. Edited lines are highlighted via "Edit" succcessions
+ // Original: Original lines are kept via "Original" successions
+ // Replaced: Replaced lines are replaced via "Replaced" successions 
+ // Now, adopting $catsNdogs from homepage-decor.php and replacing $categories_list with them - intercepting a la Maverick.
+ require_once('../../../../../wordpress/wp-content/plugins/homepage-decor/homepage-decor.php');  //Edit
+
 
  if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**
@@ -102,14 +107,15 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 
 				echo '<div class="post-taxonomies">';
 
-				$categories_list = get_the_category_list( wp_get_list_item_separator() );
-				if ( $categories_list ) {
+				$catsNdogs = get_the_category_list( wp_get_list_item_separator() );
+				if ( $catsNdogs ) {
 					printf(
 						/* translators: %s: List of categories. */
-						'<span class="cat-links">' . esc_html__( 'Categorized as %s', 'twentytwentyone' ) . ' </span>',
-						$categories_list // phpcs:ignore WordPress.Security.EscapeOutput
+						'<span class="cat-links">' . esc_html__( 'categorized as %s', 'twentytwentyone' ) . ' </span>',
+						$catsNdogs //phpscs:ignore WordPress.Security.EscapeOutput 
 					);
 				}
+				// Edit	
 
 				$tags_list = get_the_tag_list( '', wp_get_list_item_separator() );
 				if ( $tags_list ) {
