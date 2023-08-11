@@ -1,12 +1,12 @@
 <?php
 /**
  * Plugin Name: Latent Supremacy
- * Description: Tracks the creation of Auto Draft posts in WordPress and logs the findings to a text file.
+ * Description: Prevasive Spider-modeled plugins wait for bugs to emerge! 
  * Version: 1.0.0
  * Delicensed CC0 by Salman SHUAIB
  */
 
-// Register the action to track Auto Draft posts
+// Register the action to track Auto Draft posts BUG
 function track_auto_draft($post_id) {
     $post = get_post($post_id);
 
