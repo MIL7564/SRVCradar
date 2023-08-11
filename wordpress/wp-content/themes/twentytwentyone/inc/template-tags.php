@@ -10,8 +10,8 @@
  // Edit: I am editing a theme file against recommended practice. Edited lines are highlighted via "Edit" succcessions
  // Original: Original lines are kept via "Original" successions
  // Replaced: Replaced lines are replaced via "Replaced" successions 
- // Now, adopting $catsNdogs from homepage-decor.php and replacing $categories_list with them - intercepting a la Maverick.
- require_once('../../../../../wordpress/wp-content/plugins/homepage-decor/homepage-decor.php');  //Edit
+ // Now, adopting $catsNdogs from homepage-decor.php and replacing $categories_list with them.
+ require_once(plugin_dir_path(__FILE__) . '../../../../../wordpress/wp-content/plugins/homepage-decor/homepage-decor.php');  //Edit
 
 
  if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {

@@ -30,14 +30,11 @@ Woman is dying (of aging). sentinel, and application of cellnet, can resolve thi
 +++++ So, we just include homepage-decor.php into template-tags.php.
 */
 
-// Include the necessary files
-require_once('../my-webhooks/my-webhooks.php');
-require_once('../../themes/twentytwentyone/inc/template-tags.php');
+// Include my-webhooks.php
+require_once(plugin_dir_path(__FILE__) . '../../my-webhooks.php');
 
-// require_once('https://flowereconomics.com/wp-content/plugins/my-webhooks/my-webhooks.php');
-// require_once('https://flowereconomics.com/wp-content/themes/twentytwentyone/inc/template-tags.php');
-
-
+// Include template-tags.php
+require_once(get_template_directory() . '../../../template-tags.php');
 
 function cooperative($catsNdogs) {
     // $legion_num is already calculated in the above required/included file my-webhooks.php
