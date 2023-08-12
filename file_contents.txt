@@ -1,5 +1,31 @@
 ***Codebase:
 
+**customs-bridge.php:-
+<?php
+/*
+Plugin Name: Customs Bridge
+Description: Bridge plugin for communication between homepage-decor.php and template-tags.php.
+Version: 1.0
+Declicensed: CC0 by Salman SHUAIB
+*/
+
+define("PATH", $_SERVER['DOCUMENT_ROOT']);
+require_once PATH . "/wp-content/plugins/homepage-decor/homepage-decor.php";
+
+// Define the custom filter function
+if (! function_exists('custom_cats_ndogs_filter')) {
+    function custom_cats_ndogs_filter($value) {
+        // Access the filtered value from homepage-decor.php
+        return apply_filters('custom_cats_ndogs', $value);
+    }
+}
+// Replace the original function with the filtered one
+if (function_exists('twenty_twenty_one_entry_meta_footer')) {
+    //remove_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
+    add_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
+}
+?>
+
 **homepage-decor.css:-
 .post:nth-child(even) {
     background-color: red;
@@ -40,8 +66,8 @@
 /*
 Plugin Name: Homepage Decor
 Description: Customizing WordPress Homepage for FE.
-Version: 1.0
-Declicensed: CC0 by Salman SHUAIB
+Version: 1.0.1
+Declicensed: CC0
 */
 
 if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
@@ -70,4 +96,68 @@ require_once(get_template_directory() . '/inc/template-tags.php');
 
 // Pass $catsNdogs to template-tags.php
 add_filter('custom_cats_ndogs', 'cooperative');
+?>
+
+**my-webhooks.php:-
+<?php
+/*
+Plugin Name: My Webhooks
+Description: Custom plugin to handle incoming webhooks from Mobilephones.
+Requisites: "WP REST API" plugin and "League Table Grid" plugin.
+Version: 0.0.9
+Delicensed: CC0 by Salman SHUAIB.
+*/
+
+if (!function_exists('resolute')) {
+    function resolute($phNum) {
+        $digits = str_split($phNum);
+        while (count($digits) > 1) {
+            $digits = str_split(array_sum($digits));
+        }
+        return intval($digits[0]);
+    }
+}
+
+// Webhook handler function
+if (!function_exists('handle_webhook_request')) {
+    function handle_webhook_request(WP_REST_Request $request) {
+        // Extract the necessary information from the request headers
+        $from_number = $request->get_header('FromNumber');
+        $text = $request->get_header('text');
+
+        $legion_num = resolute($from_number);
+        update_option('legion_number', $legion_num);       
+        // Perform actions based on the webhook data
+        // Create a new post with the received data
+        $post_data = array(
+            'post_title'   => '[Base City: ] [TOKEN] [TOKEN]',
+            'post_content' => $text,   // Use the extracted text here
+            'post_status'  => 'publish',
+            'post_author'  => 1, // Change this to the desired author ID
+            //'post_category' => $sub_category
+        );
+
+        $post_id = wp_insert_post($post_data);
+
+        // Send a response if necessary
+        if ($post_id) {
+            // Post created successfully
+            return new WP_REST_Response('Post created', 200);
+        } else {
+            // Error occurred while creating the post
+            return new WP_REST_Response('Error creating post', 500);
+        }
+    }
+}
+
+// Register the custom webhook route
+function register_custom_webhook_route() {
+    register_rest_route('my-webhooks/v1', '/webhook/text', array(
+        'methods' => 'POST',
+        'callback' => 'handle_webhook_request',
+    ));
+}
+
+// Ensure the callback to register_custom_webhook_route is being run
+add_action('rest_api_init', 'register_custom_webhook_route');
 ?>

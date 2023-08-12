@@ -2,8 +2,8 @@
 /*
 Plugin Name: Homepage Decor
 Description: Customizing WordPress Homepage for FE.
-Version: 1.0
-Declicensed: CC0 by Salman SHUAIB
+Version: 1.0.1
+Declicensed: CC0
 */
 
 if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {

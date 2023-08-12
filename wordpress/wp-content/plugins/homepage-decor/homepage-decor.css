@@ -9,25 +9,38 @@
 }
 
 /* Hide separators between posts on the homepage */
-.archive .separator {
+.post .separator {
     display: none;
 }
 
-/* Adjust white space for compact design (example values, adjust as needed) */
+/* 1. Reduce the Width */
 .post {
-    margin: 5px 0;
+    max-width: 80%; /* Adjust this to the desired width */
+    margin: 5px auto; /* Centers the post */
     padding: 5px;
     margin-bottom: 0px;
+    border-bottom: none; /* 5. Remove Underline */
 }
 
-.post-title {
-    margin-bottom: 0px;
+/* 2. Yellow Border Around the Page */
+body {
+    border: 12px solid yellow; /* Replace with an actual color code if "neonpink" is not defined */
 }
 
-.post-summary {
-    margin-bottom: 0px;
+/* 3. Reduce and Make Uniform Distance */
+.entry-header, .entry-footer {
+    margin-bottom: 5px; /* Adjust as needed */
 }
 
-.post-date {
-    margin-bottom: 0px;
+/* 4. Uniform Font Style */
+.entry-header, .entry-footer {
+    font-family: 'Calibri', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Italic styling for Summary/Content */
+.entry-content {
+    font-style: italic;
 }
