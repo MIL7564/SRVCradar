@@ -13,7 +13,11 @@ function homepage_decor_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
 
 // Include my-webhooks.php
-require_once('wordpress/' . plugin_dir_path(__FILE__) . '/../../my-webhooks.php');
+// Include my-webhooks.php from the correct directory
+//require_once(plugin_dir_path(dirname(__FILE__)) .'wordpress'. '/../../../my-webhooks.php');
+define( "PATH", $_SERVER['DOCUMENT_ROOT']);
+require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
+
 
 // Calculate $catsNdogs using cooperative function
 $catsNdogs = cooperative();
