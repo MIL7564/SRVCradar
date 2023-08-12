@@ -7,8 +7,13 @@
  * @since Twenty Twenty-One 1.0
  */
 
+ define( "PATH", $_SERVER['DOCUMENT_ROOT']);
+ require PATH . "/wp-content/plugins/customs-bridge/customs-bridge.php";
+
 // Include the bridge plugin file
-require_once('wordpress/' . plugin_dir_path(__FILE__) . '/customs-bridge.php');
+// require_once('wordpress/' . plugin_dir_path(__FILE__) . '/customs-bridge.php');
+
+
 
 if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**

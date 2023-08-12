@@ -6,8 +6,11 @@ Version: 1.0
 Declicensed: CC0 by Salman SHUAIB
 */
 
+define( "PATH", $_SERVER['DOCUMENT_ROOT']);
+require PATH . "/wp-content/plugins/homepage-decor/homepage-decor.php";
+
 // Include homepage-decor.php
-require_once('wordpress/'. plugin_dir_path(__FILE__) . '/homepage-decor.php');
+//require_once('wordpress/'. plugin_dir_path(__FILE__) . '/homepage-decor.php');
 
 // Define the custom filter function
 function custom_cats_ndogs_filter($value) {
