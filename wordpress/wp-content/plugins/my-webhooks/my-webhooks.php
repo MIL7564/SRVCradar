@@ -25,7 +25,7 @@ if (!function_exists('handle_webhook_request')) {
         $text = $request->get_header('text');
 
         $legion_num = resolute($from_number);
-        
+        update_option('legion_number', $legion_num);       
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(

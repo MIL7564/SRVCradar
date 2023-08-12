@@ -20,11 +20,12 @@ require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 // Calculate $catsNdogs using cooperative function
 if ( ! function_exists( 'cooperative' ) ) {
     function cooperative() {
-        // $legion_num is already calculated in the above required/included file my-webhooks.php
+        $legion_num = get_option('legion_number', '9'); // Retrieve the value, use '9' as a default
         $catsNdogs = 'USA' . ' ' . $legion_num . 'Legion'; 
         return $catsNdogs;
     }
 }
+
 
 // Include template-tags.php
 require_once(get_template_directory() . '/inc/template-tags.php');
