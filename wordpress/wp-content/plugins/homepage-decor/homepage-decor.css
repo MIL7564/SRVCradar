@@ -9,7 +9,7 @@
 }
 
 /* Hide separators between posts on the homepage */
-.post .separator {
+.entry-footer .separator {
     display: none;
 }
 

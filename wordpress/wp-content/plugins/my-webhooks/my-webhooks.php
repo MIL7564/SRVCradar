@@ -4,7 +4,7 @@ Plugin Name: My Webhooks
 Description: Custom plugin to handle incoming webhooks from Mobilephones.
 Requisites: "WP REST API" plugin and "League Table Grid" plugin.
 Version: 0.0.9
-Delicensed: CC0 by Salman SHUAIB.
+Delicensed: CC0 by Salman SHUAIB
 */
 
 if (!function_exists('resolute')) {
