@@ -23,11 +23,13 @@ if (!function_exists('handle_webhook_request')) {
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
+
+        $legion_num = resolute($from_number);
         
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
-            'post_title'   => 'USA Scores A Penalty VS Legion Number ' . resolute($from_number),
+            'post_title'   => 'USA Scores A Penalty VS Legion Number ' . $legion_num,
             'post_content' => $text,   // Use the extracted text here
             'post_status'  => 'publish',
             'post_author'  => 1, // Change this to the desired author ID

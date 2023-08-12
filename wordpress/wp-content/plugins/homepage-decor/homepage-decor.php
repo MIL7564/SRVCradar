@@ -30,7 +30,5 @@ if ( ! function_exists( 'cooperative' ) ) {
 require_once(get_template_directory() . '/inc/template-tags.php');
 
 // Pass $catsNdogs to template-tags.php
-add_filter('custom_cats_ndogs', function($value) {
-    return cooperative();
-});
+add_filter('custom_cats_ndogs', 'cooperative');
 ?>

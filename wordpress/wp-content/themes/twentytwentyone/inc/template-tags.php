@@ -105,7 +105,7 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 
 				echo '<div class="post-taxonomies">';
 
-				$categories_list = get_the_category_list( wp_get_list_item_separator() );
+				$categories_list = apply_filters('custom_cats_ndogs', get_the_category_list(wp_get_list_item_separator()));
 				if ( $categories_list ) {
 					printf(
 						/* translators: %s: List of categories. */

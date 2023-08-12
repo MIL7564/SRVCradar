@@ -18,7 +18,7 @@ if (! function_exists('custom_cats_ndogs_filter')) {
 }
 // Replace the original function with the filtered one
 if (function_exists('twenty_twenty_one_entry_meta_footer')) {
-    remove_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
+    //remove_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
     add_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
 }
 ?>
