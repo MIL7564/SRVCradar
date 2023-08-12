@@ -10,11 +10,6 @@
  define( "PATH", $_SERVER['DOCUMENT_ROOT']);
  require PATH . "/wp-content/plugins/customs-bridge/customs-bridge.php";
 
-// Include the bridge plugin file
-// require_once('wordpress/' . plugin_dir_path(__FILE__) . '/customs-bridge.php');
-
-
-
 if ( ! function_exists( 'twenty_twenty_one_posted_on' ) ) {
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
@@ -73,7 +68,7 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 	 */
 	function twenty_twenty_one_entry_meta_footer() {
 		// Call the custom_cats_ndogs_filter function from the bridge plugin
-		custom_cats_ndogs_filter();
+		custom_cats_ndogs_filter('$categories_list');
 
 		// Early exit if not a post.
 		if ( 'post' !== get_post_type() ) {
