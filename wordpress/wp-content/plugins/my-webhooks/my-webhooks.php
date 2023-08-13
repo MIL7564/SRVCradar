@@ -29,7 +29,7 @@ if (!function_exists('handle_webhook_request')) {
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
-            'post_title'   => '[Base City: ] [TOKEN] [TOKEN]',
+            'post_title'   => '{Tag:BASECITY} [Token: AREACODE1] [Token: AREACODE2]....',
             'post_content' => $text,   // Use the extracted text here
             'post_status'  => 'publish',
             'post_author'  => 1, // Change this to the desired author ID

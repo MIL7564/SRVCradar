@@ -13,13 +13,19 @@
     border-bottom: none;
 }
 
+/*
+.site-main {
+    background-color: yellow;
+}
+*/
+
 /* 1. Reduce the Width */
 .post {
-    max-width: 80%; /* Adjust this to the desired width */
+    max-width: 100%; /* Adjust this to the desired width */
     margin: 5px auto; /* Centers the post */
     padding: 5px;
     margin-bottom: 0px;
-    /*bborder-bottom: none; */    /* 5. Remove Underline */
+    /*border-bottom: none; */    /* 5. Remove Underline */
 }
 
 /* 2. Yellow Border Around the Articles area */
@@ -28,17 +34,42 @@ article {
 }
 
 /* 3. Reduce and Make Uniform Distance */
-.entry-header, .entry-footer {
+.entry-title, .entry-footer {
     margin-bottom: 5px; /* Adjust as needed */
 }
 
+/*
+.entry-title {
+    color: var(--entry-header--color);
+    font-size: var(--entry-header--font-size);
+    letter-spacing: var(--heading--letter-spacing-h2);
+    line-height: var(--heading--line-height-h2);
+*/
+
 /* 4. Uniform Font Style */
-.entry-header, .entry-footer {
+.post .entry-title {
+    font-family: 'Calibri', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;    
+}
+.post .entry-footer {
     font-family: 'Calibri', sans-serif;
     font-size: 10px;
     font-weight: bold;
     color: white;
 }
+
+
+/* 4. Uniform Font Style */
+/*
+.site-main > article > .entry-header, .entry-footer {
+    font-family: 'Calibri', sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+}
+*/
 
 /* Italic styling for Summary+Content */
 .entry-content {
