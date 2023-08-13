@@ -24,7 +24,8 @@
 
 /* 2. Yellow Border Around the Articles area */
 article {
-    border: 12px solid yellow; 
+    border: 12px solid yellow;
+    padding: 0px; 
 }
 
 /* 3. Reduce and Make Uniform Distance */
@@ -48,6 +49,7 @@ article {
     font-size: 15px;
     color: white;
     padding: 0px;
+    margin: 0px;
 }
 
 /* Italic styling for Summary+Content */
