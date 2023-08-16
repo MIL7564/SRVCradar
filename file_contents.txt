@@ -1,163 +1,243 @@
 ***Codebase:
 
-**customs-bridge.php:-
-<?php
-/*
-Plugin Name: Customs Bridge
-Description: Bridge plugin for communication between homepage-decor.php and template-tags.php.
-Version: 1.0
-Declicensed: CC0 by Salman SHUAIB
-*/
+**AndroidManifest.xml:-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-define("PATH", $_SERVER['DOCUMENT_ROOT']);
-require_once PATH . "/wp-content/plugins/homepage-decor/homepage-decor.php";
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
-// Define the custom filter function
-if (! function_exists('custom_cats_ndogs_filter')) {
-    function custom_cats_ndogs_filter($value) {
-        // Access the filtered value from homepage-decor.php
-        return apply_filters('custom_cats_ndogs', $value);
-    }
-}
-// Replace the original function with the filtered one
-if (function_exists('twenty_twenty_one_entry_meta_footer')) {
-    //remove_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
-    add_action('twenty_twenty_one_entry_meta_footer', 'custom_cats_ndogs_filter');
-}
-?>
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
 
-**homepage-decor.css:-
-.post:nth-child(even) {
-    background-color: red;
-    color: white;
-}
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Retriever"
+        tools:targetApi="33">
 
-.post:nth-child(odd) {
-    background-color: blue;
-    color: white;
-}
+        <service android:name=".MessageMonitoringService" android:exported="false"/>
+        <receiver android:name=".SMSReceiver" android:exported="true" android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
 
-/* Hide separators between posts on the homepage */
-.archive .separator {
-    display: none;
-}
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-/* Adjust white space for compact design (example values, adjust as needed) */
-.post {
-    margin: 5px 0;
-    padding: 5px;
-    margin-bottom: 0px;
-}
+        <!-- Other elements in the manifest file -->
 
-.post-title {
-    margin-bottom: 0px;
-}
+    </application>
 
-.post-summary {
-    margin-bottom: 0px;
-}
+</manifest>
 
-.post-date {
-    margin-bottom: 0px;
-}
+**MainActivity.java:-
+package com.text.retriever;
 
-**homepage-decor.php:-
-<?php
-/*
-Plugin Name: Homepage Decor
-Description: Customizing WordPress Homepage for FE.
-Version: 1.0.1
-Declicensed: CC0
-*/
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
-    // Alternate colors for WordPress Posts
-    function homepage_decor_enqueue_styles() {
-        wp_enqueue_style( 'homepage-decor', plugins_url( 'homepage-decor.css', __FILE__ ) );
-    }
-    add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
-}
+public class MainActivity extends AppCompatActivity {
 
-define( "PATH", $_SERVER['DOCUMENT_ROOT']);
-require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
+    private static final int SMS_PERMISSION_CODE = 0;
 
-// Calculate $catsNdogs using cooperative function
-if ( ! function_exists( 'cooperative' ) ) {
-    function cooperative() {
-        $legion_num = get_option('legion_number', '9'); // Retrieve the value, use '9' as a default
-        $catsNdogs = 'USA' . ' ' . $legion_num . 'Legion'; 
-        return $catsNdogs;
-    }
-}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-
-// Include template-tags.php
-require_once(get_template_directory() . '/inc/template-tags.php');
-
-// Pass $catsNdogs to template-tags.php
-add_filter('custom_cats_ndogs', 'cooperative');
-?>
-
-**my-webhooks.php:-
-<?php
-/*
-Plugin Name: My Webhooks
-Description: Custom plugin to handle incoming webhooks from Mobilephones.
-Requisites: "WP REST API" plugin and "League Table Grid" plugin.
-Version: 0.0.9
-Delicensed: CC0 by Salman SHUAIB.
-*/
-
-if (!function_exists('resolute')) {
-    function resolute($phNum) {
-        $digits = str_split($phNum);
-        while (count($digits) > 1) {
-            $digits = str_split(array_sum($digits));
-        }
-        return intval($digits[0]);
-    }
-}
-
-// Webhook handler function
-if (!function_exists('handle_webhook_request')) {
-    function handle_webhook_request(WP_REST_Request $request) {
-        // Extract the necessary information from the request headers
-        $from_number = $request->get_header('FromNumber');
-        $text = $request->get_header('text');
-
-        $legion_num = resolute($from_number);
-        update_option('legion_number', $legion_num);       
-        // Perform actions based on the webhook data
-        // Create a new post with the received data
-        $post_data = array(
-            'post_title'   => '[Base City: ] [TOKEN] [TOKEN]',
-            'post_content' => $text,   // Use the extracted text here
-            'post_status'  => 'publish',
-            'post_author'  => 1, // Change this to the desired author ID
-            //'post_category' => $sub_category
-        );
-
-        $post_id = wp_insert_post($post_data);
-
-        // Send a response if necessary
-        if ($post_id) {
-            // Post created successfully
-            return new WP_REST_Response('Post created', 200);
+        if (!hasSmsPermission()) {
+            requestSmsPermission();
         } else {
-            // Error occurred while creating the post
-            return new WP_REST_Response('Error creating post', 500);
+            startMessageMonitoringService();
+        }
+    }
+
+    private boolean hasSmsPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestSmsPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
+    }
+
+    private void startMessageMonitoringService() {
+        Intent intent = new Intent(this, MessageMonitoringService.class);
+        startService(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == SMS_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startMessageMonitoringService();
+            }
         }
     }
 }
 
-// Register the custom webhook route
-function register_custom_webhook_route() {
-    register_rest_route('my-webhooks/v1', '/webhook/text', array(
-        'methods' => 'POST',
-        'callback' => 'handle_webhook_request',
-    ));
+**MessageMonitoringService.java:-
+package com.text.retriever;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.IBinder;
+
+public class MessageMonitoringService extends Service {
+
+    private SMSReceiver yourBroadcastReceiver;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Perform initialization tasks here
+        yourBroadcastReceiver = new SMSReceiver();
+        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(yourBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Perform tasks when the service starts here
+        return Service.START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // Return null for a simple Service
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        // Perform cleanup tasks here
+        super.onDestroy();
+        unregisterReceiver(yourBroadcastReceiver);
+    }
 }
 
-// Ensure the callback to register_custom_webhook_route is being run
-add_action('rest_api_init', 'register_custom_webhook_route');
-?>
+**SMSReceiver.java:-
+package com.text.retriever;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.telephony.SmsMessage;
+import android.util.Log;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import org.json.JSONObject;
+
+import java.util.concurrent.TimeUnit;
+
+public class SMSReceiver extends BroadcastReceiver {
+    private static final String TAG = "SMSReceiver";
+    private OkHttpClient client;
+    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
+    private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+    public SMSReceiver() {
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                Object[] pdus = (Object[]) extras.get("pdus");
+                if (pdus != null && pdus.length > 0) {
+                    SmsMessage[] messages = new SmsMessage[pdus.length];
+                    for (int i = 0; i < pdus.length; i++) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            String format = extras.getString("format");
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
+                        } else {
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        }
+                    }
+
+                    // Extract necessary information from the messages
+                    String messageBody = messages[0].getMessageBody();
+                    String sender = messages[0].getOriginatingAddress();
+
+                    // Convert the message body and keywords to lowercase for case-insensitive comparison
+                    String lowerCaseMessageBody = messageBody.toLowerCase();
+                    String keyword1 = "cellnet";
+                    String keyword2 = "opa";
+
+                    if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
+                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
+                        // Log the entire message and sender's number (second, third, and fourth digits)
+                        Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
+                        if (sender != null && sender.length() > 4) {
+                            Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
+                            // Trigger the webhook asynchronously using AsyncTask
+                            new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
+                        } else {
+                            Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            String messageBody = params[0];
+            String fromNumber = params[1];
+
+            try {
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                // + System.currentTimeMillis()
+                RequestBody body = RequestBody.create(requestBody, JSON);
+                Request request = new Request.Builder()
+                        .url(WEBHOOK_URL)
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("FromNumber", fromNumber)
+                        .addHeader("text", messageBody)
+                        // .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
+                        .build();
+
+                // Execute the request
+                Response response = client.newCall(request).execute();
+
+                Log.i(TAG, "Webhook response: " + response.body().string());
+            } catch (Exception e) {
+                Log.e(TAG, "Error in sending request", e);
+            }
+
+            return null;
+        }
+    }
+}
