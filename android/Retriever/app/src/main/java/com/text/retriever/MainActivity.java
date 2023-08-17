@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
     }
 
+    private void startForegroundService() {
+        Intent serviceIntent = new Intent(this, MessageMonitoringService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
     private void startMessageMonitoringService() {
         Intent intent = new Intent(this, MessageMonitoringService.class);
         startService(intent);
