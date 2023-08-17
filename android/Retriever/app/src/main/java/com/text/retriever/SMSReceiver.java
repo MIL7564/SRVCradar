@@ -13,14 +13,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
-    private static boolean isProcessingSMS = false;  // Added variable
-    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";
+    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     public SMSReceiver() {
@@ -33,15 +33,6 @@ public class SMSReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
-            // Check if the SMS is already being processed
-            if (isProcessingSMS) {
-                // If the SMS is being processed, ignore this broadcast
-                return;
-            }
-
-            // Mark the SMS as being processed
-            isProcessingSMS = true;
-
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 Object[] pdus = (Object[]) extras.get("pdus");
@@ -49,16 +40,36 @@ public class SMSReceiver extends BroadcastReceiver {
                     SmsMessage[] messages = new SmsMessage[pdus.length];
                     for (int i = 0; i < pdus.length; i++) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            // ... Rest of the message processing code ...
+                            String format = extras.getString("format");
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
+                        } else {
+                            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        }
+                    }
 
-                            // IMPORTANT: Remove the abortBroadcast() call
+                    // Extract necessary information from the messages
+                    String messageBody = messages[0].getMessageBody();
+                    String sender = messages[0].getOriginatingAddress();
+
+                    // Convert the message body and keywords to lowercase for case-insensitive comparison
+                    String lowerCaseMessageBody = messageBody.toLowerCase();
+                    String keyword1 = "cellnet";
+                    String keyword2 = "opa";
+
+                    if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
+                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
+                        // Log the entire message and sender's number (second, third, and fourth digits)
+                        Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
+                        if (sender != null && sender.length() > 4) {
+                            Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
+                            // Trigger the webhook asynchronously using AsyncTask
+                            new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
+                        } else {
+                            Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
                         }
                     }
                 }
             }
-
-            // Mark the SMS processing as complete
-            isProcessingSMS = false;
         }
     }
 
@@ -70,6 +81,7 @@ public class SMSReceiver extends BroadcastReceiver {
 
             try {
                 String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                // + System.currentTimeMillis()
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -77,6 +89,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
+                        // .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request
@@ -90,5 +103,4 @@ public class SMSReceiver extends BroadcastReceiver {
             return null;
         }
     }
-
 }
