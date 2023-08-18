@@ -44,10 +44,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMessageMonitoringService() {
-        Intent intent = new Intent(this, MessageMonitoringService.class);
-        startService(intent);
-    }
+        // Check if more than one instance of Retriever is running
+        if (!MessageMonitoringService.isServiceRunning()) {
 
+            Intent intent = new Intent(this, MessageMonitoringService.class);
+            startService(intent);
+        }
+    }
     private void playAlarmSound() {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), alarmSound);

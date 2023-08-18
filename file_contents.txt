@@ -14,7 +14,13 @@ public class BootReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             // Start your service when the device boots up
             Intent serviceIntent = new Intent(context, MessageMonitoringService.class);
-            context.startService(serviceIntent);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                // Starting from Android Oreo, background services should be started as foreground services
+                context.startForegroundService(serviceIntent);
+            } else {
+                // For older Android versions, start the service as usual
+                context.startService(serviceIntent);
+            }
         }
     }
 }
@@ -217,9 +223,6 @@ public class SMSReceiver extends BroadcastReceiver {
                             Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
                             // Trigger the webhook asynchronously using AsyncTask
                             new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
-
-                            // IMPORTANT: Disable further processing of the same message
-                            abortBroadcast();
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
                         }
@@ -237,6 +240,7 @@ public class SMSReceiver extends BroadcastReceiver {
 
             try {
                 String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                // + System.currentTimeMillis()
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -244,6 +248,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
+                        // .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request

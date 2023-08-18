@@ -32,11 +32,15 @@ if (!function_exists('handle_webhook_request')) {
             'post_title'   => '{Tag: BASECITY} [TICKET#] [Token: AREACODE1]',
             'post_content' => $text,   // Use the extracted text here
             'post_status'  => 'publish',
-            'post_author'  => 1, // Change this to the desired author ID
+            'post_author'  => 2, // Change this to the desired author ID
             //'post_category' => $sub_category
         );
 
         $post_id = wp_insert_post($post_data);
+        
+        // Check for duplicates and trash if necessary
+        do_action('interdict_check_duplicate', $post_id, $from_number);
+
 
         // Send a response if necessary
         if ($post_id) {
