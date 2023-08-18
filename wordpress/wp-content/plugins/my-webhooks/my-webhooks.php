@@ -40,7 +40,7 @@ if (!function_exists('handle_webhook_request')) {
         
         // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);
-
+        
 
         // Send a response if necessary
         if ($post_id) {
