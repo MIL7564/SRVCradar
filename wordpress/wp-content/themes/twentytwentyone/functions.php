@@ -26,6 +26,32 @@ if ( ! function_exists( 'twenty_twenty_one_setup' ) ) {
 	 *
 	 * @return void
 	 */
+
+	function custom_widgets_init() {
+	// Header Widget Area
+    register_sidebar( array(
+        'name'          => esc_html__( 'Header Widget Area', 'twentytwentyone' ),
+        'id'            => 'header-widget-area',
+        'description'   => esc_html__( 'Add widgets here to appear in your header.', 'twentytwentyone' ),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ) );
+
+    // Main Content Right Widget Area
+    register_sidebar( array(
+        'name'          => esc_html__( 'Main Content Right Widget Area', 'twentytwentyone' ),
+        'id'            => 'content-right-widget-area',
+        'description'   => esc_html__( 'Add widgets here to appear to the right of the main content.', 'twentytwentyone' ),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ) );
+}
+add_action( 'widgets_init', 'custom_widgets_init' );
+
 	function twenty_twenty_one_setup() {
 		/*
 		 * Make theme available for translation.

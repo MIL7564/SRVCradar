@@ -22,6 +22,12 @@ get_header(); ?>
 	</header><!-- .page-header -->
 <?php endif; ?>
 
+<?php if ( is_active_sidebar( 'content-right-widget-area' ) ) : ?>
+    <aside class="content-right-widget-area">
+        <?php dynamic_sidebar( 'content-right-widget-area' ); ?>
+    </aside>
+<?php endif; ?>
+
 <?php
 if ( have_posts() ) {
 
@@ -41,5 +47,8 @@ if ( have_posts() ) {
 	get_template_part( 'template-parts/content/content-none' );
 
 }
+
+
+
 
 get_footer();
