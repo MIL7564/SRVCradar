@@ -79,7 +79,7 @@ if ( ! function_exists( 'twenty_twenty_one_entry_meta_footer' ) ) {
 		if ( ! is_single() ) {
 
 			if ( is_sticky() ) {
-				echo '<p style="color: red; background-color: cyan; text-align: center;">' . esc_html_x( 'STICKY NOTE!', 'Label for sticky posts', 'twentytwentyone' ) . '</p>';
+				echo '<p style="color: orange; background-color: cyan; text-align: center; font-weight: bold;">' . esc_html_x( 'STICKY NOTE!', 'Label for sticky posts', 'twentytwentyone' ) . '</p>';
 			}
 
 			$post_format = get_post_format();
