@@ -74,8 +74,8 @@ public class SMSReceiver extends BroadcastReceiver {
 
     private String escapeJsonString(String input) {
         return input.replace("\\", "\\\\")
-                .replace("\"", " \\\"")
-                .replace("\n", " \\n")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
                 .replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
