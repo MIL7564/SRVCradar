@@ -1,4 +1,7 @@
-- 
+- Long words do not get sent.
+- Emojis, Emoticons, non-English chars do not get sent to website; ought to be represented by 9.
+
+- 9 added to any number, singled, results in the same number - sigled. Therefore, 9 can represent unknown chars. For example, 7+9=16=>1+6=7; 23+9=32=>5 is resolution of 23 [2+3=5].
 
 -Salman> OKAY SO HERE'S THE PLAN C, IF I MAY CALL YOU THAT.  WE WILL EDIT homepage-decor.php INSTEAD OF ALTERING THE THEME FILE template-tags.php. WHAT WE NEED TO DO IS TAKE THE VALUE OF $categories_list AS PARAMETER FOR  A NEW FUNCTION IN homepage-decor.php. YOU CAN CALL THIS FUNCTION WHATEVER YOU WISH. THEN WE ASSIGN $categories_list THE FOLLOWING STRING IN PHP: 'USA' . ' ' . $legion_num . 'Legion';  AFTER BORROWING THE CODE FOR THE resolute FUNCTION FROM my-webhooks.php AND DUMPING IT INTO template-tags.php.
 -ChatGPT-> Based on the information you've provided, it's not entirely clear how you plan to pass the $categories_list value through these different components and how it will be used. If you can provide more specific details about how you intend to use the $categories_list value and how it should flow through the different parts of your system, I can provide more targeted assistance and guidance. 
