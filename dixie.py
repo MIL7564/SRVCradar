@@ -1,5 +1,5 @@
 '''
-1. PUT dixie.py INSIDE THE FOLDER WHERE YOU HAVE FILES TO COMPILE.
+1. PUT dixie.py ONE STEP ABOVE THE FOLDER(s) WHERE YOU HAVE FILES TO COMPILE.
 2. RUN dixie.py.
 3. ENTER THE NAMES OF THE FILES YOU WANT TO SEARCH FOR, SEPARATED BY COMMAS (e.g., cont.html, jessie.py, random.js).
 4. A TEXT FILE "file_contents.txt" WILL BE GENERATED THAT YOU CAN USE TO CONVERSE IN CODE WITH ChatGPT.
@@ -30,10 +30,16 @@ def search_files(folder_path, files):
         for file in filenames:
             if file in files:
                 file_path = os.path.join(root, file)
-                with open(file_path, 'r') as f:
-                    content = f.read()
-                    file_contents[file] = content
+                try:
+                    with open(file_path, 'r', encoding='cp1252') as f:
+                        content = f.read()
+                        file_contents[file] = content
+                except UnicodeDecodeError:
+                    # Display an error dialog box
+                    messagebox.showerror("Decoding Error", f"The file '{file}' cannot be decoded from cp1252 to Unicode and will be skipped.")
     return file_contents
+
+
 
 def write_contents_to_file(file_contents):
     """

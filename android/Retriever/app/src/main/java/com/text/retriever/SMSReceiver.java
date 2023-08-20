@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +62,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
                             // Trigger the webhook asynchronously using AsyncTask
-                            new WebhookAsyncTask().execute(messageBody, sender.substring(1, 4));
+                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
                         }
@@ -71,6 +70,14 @@ public class SMSReceiver extends BroadcastReceiver {
                 }
             }
         }
+    }
+
+    private String escapeJsonString(String input) {
+        return input.replace("\\", "\\\\")
+                .replace("\"", " \\\"")
+                .replace("\n", " \\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
     private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
@@ -81,7 +88,6 @@ public class SMSReceiver extends BroadcastReceiver {
 
             try {
                 String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
-                // + System.currentTimeMillis()
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -89,7 +95,6 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        // .addHeader("OccurredAt", String.valueOf(System.currentTimeMillis()))
                         .build();
 
                 // Execute the request

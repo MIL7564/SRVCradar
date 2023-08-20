@@ -49,7 +49,7 @@ if ( ! function_exists( 'twenty_twenty_one_setup' ) ) {
         'before_title'  => '<h2 class="widget-title">',
         'after_title'   => '</h2>',
     ) );
-}
+	}
 add_action( 'widgets_init', 'custom_widgets_init' );
 
 	function twenty_twenty_one_setup() {
