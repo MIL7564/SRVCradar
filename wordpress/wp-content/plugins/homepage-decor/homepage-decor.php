@@ -21,7 +21,7 @@ require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 if ( ! function_exists( 'cooperative' ) ) {
     function cooperative() {
         $legion_num = get_option('legion_number', '9'); // Retrieve the value, use '9' as a default
-        $catsNdogs = 'USA' . ' ' . $legion_num . 'Legion'; 
+        $catsNdogs = $legion_num . 'th Legion'. ' '. 'of the USA'; 
         return $catsNdogs;
     }
 }
