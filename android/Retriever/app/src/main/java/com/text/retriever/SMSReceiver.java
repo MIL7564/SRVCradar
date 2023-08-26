@@ -57,14 +57,14 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
                         // Keywords "cellnet" and "opa" (case-insensitive) found in the message
-                        // Log the entire message and sender's number (second, third, and fourth digits)
+                        // Log the entire message and sender's number (second digit)
                         Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
-                            Log.i(TAG, "Sender's number, digits 2-4: " + sender.substring(1, 4));
+                            Log.i(TAG, "Sender's number, digit 2: " + sender.substring(1, 2));
                             // Trigger the webhook asynchronously using AsyncTask
-                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
+                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 2));
                         } else {
-                            Log.w(TAG, "Sender's number is not long enough to extract digits 2-4");
+                            Log.w(TAG, "Sender's number is not long enough to extract digit 2");
                         }
                     }
                 }
