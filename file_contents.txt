@@ -1,95 +1,139 @@
 ***Codebase:
 
-**index.php:-
+**default-public-posts.php:-
 <?php
-/**
- * Used to set up all core blocks used with the block editor.
- *
- * @package WordPress
- */
+/*
+Plugin Name: Default Public Posts
+Description: Sets the default visibility of new posts to "Public" and displays non-private posts by default.
+Version: 1.0.1
+Delicensed: CC0 by Salman SHUAIB
+*/
 
-define( 'BLOCKS_PATH', ABSPATH . WPINC . '/blocks/' );
-
-// Include files required for core blocks registration.
-require BLOCKS_PATH . 'legacy-widget.php';
-require BLOCKS_PATH . 'widget-group.php';
-require BLOCKS_PATH . 'require-dynamic-blocks.php';
-
-/**
- * Registers core block types using metadata files.
- * Dynamic core blocks are registered separately.
- *
- * @since 5.5.0
- */
-function register_core_block_types_from_metadata() {
-	$block_folders = require BLOCKS_PATH . 'require-static-blocks.php';
-	foreach ( $block_folders as $block_folder ) {
-		register_block_type(
-			BLOCKS_PATH . $block_folder
-		);
-	}
+// Set the default post visibility to "Public"
+function set_default_post_visibility($post_data) {
+    if ($post_data['post_type'] === 'post' && $post_data['post_status'] === 'auto-draft') {
+        $post_data['post_status'] = 'publish';
+    }
+    return $post_data;
 }
-add_action( 'init', 'register_core_block_types_from_metadata' );
+add_filter('wp_insert_post_data', 'set_default_post_visibility');
 
-**header.php:-
-<?php
-/**
- * @package WordPress
- * @subpackage Theme_Compat
- * @deprecated 3.0.0
- *
- * This file is here for backward compatibility with old themes and will be removed in a future version.
- */
-_deprecated_file(
-	/* translators: %s: Template name. */
-	sprintf( __( 'Theme without %s' ), basename( __FILE__ ) ),
-	'3.0.0',
-	null,
-	/* translators: %s: Template name. */
-	sprintf( __( 'Please include a %s template in your theme.' ), basename( __FILE__ ) )
-);
-?>
-<!DOCTYPE html>
-<html <?php language_attributes(); ?>>
-<head>
-<link rel="profile" href="https://gmpg.org/xfn/11" />
-<meta http-equiv="Content-Type" content="<?php bloginfo( 'html_type' ); ?>; charset=<?php bloginfo( 'charset' ); ?>" />
-
-<title><?php echo wp_get_document_title(); ?></title>
-
-<link rel="stylesheet" href="<?php bloginfo( 'stylesheet_url' ); ?>" type="text/css" media="screen" />
-<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
-
-<?php if ( file_exists( get_stylesheet_directory() . '/images/kubrickbgwide.jpg' ) ) { ?>
-<style type="text/css" media="screen">
-
-	<?php
-	// Checks to see whether it needs a sidebar.
-	if ( empty( $withcomments ) && ! is_single() ) {
-		?>
-	#page { background: url("<?php bloginfo( 'stylesheet_directory' ); ?>/images/kubrickbg-<?php bloginfo( 'text_direction' ); ?>.jpg") repeat-y top; border: none; }
-<?php } else { // No sidebar. ?>
-	#page { background: url("<?php bloginfo( 'stylesheet_directory' ); ?>/images/kubrickbgwide.jpg") repeat-y top; border: none; }
-<?php } ?>
-
-</style>
-<?php } ?>
-
-<?php
-if ( is_singular() ) {
-	wp_enqueue_script( 'comment-reply' );
+// Display non-private posts by default
+function display_public_posts($query) {
+    if ($query->is_main_query() && !is_admin() && $query->is_home()) {
+        $query->set('post_status', array('publish'));
+    }
 }
+add_action('pre_get_posts', 'display_public_posts');
 ?>
 
-<?php wp_head(); ?>
-</head>
-<body <?php body_class(); ?>>
-<div id="page">
+**homepage-decor.php:-
+<?php
+/*
+Plugin Name: Homepage Decor
+Description: Customizing WordPress Homepage for FE.
+Version: 1.0.1
+Declicensed: CC0
+*/
 
-<div id="header" role="banner">
-	<div id="headerimg">
-		<h1><a href="<?php echo home_url(); ?>/"><?php bloginfo( 'name' ); ?></a></h1>
-		<div class="description"><?php bloginfo( 'description' ); ?></div>
-	</div>
-</div>
-<hr />
+if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
+    // Alternate colors for WordPress Posts
+    function homepage_decor_enqueue_styles() {
+        wp_enqueue_style( 'homepage-decor', plugins_url( 'homepage-decor.css', __FILE__ ) );
+    }
+    add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
+}
+
+define( "PATH", $_SERVER['DOCUMENT_ROOT']);
+require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
+
+// Calculate $catsNdogs using cooperative function
+if ( ! function_exists( 'cooperative' ) ) {
+    function cooperative() {
+        $legion_num = get_option('legion_number', '9'); // Retrieve the value from WordPress DB, use '9' as a default
+        $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
+        return $catsNdogs;
+    }
+}
+
+
+// Include template-tags.php
+require_once(get_template_directory() . '/inc/template-tags.php');
+
+// Pass $catsNdogs to template-tags.php
+add_filter('custom_cats_ndogs', 'cooperative');
+?>
+
+**my-webhooks.php:-
+<?php
+/*
+Plugin Name: My Webhooks
+Description: Custom plugin to handle incoming webhooks from Mobilephones.
+Requisites: "WP REST API" plugin and "League Table Grid" plugin.
+Version: 0.0.9
+Delicensed: CC0 by Salman SHUAIB
+*/
+
+if (!function_exists('resolute')) {
+    function resolute($phNum) {
+        $digits = str_split($phNum);
+        while (count($digits) > 1) {
+            $digits = str_split(array_sum($digits));
+        }
+        return intval($digits[0]);
+    }
+}
+
+// Webhook handler function
+if (!function_exists('handle_webhook_request')) {
+    function handle_webhook_request(WP_REST_Request $request) {
+        // Extract the necessary information from the request headers
+        $from_number = $request->get_header('FromNumber');
+        $text = $request->get_header('text');
+
+        $legion_num = resolute($from_number);
+        update_option('legion_number', $legion_num);       
+        // Perform actions based on the webhook data
+        // Create a new post with the received data
+        $post_data = array(
+            'post_title'   => '{Tag: BASECITY} [TICKET#] [Token: AREACODE1]',
+            'post_content' => $text,   // Use the extracted text here
+            'post_status'  => 'publish',
+            'post_author'  => 2, // Change this to the desired author ID
+            //'post_category' => $sub_category
+        );
+
+        $post_id = wp_insert_post($post_data);
+        
+        // Update the Legion Number for the latest post only
+        if ($post_id) {
+            $legion_num = resolute($from_number);
+            update_post_meta($post_id, 'legion_number', $legion_num);
+        
+        // Check for duplicates and trash if necessary
+        do_action('interdict_check_duplicate', $post_id, $from_number);
+        
+
+        // Send a response if necessary
+        if ($post_id) {
+            // Post created successfully
+            return new WP_REST_Response('Post created', 200);
+        } else {
+            // Error occurred while creating the post
+            return new WP_REST_Response('Error creating post', 500);
+        }
+    }
+}
+}
+
+// Register the custom webhook route
+function register_custom_webhook_route() {
+    register_rest_route('my-webhooks/v1', '/webhook/text', array(
+        'methods' => 'POST',
+        'callback' => 'handle_webhook_request',
+    ));
+}
+
+// Ensure the callback to register_custom_webhook_route is being run
+add_action('rest_api_init', 'register_custom_webhook_route');
+?>

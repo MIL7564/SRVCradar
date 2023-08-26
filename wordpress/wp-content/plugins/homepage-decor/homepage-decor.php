@@ -20,7 +20,7 @@ require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 // Calculate $catsNdogs using cooperative function
 if ( ! function_exists( 'cooperative' ) ) {
     function cooperative() {
-        $legion_num = get_option('legion_number', '9'); // Retrieve the value, use '9' as a default
+        $legion_num = get_option('legion_number', '9'); // Retrieve the value from WordPress DB, use '9' as a default
         $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
         return $catsNdogs;
     }

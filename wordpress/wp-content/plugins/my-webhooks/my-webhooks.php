@@ -38,7 +38,14 @@ if (!function_exists('handle_webhook_request')) {
 
         $post_id = wp_insert_post($post_data);
         
-        // Check for duplicates and trash if necessary
+        // Update the Legion Number for the latest post only
+        if ($post_id) {
+            $legion_num = resolute($from_number);
+            update_post_meta($post_id, 'legion_number', $legion_num);   //This will store the legion_number in the wp_postmeta table, associated with the post ID of the newly created post.
+        
+        
+        
+            // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);
         
 
@@ -51,6 +58,7 @@ if (!function_exists('handle_webhook_request')) {
             return new WP_REST_Response('Error creating post', 500);
         }
     }
+}
 }
 
 // Register the custom webhook route
