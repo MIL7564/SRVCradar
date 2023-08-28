@@ -60,11 +60,11 @@ public class SMSReceiver extends BroadcastReceiver {
                         // Log the entire message and sender's number (second, third, and fourth digits)
                         Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
-                            Log.i(TAG, "Sender's number, digit two: " + sender.substring(1, 2));
+                            Log.i(TAG, "Sender's number, digits Two TO Four: " + sender.substring(1, 4));
                             // Trigger the webhook asynchronously using AsyncTask
-                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 2));
+                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
                         } else {
-                            Log.w(TAG, "Sender's number is not long enough to extract digit two");
+                            Log.w(TAG, "Sender's number is not long enough to extract digits Two TO Four");
                         }
                     }
                 }

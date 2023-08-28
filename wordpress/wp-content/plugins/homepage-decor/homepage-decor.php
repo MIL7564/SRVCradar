@@ -20,11 +20,22 @@ require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 // Calculate $catsNdogs using cooperative function
 if ( ! function_exists( 'cooperative' ) ) {
     function cooperative() {
-        $legion_num = get_option('legion_number', '9'); // Retrieve the value from WordPress DB, use '9' as a default
+        global $wpdb, $post;
+
+        // Using $wpdb to fetch the legion_number from the fgp_posts table
+        $query = "SELECT legion_number FROM {$wpdb->prefix}posts WHERE ID = %d";
+        $legion_num = $wpdb->get_var($wpdb->prepare($query, $post->ID));
+
+        // If legion_number is empty, set to default '9'
+        if (empty($legion_num)) {
+            $legion_num = '9';
+        }
+
         $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
         return $catsNdogs;
     }
 }
+
 
 
 // Include template-tags.php
