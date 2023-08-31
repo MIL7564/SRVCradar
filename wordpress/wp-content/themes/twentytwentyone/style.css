@@ -2896,7 +2896,6 @@ pre.wp-block-preformatted {
 	.wp-block-pullquote.is-style-solid-color {
 		padding: calc(5 * var(--global--spacing-unit));
 	}
-
 }
 
 .wp-block-pullquote.is-style-solid-color blockquote::before {

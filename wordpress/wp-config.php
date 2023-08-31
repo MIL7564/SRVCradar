@@ -1,4 +1,6 @@
-<?php
+<?php
+define( 'WP_CACHE', false ); // By SiteGround Optimizer
+
 
 /**
 
@@ -48,13 +50,13 @@ define( 'DB_NAME', 'dbyntcablwz2fz' );
 
 /** Database username */
 
-define( 'DB_USER', 'root' );
+define( 'DB_USER', 'uuow2rmglteoy' );
 
 
 
 /** Database password */
 
-define( 'DB_PASSWORD', 'felixLG;4BLUE' );
+define( 'DB_PASSWORD', 'rg1wx2no42fg' );
 
 
 
@@ -167,6 +169,11 @@ define( 'WP_DEBUG', false );
 /* Add any custom values between this line and the "stop editing" line. */
 
 
+// Disable post revisions
+define('WP_POST_REVISIONS', false);
+
+// Set auto-save interval to 9999 seconds (almost 2 hours)
+define('AUTOSAVE_INTERVAL', 9999);
 
 
 /* That's all, stop editing! Happy publishing. */

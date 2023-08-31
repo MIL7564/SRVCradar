@@ -23,4 +23,3 @@ function display_public_posts($query) {
 }
 add_action('pre_get_posts', 'display_public_posts');
 ?>
- 

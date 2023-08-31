@@ -187,14 +187,11 @@ class Campaign_Service {
 	 * @return mixed false on failure, HTML of the message body on success.
 	 */
 	static function generate_message_body() {
-		// SG Settings page.
-		$settings_page = admin_url( 'options-general.php?page=siteground_settings' );
-
 		// The campaign steps.
 		$campaign_steps = (int) get_option( 'siteground_optimizer_campaign_steps', 0 );
 
 		// Get the campaign content.
-		$response = wp_remote_get( 'https://sgwpdemo.com/jsons/campaigns/sg-cachepress-body.json' );
+		$response = wp_remote_get( 'https://sgwpdemo.com/jsons/campaigns/new-sg-cachepress-body.json' );
 
 		// Bail if the request fails.
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -214,13 +211,16 @@ class Campaign_Service {
 		$args = array_key_exists( $locale, $json_args[ $campaign_steps ] ) ? $json_args[ $campaign_steps ][ $locale ] : $json_args[ $campaign_steps ]['default'];
 
 		// Add any additional arguments.
-		$args['unsubscribe_link'] = $settings_page;
+		$args['unsubscribe_link'] = admin_url( 'options-general.php?page=siteground_settings' );
+		$args['campaign_step'] = $campaign_steps;
+		$args['plugins_link'] = admin_url( 'plugins.php' );
+		$args['sgo_page_link'] = admin_url( 'admin.php?page=sg-cachepress' );
 
 		// Start the output biffering.
 		ob_start();
 
 		// Include the template file.
-		include \SiteGround_Optimizer\DIR . '/templates/campaigns/campaign-template.php';
+		include \SiteGround_Optimizer\DIR . '/templates/campaigns/new-campaign-template.php';
 
 		// Pass the contents of the output buffer to a variable.
 		$message_body = ob_get_contents();

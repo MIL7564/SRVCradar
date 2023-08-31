@@ -27,7 +27,7 @@ class Admin {
 		'sgo_environment' => 'Environment',
 		'sgo_frontend'    => 'Frontend',
 		'sgo_media'       => 'Media',
-		'sgo_analysis'    => 'Speed Test',
+		'sgo_analysis'    => 'Site Performance',
 	);
 
 	public $multisite_permissions = array(

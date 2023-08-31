@@ -48,6 +48,7 @@ class Loader {
 	public $rest;
 	public $database_optimizer;
 	public $campaign_service;
+	public $performance_reports;
 
 	/**
 	 * Configuration map array.
@@ -80,7 +81,8 @@ class Loader {
 			'file_cacher'            => 'file_cacher',
 			'ssl'                    => 'ssl',
 			'campaign_service'       => 'campaign_service',
-			'config'                 => 'config'
+			'config'                 => 'config',
+			'performance_reports'    => 'performance_reports',
 		),
 	);
 
@@ -266,6 +268,12 @@ class Loader {
 	public function add_install_service_hooks() {
 		// Add the install action.
 		add_action( 'upgrader_process_complete', array( $this->install_service, 'install' ) );
+
+		// Force the installation process if it is not completed.
+		if ( false === get_option( 'sgo_install_7_4_0', false ) ) {
+			add_action( 'init', array( $this->install_service, 'install' ) );
+		}
+
 	}
 
 	/**
@@ -476,7 +484,7 @@ class Loader {
 			foreach ( $child as $attributes ) {
 
 				// Continue if option is in the exclude list.
-				if ( in_array( 'lazyload_'. $attributes["option"], $excluded_types ) ) {
+				if ( in_array( 'lazyload_' . $attributes['option'], $excluded_types ) ) {
 					continue;
 				}
 
@@ -778,5 +786,40 @@ class Loader {
 		add_action( 'init', array( $this->config, 'check_current_version' ) );
 		add_action( 'updated_option', array( $this->config, 'update_config_check' ), 10, 1 );
 		add_action( 'added_option', array( $this->config, 'update_config_check' ), 10, 1 );
+	}
+
+	/**
+	 * Add Performance Reports hooks.
+	 *
+	 * @since 7.4.0
+	 */
+	public function add_performance_reports_hooks() {
+		// Non SG users and non multisites only.
+		if (
+			Helper_Service::is_siteground() ||
+			is_multisite()
+		) {
+			return;
+		}
+
+		// Get the list of performance report email receipients.
+		$performance_reports_receipients = get_option( 'siteground_optimizer_performace_receipient', false );
+
+		add_filter( 'cron_schedules', array( $this->performance_reports, 'sg_add_cron_interval' ), 10, 1 );
+
+		if ( empty( $performance_reports_receipients ) ) {
+			$this->performance_reports->performance_reports_email->unschedule_event();
+		} else {
+			// Schedule performace report event.
+			if ( ! wp_next_scheduled( 'siteground_optimizer_performance_report_cron' ) ) {
+				$this->performance_reports->performance_reports_email->schedule_event();
+			}
+		}
+
+		// Check if the admin email is being updated, and verify if we need to update the receipient option as well.
+		add_action( 'update_option_admin_email', array( $this->performance_reports, 'update_receipient' ), 10, 3 );
+
+		// Sent the performance report email.
+		add_action( 'siteground_optimizer_performance_report_cron', array( $this->performance_reports->performance_reports_email, 'sg_handle_email' ) );
 	}
 }

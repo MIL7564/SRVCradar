@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'siteground/sg-cachepress',
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
-        'reference' => '3c5961465a0c214b487b198696755101cccd7b23',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '27d893b70a5263579dd8c57324d0696affc759cd',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,9 +40,9 @@
             'dev_requirement' => false,
         ),
         'matthiasmullie/minify' => array(
-            'pretty_version' => '1.3.70',
-            'version' => '1.3.70.0',
-            'reference' => '2807d9f9bece6877577ad44acb5c801bb3ae536b',
+            'pretty_version' => '1.3.71',
+            'version' => '1.3.71.0',
+            'reference' => 'ae42a47d7fecc1fbb7277b2f2d84c37a33edc3b1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matthiasmullie/minify',
             'aliases' => array(),
@@ -79,9 +79,9 @@
             ),
         ),
         'siteground/sg-cachepress' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
-            'reference' => '3c5961465a0c214b487b198696755101cccd7b23',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '27d893b70a5263579dd8c57324d0696affc759cd',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

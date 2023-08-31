@@ -1,9 +1,7 @@
 <?php
 /**
  * Plugin Name: Latent Supremacy
- * Description: Logs details about bugs to a text file for analysis. Examples:
- ** Tracks the creation of Auto Draft posts in WordPress and
- ** Debugs resolute function for processing cellphone numbers.
+ * Description: Tracks the creation of Auto Draft posts in WordPress and logs the findings to a text file.
  * Version: 1.0.0
  * Delicensed CC0 by Salman SHUAIB
  */
