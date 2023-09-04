@@ -29,7 +29,7 @@ if (!function_exists('handle_webhook_request')) {
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
-            'post_title'   => '{Tag: BASECITY} [TICKET#] [Token: AREACODE1]',
+            'post_title'   => '{Tag: BASECITY} ' . rand(10000, 99999),
             'post_content' => $text,   // Use the extracted text here
             'post_status'  => 'publish',
             'post_author'  => 2, // Change this to the desired author ID
