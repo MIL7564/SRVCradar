@@ -7,6 +7,9 @@ Version: 0.0.9
 Delicensed: CC0 by Salman SHUAIB
 */
 
+include 'CitiesBank.php';
+$areaCodeToCity = array_flip($cityAreaCodes);  // Reverse the array for lookup
+
 if (!function_exists('resolute')) {
     function resolute($phNum) {
         $digits = str_split($phNum);
@@ -20,19 +23,27 @@ if (!function_exists('resolute')) {
 // Webhook handler function
 if (!function_exists('handle_webhook_request')) {
     function handle_webhook_request(WP_REST_Request $request) {
+        global $areaCodeToCity;
+
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
 
         $legion_num = resolute($from_number);
+
+        // Extract the area code from the phone number
+        $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
+
+        $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}";  // Check if the area code exists, else default
+
         update_option('legion_number', $legion_num);       
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
-            'post_title'   => '{Tag: BASECITY} ' . rand(10000, 99999),
-            'post_content' => $text,   // Use the extracted text here
+            'post_title'   => $baseCity . ' ' . rand(10000, 99999),
+            'post_content' => $text,   
             'post_status'  => 'publish',
-            'post_author'  => 2, // Change this to the desired author ID
+            'post_author'  => 2, 
             //'post_category' => $sub_category
         );
 
@@ -42,21 +53,13 @@ if (!function_exists('handle_webhook_request')) {
         $wpdb->update(
             $wpdb->posts,
             array(
-                'legion_number' => $legion_num  // integer
+                'legion_number' => $legion_num  
             ),
-            array('ID' => $post_id) // where clause
+            array('ID' => $post_id) 
         );
-
-        /* Update the Legion Number for the latest post only
-        if ($post_id) {
-            $legion_num = resolute($from_number);
-            update_post_meta($post_id, 'legion_number', $legion_num);   //This will store the legion_number in the wp_postmeta table, associated with the post ID of the newly created post.
-        */
         
-        
-            // Check for duplicates and trash if necessary
+        // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);
-        
 
         // Send a response if necessary
         if ($post_id) {
