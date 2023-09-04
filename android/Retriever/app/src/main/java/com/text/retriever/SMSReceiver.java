@@ -1,5 +1,7 @@
 package com.text.retriever;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,26 +48,29 @@ public class SMSReceiver extends BroadcastReceiver {
                         }
                     }
 
-                    // Extract necessary information from the messages
                     String messageBody = messages[0].getMessageBody();
                     String sender = messages[0].getOriginatingAddress();
 
-                    // Convert the message body and keywords to lowercase for case-insensitive comparison
-                    String lowerCaseMessageBody = messageBody.toLowerCase();
-                    String keyword1 = "cellnet";
-                    String keyword2 = "opa";
+                    Pattern pattern = Pattern.compile("\\b\\d{5}\\b");
+                    Matcher matcher = pattern.matcher(messageBody);
 
-                    if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
-                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
-                        // Log the entire message and sender's number (second, third, and fourth digits)
-                        Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
+// Check if the message contains "opa" and "cellnet"
+                    if (messageBody.toLowerCase().contains("cellnet") && messageBody.toLowerCase().contains("opa")) {
+                        String fiveDigitNumber = ""; // default value
+
+                        if (matcher.find()) {
+                            fiveDigitNumber = matcher.group(); // override with the actual 5-digit number if found
+                        }
+
                         if (sender != null && sender.length() > 4) {
-                            Log.i(TAG, "Sender's number, digits Two TO Four: " + sender.substring(1, 4));
-                            // Trigger the webhook asynchronously using AsyncTask
-                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
+                            new WebhookAsyncTask().execute(escapeJsonString(fiveDigitNumber),
+                                    escapeJsonString(messageBody),
+                                    sender.substring(1, 4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits Two TO Four");
                         }
+                    } else {
+                        Log.i(TAG, "Required keywords not found in the SMS");
                     }
                 }
             }
@@ -83,11 +88,12 @@ public class SMSReceiver extends BroadcastReceiver {
     private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
-            String messageBody = params[0];
-            String fromNumber = params[1];
+            String fiveDigitNumber = params[0];
+            String messageBody = params[1];
+            String fromNumber = params[2];
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                String requestBody = "{\"fiveDigitNumber\":\"" + fiveDigitNumber + "\",\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -95,16 +101,14 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
+                        .addHeader("fiveDigitNumber", fiveDigitNumber)
                         .build();
 
-                // Execute the request
                 Response response = client.newCall(request).execute();
-
                 Log.i(TAG, "Webhook response: " + response.body().string());
             } catch (Exception e) {
                 Log.e(TAG, "Error in sending request", e);
             }
-
             return null;
         }
     }

@@ -23,54 +23,64 @@ if (!function_exists('resolute')) {
 // Webhook handler function
 if (!function_exists('handle_webhook_request')) {
     function handle_webhook_request(WP_REST_Request $request) {
-        global $areaCodeToCity;
+        global $areaCodeToCity, $wpdb;
 
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
+        $fiveDigitNumber = $request->get_header('fiveDigitNumber');
 
         $legion_num = resolute($from_number);
-
-        // Extract the area code from the phone number
         $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
+        $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}"; 
 
-        $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}";  // Check if the area code exists, else default
-
-        update_option('legion_number', $legion_num);       
-        // Perform actions based on the webhook data
-        // Create a new post with the received data
+        update_option('legion_number', $legion_num); 
+        
+        $TICKET = rand(10000, 99999);
         $post_data = array(
-            'post_title'   => $baseCity . ' ' . rand(10000, 99999),
-            'post_content' => $text,   
+            'post_title'   => $baseCity . ' ' . $TICKET,
+            'post_content' => $text,
             'post_status'  => 'publish',
-            'post_author'  => 2, 
-            //'post_category' => $sub_category
+            'post_author'  => 2,
         );
 
         $post_id = wp_insert_post($post_data);
-        
-        global $wpdb;
+
         $wpdb->update(
             $wpdb->posts,
             array(
                 'legion_number' => $legion_num  
             ),
-            array('ID' => $post_id) 
+            array('ID' => $post_id)
         );
-        
-        // Check for duplicates and trash if necessary
+
         do_action('interdict_check_duplicate', $post_id, $from_number);
 
-        // Send a response if necessary
+        // Check for post matching the fiveDigitNumber and add the comment
+        $matching_post_id = $wpdb->get_var($wpdb->prepare(
+            "SELECT ID FROM {$wpdb->posts} WHERE post_title LIKE %s LIMIT 1",
+            '%' . $wpdb->esc_like($fiveDigitNumber) . '%'
+        ));
+
+        if ($matching_post_id) {
+            // Inserting a comment directly using the database
+            $wpdb->insert($wpdb->comments, array(
+                'comment_post_ID' => $matching_post_id,
+                'comment_content' => $text,
+                'comment_date' => current_time('mysql'),
+                'comment_date_gmt' => current_time('mysql', 1),
+                'comment_approved' => 1,
+            ));
+        }
+
         if ($post_id) {
-            // Post created successfully
             return new WP_REST_Response('Post created', 200);
         } else {
-            // Error occurred while creating the post
             return new WP_REST_Response('Error creating post', 500);
         }
     }
 }
+
 
 // Register the custom webhook route
 function register_custom_webhook_route() {
