@@ -36,7 +36,7 @@ if (!function_exists('handle_webhook_request')) {
 
         update_option('legion_number', $legion_num); 
         
-        $TICKET = rand(10000, 99999);
+        $TICKET = $fiveDigitNumber;
         $post_data = array(
             'post_title'   => $baseCity . ' ' . $TICKET,
             'post_content' => $text,
@@ -55,23 +55,6 @@ if (!function_exists('handle_webhook_request')) {
         );
 
         do_action('interdict_check_duplicate', $post_id, $from_number);
-
-        // Check for post matching the fiveDigitNumber and add the comment
-        $matching_post_id = $wpdb->get_var($wpdb->prepare(
-            "SELECT ID FROM {$wpdb->posts} WHERE post_title LIKE %s LIMIT 1",
-            '%' . $wpdb->esc_like($fiveDigitNumber) . '%'
-        ));
-
-        if ($matching_post_id) {
-            // Inserting a comment directly using the database
-            $wpdb->insert($wpdb->comments, array(
-                'comment_post_ID' => $matching_post_id,
-                'comment_content' => $text,
-                'comment_date' => current_time('mysql'),
-                'comment_date_gmt' => current_time('mysql', 1),
-                'comment_approved' => 1,
-            ));
-        }
 
         if ($post_id) {
             return new WP_REST_Response('Post created', 200);

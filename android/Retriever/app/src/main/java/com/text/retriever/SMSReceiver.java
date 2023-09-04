@@ -1,5 +1,6 @@
 package com.text.retriever;
 
+import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import android.content.BroadcastReceiver;
@@ -56,10 +57,17 @@ public class SMSReceiver extends BroadcastReceiver {
 
 // Check if the message contains "opa" and "cellnet"
                     if (messageBody.toLowerCase().contains("cellnet") && messageBody.toLowerCase().contains("opa")) {
-                        String fiveDigitNumber = ""; // default value
+                        Random random = new Random();
+                        String fiveDigitNumber = String.format("%05d", random.nextInt(100000)); // random Ticket
 
                         if (matcher.find()) {
                             fiveDigitNumber = matcher.group(); // override with the actual 5-digit number if found
+                        }
+
+                        // Sending a response message with the parsed five-digit number
+                        if (!fiveDigitNumber.isEmpty()) {
+                            String responseMessage = "Your ticket number is: " + fiveDigitNumber;
+                            SMSTransmitter.sendSMS(sender, responseMessage);
                         }
 
                         if (sender != null && sender.length() > 4) {
