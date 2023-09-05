@@ -1,7 +1,7 @@
 package com.text.retriever;
 
 import java.time.LocalDate;
-import java.io.IOException;
+import java.time.LocalTime;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,9 @@ public class SMSReceiver extends BroadcastReceiver {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     // Define TheCurrentDate as a class member variable
-    private LocalDate TheCurrentDate = LocalDate.now(java.time.ZoneId.of("America/New_York"));
+    private LocalDate TheCurrentDate;
+    private LocalTime TheCurrentTime;
+    private String Taser;
 
     public SMSReceiver() {
         this.client = new OkHttpClient.Builder()
@@ -62,8 +64,12 @@ public class SMSReceiver extends BroadcastReceiver {
                         Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits Two TO Four: " + sender.substring(1, 4));
+                            // Update the time-related values
+                            TheCurrentDate = LocalDate.now(java.time.ZoneId.of("America/New_York"));
+                            TheCurrentTime = LocalTime.now(java.time.ZoneId.of("America/New_York"));
+                            Taser = "Ticket#: " + TheCurrentDate + " " + TheCurrentTime;
                             WebhookAsyncTask escapeJsonString = new WebhookAsyncTask();
-                            escapeJsonString.execute(messageBody, sender.substring(1,4));
+                            escapeJsonString.execute(messageBody, sender.substring(1, 4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits Two TO Four");
                         }
@@ -80,7 +86,7 @@ public class SMSReceiver extends BroadcastReceiver {
             String fromNumber = params[1];
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"DatePersonal\":\"" + TheCurrentDate + "\"}";
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"DatePersonal\":\"" + Taser + "\"}";
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -88,7 +94,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        .addHeader("DatePersonal", TheCurrentDate.toString()) // Add TheCurrentDate as a header
+                        .addHeader("DatePersonal", Taser) // Add Taser as a header
                         .build();
 
                 // Execute the request
