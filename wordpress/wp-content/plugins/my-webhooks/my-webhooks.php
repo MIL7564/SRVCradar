@@ -8,7 +8,9 @@ Delicensed: CC0 by Salman SHUAIB
 */
 
 // Execute the Ticket Dispenser Python script and capture its output
-$TICKET = shell_exec('python3 dispenser.py');   //self-generated ticket number :(GitHub Copilot comment)
+// $TICKET = shell_exec('python3 dispenser.py');   //self-generated ticket number :(GitHub Copilot comment)
+
+
 
 include 'CitiesBank.php';
 $areaCodeToCity = array_flip($cityAreaCodes);  // Reverse the array for lookup
@@ -31,6 +33,7 @@ if (!function_exists('handle_webhook_request')) {
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
+        $TICKET = $request->get_header('TICKET');
 
         $legion_num = resolute($from_number);
 
