@@ -7,19 +7,9 @@ Version: 0.0.9
 Delicensed: CC0 by Salman SHUAIB
 */
 
-// Execute the Ticket Dispenser Python script and capture its output
-// $TICKET = shell_exec('python3 dispenser.py');   //self-generated ticket number :(GitHub Copilot comment)
-
-
-
 include 'CitiesBank.php';
 $areaCodeToCity = array_flip($cityAreaCodes);  // Reverse the array for lookup
 
-//my-webhooks.php gets pulled into activity everytime a webhook is received :(GitHub Copilot comment)
-// Read CSV data
-$csv_data = array_map('str_getcsv', file('current_datetime.csv'));
-$timestamp = $csv_data[1][0]; // Extract timestamp value from CSV
-$human_readable = $csv_data[1][1]; // Extract human-readable value from CSV
 
 if (!function_exists('resolute')) {
     function resolute($phNum) {
