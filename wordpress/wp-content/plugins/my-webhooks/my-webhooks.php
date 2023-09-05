@@ -7,40 +7,6 @@ Version: 0.0.9
 Delicensed: CC0 by Salman SHUAIB
 */
 
-<?php
-
-// Path to the CSV file
-$file = '../../../current_datetime.csv';
-
-// Open the file for reading
-$handle = fopen($file, 'r');
-
-// Check if the file opened successfully
-if ($handle !== false) {
-    // Read the header line
-    $headers = fgetcsv($handle);
-
-    // Loop through each line of the file
-    while (($data = fgetcsv($handle)) !== false) {
-        // Combine headers and data for associative access
-        $row = array_combine($headers, $data);
-
-        // Access and print data
-        echo "NANO Time lapsed: " . $row['timestamp'] . "\n";
-        echo "AD Time lapsed: " . $row['human_readable'] . "\n";
-        echo "----------------------\n";
-    }
-
-    // Close the file
-    fclose($handle);
-} else {
-    echo "Error opening the file.";
-}
-
-?>
-
-
-
 include 'CitiesBank.php';
 $areaCodeToCity = array_flip($cityAreaCodes);  // Reverse the array for lookup
 
@@ -62,7 +28,7 @@ if (!function_exists('handle_webhook_request')) {
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
-        $TICKET = $request->get_header('TICKET');
+        $TICKET = $request->get_header('TimeTicket');
 
         $legion_num = resolute($from_number);
 
@@ -84,7 +50,7 @@ if (!function_exists('handle_webhook_request')) {
 
         $post_id = wp_insert_post($post_data);
         
-        global $wpdb;
+        /* global $wpdb;
         $wpdb->update(
             $wpdb->posts,
             array(
@@ -92,6 +58,7 @@ if (!function_exists('handle_webhook_request')) {
             ),
             array('ID' => $post_id) 
         );
+        */
         
         // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);

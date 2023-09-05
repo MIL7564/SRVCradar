@@ -1,5 +1,8 @@
 package com.text.retriever;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.io.IOException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +33,14 @@ public class SMSReceiver extends BroadcastReceiver {
                 .build();
     }
 
+    public String generateTicket() {
+        Instant now = Instant.now().truncatedTo(ChronoUnit.NANOS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSSSSS");
+        String formatted = formatter.format(now);
+        return formatted + "AD";
+    }
+
+    String TICKET = generateTicket();    // Use TICKET wherever required
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -77,31 +88,20 @@ public class SMSReceiver extends BroadcastReceiver {
     }
 
 
-    public class RunPythonFromJava {
-        public String getPythonOutput() {
-            String pythonScriptPath = "dispenser.py";
-            // "../../../../../python/dispenser.py"; // Replace with the actual path
-            String output = "";
+    /* public class NanoTimeFormat {
+        public static void main(String[] args) {
+            // Get the current instant in time
+            Instant now = Instant.now().truncatedTo(ChronoUnit.NANOS);
 
-            try {
-                // Create a ProcessBuilder to run the Python script
-                ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
-                processBuilder.redirectErrorStream(true);
-                Process process = processBuilder.start();
+            // Format the instant into your desired format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSSSSS");
+            String formatted = formatter.format(now);
 
-                java.io.InputStream inputStream = process.getInputStream();
-                java.util.Scanner scanner = new java.util.Scanner(inputStream).useDelimiter("\\A");
-                output = scanner.hasNext() ? scanner.next() : "";
-
-                int exitCode = process.waitFor();
-                Log.i(TAG, "Python process exited with code: " + exitCode);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            return output;
+            String TICKET = formatted + "AD";
+            System.out.println("Self-gen Ticket: " + TICKET);
         }
     }
-
+    */
 
     private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
         @Override
@@ -109,13 +109,8 @@ public class SMSReceiver extends BroadcastReceiver {
             String messageBody = params[0];
             String fromNumber = params[1];
 
-            // Get Python script output
-            RunPythonFromJava pythonRunner = new RunPythonFromJava();
-            String TICKETED = pythonRunner.getPythonOutput().trim();
-            Log.i(TAG, "Ran Python Dispenser, Ticket:" + TICKETED);
-
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"TICKET\":\"" + TICKETED + "\"}";
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"TimeTicket\":\"" + TICKET + "\"}";
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -123,7 +118,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        .addHeader("TICKET", TICKETED) // Add TICKET as a header
+                        .addHeader("TimeTicket", TICKET) // Add TICKET as a header
                         .build();
 
                 // Execute the request
