@@ -97,7 +97,7 @@ public class SMSReceiver extends BroadcastReceiver {
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-
+            Log.i(TAG, "Ran Python Dispenser, output:" + output);
             return output;
         }
     }
