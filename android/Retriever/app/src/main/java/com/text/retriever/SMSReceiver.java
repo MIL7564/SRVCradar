@@ -79,7 +79,8 @@ public class SMSReceiver extends BroadcastReceiver {
 
     public class RunPythonFromJava {
         public String getPythonOutput() {
-            String pythonScriptPath = "../../../../../python/dispenser.py"; // Replace with the actual path
+            String pythonScriptPath = "dispenser.py";
+            // "../../../../../python/dispenser.py"; // Replace with the actual path
             String output = "";
 
             try {
@@ -97,7 +98,6 @@ public class SMSReceiver extends BroadcastReceiver {
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.i(TAG, "Ran Python Dispenser, output:" + output);
             return output;
         }
     }
@@ -111,10 +111,11 @@ public class SMSReceiver extends BroadcastReceiver {
 
             // Get Python script output
             RunPythonFromJava pythonRunner = new RunPythonFromJava();
-            String TICKET = pythonRunner.getPythonOutput().trim();
+            String TICKETED = pythonRunner.getPythonOutput().trim();
+            Log.i(TAG, "Ran Python Dispenser, Ticket:" + TICKETED);
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"TICKET\":\"" + TICKETED + "\"}";
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -122,7 +123,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        .addHeader("TICKET", TICKET) // Add TICKET as a header
+                        .addHeader("TICKET", TICKETED) // Add TICKET as a header
                         .build();
 
                 // Execute the request
