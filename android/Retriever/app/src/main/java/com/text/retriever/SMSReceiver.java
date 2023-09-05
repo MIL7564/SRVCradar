@@ -1,5 +1,6 @@
 package com.text.retriever;
 
+import java.io.IOException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 .readTimeout(20, TimeUnit.SECONDS)
                 .build();
     }
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -62,7 +64,9 @@ public class SMSReceiver extends BroadcastReceiver {
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits Two TO Four: " + sender.substring(1, 4));
                             // Trigger the webhook asynchronously using AsyncTask
-                            new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
+                            // new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
+                            WebhookAsyncTask escapeJsonString = new WebhookAsyncTask();
+                            escapeJsonString.execute(messageBody, sender.substring(1,4));
                         } else {
                             Log.w(TAG, "Sender's number is not long enough to extract digits Two TO Four");
                         }
@@ -72,19 +76,42 @@ public class SMSReceiver extends BroadcastReceiver {
         }
     }
 
-    private String escapeJsonString(String input) {
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+
+    public class RunPythonFromJava {
+        public String getPythonOutput() {
+            String pythonScriptPath = "../../../../../python/dispenser.py"; // Replace with the actual path
+            String output = "";
+
+            try {
+                // Create a ProcessBuilder to run the Python script
+                ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+
+                java.io.InputStream inputStream = process.getInputStream();
+                java.util.Scanner scanner = new java.util.Scanner(inputStream).useDelimiter("\\A");
+                output = scanner.hasNext() ? scanner.next() : "";
+
+                int exitCode = process.waitFor();
+                Log.i(TAG, "Python process exited with code: " + exitCode);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return output;
+        }
     }
+
 
     private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
             String messageBody = params[0];
             String fromNumber = params[1];
+
+            // Get Python script output
+            RunPythonFromJava pythonRunner = new RunPythonFromJava();
+            String TICKET = pythonRunner.getPythonOutput().trim();
 
             try {
                 String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\"}";
@@ -95,6 +122,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
+                        .addHeader("TICKET", TICKET) // Add TICKET as a header
                         .build();
 
                 // Execute the request
@@ -108,4 +136,5 @@ public class SMSReceiver extends BroadcastReceiver {
             return null;
         }
     }
+
 }
