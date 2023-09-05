@@ -28,7 +28,7 @@ if (!function_exists('handle_webhook_request')) {
         // Extract the necessary information from the request headers
         $from_number = $request->get_header('FromNumber');
         $text = $request->get_header('text');
-        $TICKET = $request->get_header('TimeTicket');
+        $TICKET = $request->get_header('DatePersonal');
 
         $legion_num = resolute($from_number);
 

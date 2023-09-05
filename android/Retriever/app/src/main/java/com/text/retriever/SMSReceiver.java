@@ -1,8 +1,6 @@
 package com.text.retriever;
 
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.io.IOException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,29 +16,21 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import java.util.concurrent.TimeUnit;
-
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
     private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
+    // Define TheCurrentDate as a class member variable
+    private LocalDate TheCurrentDate = LocalDate.now(java.time.ZoneId.of("America/New_York"));
+
     public SMSReceiver() {
         this.client = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
     }
-
-    public String generateTicket() {
-        Instant now = Instant.now().truncatedTo(ChronoUnit.NANOS);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSSSSS");
-        String formatted = formatter.format(now);
-        return formatted + "AD";
-    }
-
-    String TICKET = generateTicket();    // Use TICKET wherever required
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -69,13 +59,9 @@ public class SMSReceiver extends BroadcastReceiver {
                     String keyword2 = "opa";
 
                     if (lowerCaseMessageBody.contains(keyword1) && lowerCaseMessageBody.contains(keyword2)) {
-                        // Keywords "cellnet" and "opa" (case-insensitive) found in the message
-                        // Log the entire message and sender's number (second, third, and fourth digits)
                         Log.i(TAG, "SMS contained the word 'cellnet' and 'opa': " + messageBody);
                         if (sender != null && sender.length() > 4) {
                             Log.i(TAG, "Sender's number, digits Two TO Four: " + sender.substring(1, 4));
-                            // Trigger the webhook asynchronously using AsyncTask
-                            // new WebhookAsyncTask().execute(escapeJsonString(messageBody), sender.substring(1, 4));
                             WebhookAsyncTask escapeJsonString = new WebhookAsyncTask();
                             escapeJsonString.execute(messageBody, sender.substring(1,4));
                         } else {
@@ -87,22 +73,6 @@ public class SMSReceiver extends BroadcastReceiver {
         }
     }
 
-
-    /* public class NanoTimeFormat {
-        public static void main(String[] args) {
-            // Get the current instant in time
-            Instant now = Instant.now().truncatedTo(ChronoUnit.NANOS);
-
-            // Format the instant into your desired format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSSSSS");
-            String formatted = formatter.format(now);
-
-            String TICKET = formatted + "AD";
-            System.out.println("Self-gen Ticket: " + TICKET);
-        }
-    }
-    */
-
     private class WebhookAsyncTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
@@ -110,7 +80,7 @@ public class SMSReceiver extends BroadcastReceiver {
             String fromNumber = params[1];
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"TimeTicket\":\"" + TICKET + "\"}";
+                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"DatePersonal\":\"" + TheCurrentDate + "\"}";
                 RequestBody body = RequestBody.create(requestBody, JSON);
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
@@ -118,7 +88,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         .addHeader("Content-Type", "application/json")
                         .addHeader("FromNumber", fromNumber)
                         .addHeader("text", messageBody)
-                        .addHeader("TimeTicket", TICKET) // Add TICKET as a header
+                        .addHeader("DatePersonal", TheCurrentDate.toString()) // Add TheCurrentDate as a header
                         .build();
 
                 // Execute the request
@@ -132,5 +102,4 @@ public class SMSReceiver extends BroadcastReceiver {
             return null;
         }
     }
-
 }
