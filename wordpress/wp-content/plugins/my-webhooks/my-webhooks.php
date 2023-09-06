@@ -50,7 +50,7 @@ if (!function_exists('handle_webhook_request')) {
 
         $post_id = wp_insert_post($post_data);
         
-        /* global $wpdb;
+        global $wpdb;    //Displays unique Legion numbers
         $wpdb->update(
             $wpdb->posts,
             array(
@@ -58,7 +58,7 @@ if (!function_exists('handle_webhook_request')) {
             ),
             array('ID' => $post_id) 
         );
-        */
+        
         
         // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);

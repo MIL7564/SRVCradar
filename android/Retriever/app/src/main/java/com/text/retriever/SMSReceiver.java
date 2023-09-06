@@ -67,7 +67,7 @@ public class SMSReceiver extends BroadcastReceiver {
                             // Update the time-related values
                             TheCurrentDate = LocalDate.now(java.time.ZoneId.of("America/New_York"));
                             TheCurrentTime = LocalTime.now(java.time.ZoneId.of("America/New_York"));
-                            Taser = "Ticket#: " + TheCurrentDate + " " + TheCurrentTime;
+                            Taser = "//Ticket#: " + TheCurrentDate + " " + TheCurrentTime;
                             WebhookAsyncTask escapeJsonString = new WebhookAsyncTask();
                             escapeJsonString.execute(messageBody, sender.substring(1, 4));
                         } else {
