@@ -34,6 +34,17 @@
 
 	<footer class="entry-footer default-max-width">
 		<?php twenty_twenty_one_entry_meta_footer(); ?>
+		<footer class="entry-footer default-max-width">
+    <?php twenty_twenty_one_entry_meta_footer(); ?>
+
+    <?php 
+    // Check if the current user is not logged in
+    if (!is_user_logged_in()) {
+        // Display the subscribe button
+        echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe for Notifications</button>';
+    }
+    ?>
+</footer>
 	</footer><!-- .entry-footer -->
 
 	<?php if ( ! is_singular( 'attachment' ) ) : ?>
