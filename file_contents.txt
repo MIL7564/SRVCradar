@@ -9,6 +9,7 @@ Version: 1.0.0
 Delicensed: CC0 1.0 Universal by Salman SHUAIB
 */
 
+
 // Add meta box for email
 function nrucn_add_email_meta_box() {
     add_meta_box(
@@ -50,6 +51,30 @@ function nrucn_send_email_on_comment($comment_id, $comment_object) {
     }
 }
 add_action('wp_insert_comment', 'nrucn_send_email_on_comment', 99, 2);
+
+
+function nrucn_enqueue_scripts() {
+    wp_enqueue_script('nrucn-js', plugin_dir_url(__FILE__) . 'js/nrucn.js', array('jquery'), '1.0.0', true);
+    wp_localize_script('nrucn-js', 'nrucn_obj', array(
+        'ajax_url' => admin_url('admin-ajax.php')
+    ));
+}
+add_action('wp_enqueue_scripts', 'nrucn_enqueue_scripts');
+
+
+function nrucn_handle_subscription() {
+    $post_id = intval($_POST['post_id']);
+    $email = sanitize_email($_POST['email']);
+
+    // Store the email as post meta
+    update_post_meta($post_id, '_nrucn_email', $email);
+
+    wp_send_json(array(
+        'status' => true,
+        'message' => 'Successfully subscribed!'
+    ));
+}
+add_action('wp_ajax_nopriv_nrucn_subscribe', 'nrucn_handle_subscription');
 
 **my-webhooks.php:-
 <?php
@@ -151,8 +176,8 @@ add_action('rest_api_init', 'register_custom_webhook_route');
  * @subpackage Twenty_Twenty_One
  * @since Twenty Twenty-One 1.0
  */
-
 ?>
+
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 	<header class="entry-header alignwide">
@@ -177,6 +202,14 @@ add_action('rest_api_init', 'register_custom_webhook_route');
 
 	<footer class="entry-footer default-max-width">
 		<?php twenty_twenty_one_entry_meta_footer(); ?>
+
+    	<?php 
+    	// Check if the current user is not logged in
+    	if (!is_user_logged_in()) {
+        	// Display the subscribe button
+        	echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe To Comments</button>';
+    	}
+    	?>
 	</footer><!-- .entry-footer -->
 
 	<?php if ( ! is_singular( 'attachment' ) ) : ?>

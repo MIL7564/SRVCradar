@@ -8,8 +8,8 @@
  * @subpackage Twenty_Twenty_One
  * @since Twenty Twenty-One 1.0
  */
-
 ?>
+
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 	<header class="entry-header alignwide">
@@ -34,17 +34,14 @@
 
 	<footer class="entry-footer default-max-width">
 		<?php twenty_twenty_one_entry_meta_footer(); ?>
-		<footer class="entry-footer default-max-width">
-    <?php twenty_twenty_one_entry_meta_footer(); ?>
 
-    <?php 
-    // Check if the current user is not logged in
-    if (!is_user_logged_in()) {
-        // Display the subscribe button
-        echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe for Notifications</button>';
-    }
-    ?>
-</footer>
+    	<?php 
+    	// Check if the current user is not logged in
+    	if (!is_user_logged_in()) {
+        	// Display the subscribe button
+        	echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe To Comments</button>';
+    	}
+    	?>
 	</footer><!-- .entry-footer -->
 
 	<?php if ( ! is_singular( 'attachment' ) ) : ?>
