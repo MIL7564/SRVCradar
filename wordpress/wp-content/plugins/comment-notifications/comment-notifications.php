@@ -42,17 +42,22 @@ function nrucn_send_email_on_comment($comment_id, $comment_object) {
 
     // Fetching the post title (which we assume contains the ticket reference)
     $post_title = get_the_title($post_id);
+    
+    // Get the comment text
+    $comment_text = $comment_object->comment_content;
 
     if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $subject = "New Comment on Your Post at FE: " . $post_title;
         $unsubscribe_link = get_permalink($post_id) . '?unsubscribe=' . $token;
         $message = "There is a new comment on your post at FE: " . $post_title . ".\n\n";
+        $message .= "Comment Text:\n" . $comment_text . "\n\n";
         $message .= "If you wish to unsubscribe from these notifications, click here: " . $unsubscribe_link;
 
         wp_mail($email, $subject, $message);
     }
 }
 add_action('wp_insert_comment', 'nrucn_send_email_on_comment', 99, 2);
+
 
 function nrucn_enqueue_scripts() {
     wp_enqueue_script('nrucn-js', plugin_dir_url(__FILE__) . 'js/nrucn.js', array('jquery'), '1.0.0', true);
