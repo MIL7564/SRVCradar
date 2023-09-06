@@ -36,11 +36,8 @@
 		<?php twenty_twenty_one_entry_meta_footer(); ?>
 
     	<?php 
-    	// Check if the current user is not logged in
-    	if (!is_user_logged_in()) {
         	// Display the subscribe button
         	echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe To Comments</button>';
-    	}
     	?>
 	</footer><!-- .entry-footer -->
 

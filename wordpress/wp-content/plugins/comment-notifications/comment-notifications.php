@@ -37,13 +37,17 @@ function nrucn_save_email_data($post_id) {
 add_action('save_post', 'nrucn_save_email_data');
 
 // Send comment notification to non-registered user email
+// Send comment notification to non-registered user email
 function nrucn_send_email_on_comment($comment_id, $comment_object) {
     $post_id = $comment_object->comment_post_ID;
     $email = get_post_meta($post_id, '_nrucn_email', true);
+
+    // Fetching the post title (which we assume contains the ticket reference)
+    $post_title = get_the_title($post_id);
     
     if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $subject = "New Comment on Your Post";
-        $message = "There is a new comment on your post. Check it out!";
+        $subject = "New Comment on Your Post at FE: " . $post_title;
+        $message = "There is a new comment on your post at FE: " . $post_title . ". Check it out!";
         wp_mail($email, $subject, $message);
     }
 }
