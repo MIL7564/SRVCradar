@@ -1,118 +1,122 @@
 ***Codebase:
 
-**comment-notifications.php:-
+**homepage-decor.php:-
 <?php
 /*
-Plugin Name: Comment Notifications
-Description: Notify non-registered users about new comments on their posts via Email.
-Version: 1.0.0
-Delicensed: CC0 1.0 Universal by Salman SHUAIB
+Plugin Name: Homepage Decor
+Description: Customizing WordPress Homepage for FE.
+Version: 1.0.1
+Declicensed: CC0
 */
 
-// Add meta box for email
-function nrucn_add_email_meta_box() {
-    add_meta_box(
-        'nrucn_email',
-        'Non-Registered User Email',
-        'nrucn_email_meta_box_callback',
-        'post'
-    );
-}
-add_action('add_meta_boxes', 'nrucn_add_email_meta_box');
-
-// Display the meta box
-function nrucn_email_meta_box_callback($post) {
-    $email = get_post_meta($post->ID, '_nrucn_email', true);
-    echo '<input type="email" name="nrucn_email" value="' . esc_attr($email) . '" style="width: 100%;" />';
-}
-
-// Save email meta data
-function nrucn_save_email_data($post_id) {
-    if (array_key_exists('nrucn_email', $_POST)) {
-        update_post_meta(
-            $post_id,
-            '_nrucn_email',
-            sanitize_email($_POST['nrucn_email'])
-        );
+if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
+    // Alternate colors for WordPress Posts
+    function homepage_decor_enqueue_styles() {
+        wp_enqueue_style( 'homepage-decor', plugins_url( 'homepage-decor.css', __FILE__ ) );
     }
+    add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
 }
-add_action('save_post', 'nrucn_save_email_data');
 
-// Send comment notification to non-registered user email
-function nrucn_send_email_on_comment($comment_id, $comment_object) {
-    $post_id = $comment_object->comment_post_ID;
-    $email = get_post_meta($post_id, '_nrucn_email', true);
+define( "PATH", $_SERVER['DOCUMENT_ROOT']);
+require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 
-    // Fetching the post title (which we assume contains the ticket reference)
-    $post_title = get_the_title($post_id);
+// Calculate $catsNdogs using cooperative function
+if ( ! function_exists( 'cooperative' ) ) {
+    function cooperative() {
+        global $wpdb, $post;
 
-    if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $subject = "New Comment on Your Post at FE: " . $post_title;
-        $unsubscribe_link = get_permalink($post_id) . '?unsubscribe=' . $token;
-        $message = "There is a new comment on your post at FE: " . $post_title . ".\n\n";
-        $message .= "If you wish to unsubscribe from these notifications, click here: " . $unsubscribe_link;
+        // Using $wpdb to fetch the legion_number from the fgp_posts table
+        $query = "SELECT legion_number FROM {$wpdb->prefix}posts WHERE ID = %d";
+        $legion_num = $wpdb->get_var($wpdb->prepare($query, $post->ID));
 
-        wp_mail($email, $subject, $message);
-    }
-}
-add_action('wp_insert_comment', 'nrucn_send_email_on_comment', 99, 2);
-
-function nrucn_enqueue_scripts() {
-    wp_enqueue_script('nrucn-js', plugin_dir_url(__FILE__) . 'js/nrucn.js', array('jquery'), '1.0.0', true);
-    wp_localize_script('nrucn-js', 'nrucn_obj', array(
-        'ajax_url' => admin_url('admin-ajax.php')
-    ));
-}
-add_action('wp_enqueue_scripts', 'nrucn_enqueue_scripts');
-
-function nrucn_handle_subscription() {
-    $post_id = intval($_POST['post_id']);
-    $email = sanitize_email($_POST['email']);
-
-    // Generate a unique token for the subscription
-    $token = md5($email . time());
-
-    // Store the email and token as post meta
-    update_post_meta($post_id, '_nrucn_email', $email);
-    update_post_meta($post_id, '_nrucn_token', $token);
-
-    wp_send_json(array(
-        'status' => true,
-        'message' => 'Successfully subscribed!'
-    ));
-}
-add_action('wp_ajax_nopriv_nrucn_subscribe', 'nrucn_handle_subscription');
-
-function nrucn_handle_unsubscribe() {
-    if (isset($_GET['unsubscribe'])) {
-        $token = sanitize_text_field($_GET['unsubscribe']);
-
-        // Find the post using the token
-        $args = array(
-            'post_type' => 'post',
-            'meta_key' => '_nrucn_token',
-            'meta_value' => $token,
-            'posts_per_page' => 1,
-        );
-        $query = new WP_Query($args);
-
-        if ($query->have_posts()) {
-            while ($query->have_posts()) {
-                $query->the_post();
-                $post_id = get_the_ID();
-                delete_post_meta($post_id, '_nrucn_email');
-                delete_post_meta($post_id, '_nrucn_token');
-                echo "You've been successfully unsubscribed from comment notifications for this post.";
-            }
-        } else {
-            echo "Invalid unsubscribe link or you've already been unsubscribed.";
+        // If legion_number is empty, set to default '9'
+        if (empty($legion_num)) {
+            $legion_num = '9';
         }
 
-        exit;
+        $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
+        return $catsNdogs;
     }
 }
-add_action('template_redirect', 'nrucn_handle_unsubscribe');
+
+
+
+// Include template-tags.php
+require_once(get_template_directory() . '/inc/template-tags.php');
+
+// Pass $catsNdogs to template-tags.php
+add_filter('custom_cats_ndogs', 'cooperative');
 ?>
+
+**league-table-grid.php:-
+<?php
+/*
+Plugin Name: League Table Grid
+Description: Plugin to display the league table in a grid - solves freeridership.
+Version: 0.0.9
+Delicensed: Creative Commons Zero v1.0 Universal by Salman SHUAIB.
+*/
+
+
+function insert_initial_records() {
+  global $wpdb;
+  
+  // Retrieve the database name from the WordPress configuration file
+  $database_name = $wpdb->dbname;
+  
+  // Get the table name with the correct prefix
+  $table_name = $wpdb->prefix . 'league';
+  
+  // Check if records already exist
+  $existing_records = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+  if ($existing_records > 0) {
+    return;
+  }
+  
+  // Insert initial records
+  $wpdb->insert($table_name, array(
+    'Legion Number' => 1,
+    'Score' => 0
+  ));
+  $wpdb->insert($table_name, array(
+    'Legion Number' => 2,
+    'Score' => 0
+  ));
+  $wpdb->insert($table_name, array(
+    'Legion Number' => 3,
+    'Score' => 0
+  ));
+  // Add more initial records as needed
+  
+}
+register_activation_hook(__FILE__, 'insert_initial_records');
+
+function resolute_shortcode($atts) {
+  global $wpdb;
+  
+  // Get the table name with the correct prefix
+  $table_name = $wpdb->prefix . 'league';
+  $results = $wpdb->get_results("SELECT * FROM $table_name");
+
+  if ($results) {
+    $output = '<table>';
+    $output .= '<tr><th>Legion Number</th><th>Score</th></tr>';
+
+    foreach ($results as $result) {
+      $output .= '<tr>';
+      $output .= '<td>' . $result->{"Legion Number"} . '</td>';
+      $output .= '<td>' . $result->Score . '</td>';
+      $output .= '</tr>';
+    }
+
+    $output .= '</table>';
+
+    return $output;
+  } else {
+    return "No records found in the league table.";
+  }
+}
+add_shortcode('resolute', 'resolute_shortcode');
 
 **my-webhooks.php:-
 <?php
@@ -202,53 +206,3 @@ function register_custom_webhook_route() {
 // Ensure the callback to register_custom_webhook_route is being run
 add_action('rest_api_init', 'register_custom_webhook_route');
 ?>
-
-**content-single.php:-
-<?php
-/**
- * Template part for displaying posts
- *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package WordPress
- * @subpackage Twenty_Twenty_One
- * @since Twenty Twenty-One 1.0
- */
-?>
-
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-	<header class="entry-header alignwide">
-		<?php the_title( '<h1 class="entry-title">', '</h1>'); ?>
-		<?php twenty_twenty_one_post_thumbnail(); ?>
-	</header><!-- .entry-header -->
-
-	<div class="entry-content">
-		<?php
-		the_content();
-
-		wp_link_pages(
-			array(
-				'before'   => '<nav class="page-links" aria-label="' . esc_attr__( 'Page', 'twentytwentyone' ) . '">',
-				'after'    => '</nav>',
-				/* translators: %: Page number. */
-				'pagelink' => esc_html__( 'Page %', 'twentytwentyone' ),
-			)
-		);
-		?>
-	</div><!-- .entry-content -->
-
-	<footer class="entry-footer default-max-width">
-		<?php twenty_twenty_one_entry_meta_footer(); ?>
-
-    	<?php 
-        	// Display the subscribe button
-        	echo '<button class="subscribe-btn" data-post-id="' . get_the_ID() . '">Subscribe To Comments</button>';
-    	?>
-	</footer><!-- .entry-footer -->
-
-	<?php if ( ! is_singular( 'attachment' ) ) : ?>
-		<?php get_template_part( 'template-parts/post/author-bio' ); ?>
-	<?php endif; ?>
-
-</article><!-- #post-<?php the_ID(); ?> -->
