@@ -1,122 +1,59 @@
 ***Codebase:
 
-**homepage-decor.php:-
+**legion-ticker.php:-
 <?php
 /*
-Plugin Name: Homepage Decor
-Description: Customizing WordPress Homepage for FE.
-Version: 1.0.1
-Declicensed: CC0
+Plugin Name: Legion Ticker
+Description: Displays a ticker on top of the site showing penalties for each legion.
+Version: 1.0.0
+Delicensed: CC0 1.0 Universal by Salman SHUAIB, in honor of Taylor Swift
 */
-
-if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
-    // Alternate colors for WordPress Posts
-    function homepage_decor_enqueue_styles() {
-        wp_enqueue_style( 'homepage-decor', plugins_url( 'homepage-decor.css', __FILE__ ) );
-    }
-    add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
+function legion_ticker_enqueue_scripts() {
+    wp_enqueue_style('legion-ticker-css', plugins_url('legion-ticker.css', __FILE__));
+    wp_enqueue_script('jquery');
 }
+add_action('wp_enqueue_scripts', 'legion_ticker_enqueue_scripts');
 
-define( "PATH", $_SERVER['DOCUMENT_ROOT']);
-require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
 
-// Calculate $catsNdogs using cooperative function
-if ( ! function_exists( 'cooperative' ) ) {
-    function cooperative() {
-        global $wpdb, $post;
+function display_ticker() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'league';
+    $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY Score ASC");
+    $colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000"];
 
-        // Using $wpdb to fetch the legion_number from the fgp_posts table
-        $query = "SELECT legion_number FROM {$wpdb->prefix}posts WHERE ID = %d";
-        $legion_num = $wpdb->get_var($wpdb->prepare($query, $post->ID));
-
-        // If legion_number is empty, set to default '9'
-        if (empty($legion_num)) {
-            $legion_num = '9';
+    if ($results) {
+        echo '<div class="ticker-wrapper">';
+        foreach ($results as $index => $result) {
+            $color = $colors[$result->{"Legion Number"} - 1];
+            echo '<span class="ticker-item" style="background-color:' . $color . ';">Legion ' . $result->{"Legion Number"} . ': ' . $result->Score . '</span>';
         }
-
-        $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
-        return $catsNdogs;
+        echo '</div>';
+    } else {
+        echo "No records found in the league table.";
     }
 }
+add_action('wp_head', 'display_ticker');
 
-
-
-// Include template-tags.php
-require_once(get_template_directory() . '/inc/template-tags.php');
-
-// Pass $catsNdogs to template-tags.php
-add_filter('custom_cats_ndogs', 'cooperative');
-?>
-
-**league-table-grid.php:-
-<?php
-/*
-Plugin Name: League Table Grid
-Description: Plugin to display the league table in a grid - solves freeridership.
-Version: 0.0.9
-Delicensed: Creative Commons Zero v1.0 Universal by Salman SHUAIB.
-*/
-
-
-function insert_initial_records() {
-  global $wpdb;
-  
-  // Retrieve the database name from the WordPress configuration file
-  $database_name = $wpdb->dbname;
-  
-  // Get the table name with the correct prefix
-  $table_name = $wpdb->prefix . 'league';
-  
-  // Check if records already exist
-  $existing_records = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
-  if ($existing_records > 0) {
-    return;
-  }
-  
-  // Insert initial records
-  $wpdb->insert($table_name, array(
-    'Legion Number' => 1,
-    'Score' => 0
-  ));
-  $wpdb->insert($table_name, array(
-    'Legion Number' => 2,
-    'Score' => 0
-  ));
-  $wpdb->insert($table_name, array(
-    'Legion Number' => 3,
-    'Score' => 0
-  ));
-  // Add more initial records as needed
-  
+function legion_ticker_animation_script() {
+    ?>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            let $ticker = $('.ticker-wrapper');
+            let tickerWidth = $ticker.width();
+            $ticker.css('left', tickerWidth);
+            setInterval(function() {
+                let left = parseInt($ticker.css('left'));
+                if (left <= -tickerWidth) {
+                    $ticker.css('left', tickerWidth);
+                } else {
+                    $ticker.css('left', left - 1 + 'px');
+                }
+            }, 50);
+        });
+    </script>
+    <?php
 }
-register_activation_hook(__FILE__, 'insert_initial_records');
-
-function resolute_shortcode($atts) {
-  global $wpdb;
-  
-  // Get the table name with the correct prefix
-  $table_name = $wpdb->prefix . 'league';
-  $results = $wpdb->get_results("SELECT * FROM $table_name");
-
-  if ($results) {
-    $output = '<table>';
-    $output .= '<tr><th>Legion Number</th><th>Score</th></tr>';
-
-    foreach ($results as $result) {
-      $output .= '<tr>';
-      $output .= '<td>' . $result->{"Legion Number"} . '</td>';
-      $output .= '<td>' . $result->Score . '</td>';
-      $output .= '</tr>';
-    }
-
-    $output .= '</table>';
-
-    return $output;
-  } else {
-    return "No records found in the league table.";
-  }
-}
-add_shortcode('resolute', 'resolute_shortcode');
+add_action('wp_footer', 'legion_ticker_animation_script');
 
 **my-webhooks.php:-
 <?php

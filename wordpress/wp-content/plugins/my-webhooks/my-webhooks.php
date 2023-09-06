@@ -32,6 +32,8 @@ if (!function_exists('handle_webhook_request')) {
 
         $legion_num = resolute($from_number);
 
+        
+
         // Extract the area code from the phone number
         $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
 
