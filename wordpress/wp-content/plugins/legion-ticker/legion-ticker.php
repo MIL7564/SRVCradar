@@ -43,9 +43,9 @@ function legion_ticker_animation_script() {
                 if (left <= -tickerWidth) {
                     $ticker.css('left', tickerWidth);
                 } else {
-                    $ticker.css('left', left - 2 + 'px');
+                    $ticker.css('left', left - 3 + 'px');
                 }
-            }, 25);
+            }, 16.67);
         });
     </script>
     <?php
