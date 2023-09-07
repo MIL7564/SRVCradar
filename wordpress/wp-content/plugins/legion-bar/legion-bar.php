@@ -15,7 +15,6 @@ function display_bar() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'league';
     
-    // Corrected SQL query, removed the '*' character and fixed column name
     $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY `Legion Number` ASC");
     
     $colors = ["#FF0000", "#00FF00", "#0000FF", "#000000", "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000"];
@@ -24,8 +23,9 @@ function display_bar() {
         echo '<div class="bar-wrapper">';
         foreach ($results as $index => $result) {
             $color = $colors[$result->{"Legion Number"} - 1];
-            echo '<span class="bar-item" style="background-color:' . $color . ';">Legion ' . $result->{"Legion Number"} . ': ' . $result->Score . '</span>';
+            echo '<span class="bar-item" style="background-color:' . $color . ';">Legion ' . $result->{"Legion Number"} . ': ' . $result->Score .'</span>';
         }
+        echo ' <span style="color: white;">SCOREBOARD</span>';
         echo '</div>';
     } else {
         echo "No records found in the league table.";
