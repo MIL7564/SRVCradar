@@ -1,19 +1,23 @@
-/* Style for the ticker wrapper to make it fixed at the top */
-.ticker-wrapper {
+/* Style for the legion bar to make it fixed at the top */
+.bar-wrapper {
+    max-width: 90%;
+    border-radius: 30px;
     background-color: #333;
     padding-top: 10px;
     padding-bottom: 10px;
-    margin-top: 100px;
-    margin-bottom: 10px;
-    width: 100%;
+    margin-top: 10px; /* Adjust to control the size of the Legion Bar */
+    margin-left: auto;
+    margin-right: auto;
+    /* width: 100%; */
     z-index: 1000;
     position: fixed; /* Make it fixed at the top */
-    top: 0; /* Position from top */
-    left: 0; /* Align it with the left edge of the screen */
+    top: 60px; /* Position it below the menu/tagline */
+    left: 0;
+    right: 0;
 }
 
 /* Style for individual ticker items */
-.ticker-item {
+.bar-wrapper .bar-item {
     padding: 5px 10px;
     color: #FFF;
     border-radius: 5px;
