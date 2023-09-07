@@ -1,5 +1,6 @@
 package com.text.retriever;
 
+import org.json.JSONObject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import android.content.BroadcastReceiver;
@@ -86,15 +87,18 @@ public class SMSReceiver extends BroadcastReceiver {
             String fromNumber = params[1];
 
             try {
-                String requestBody = "{\"text\":\"" + messageBody + "\",\"FromNumber\":\"" + fromNumber + "\",\"DatePersonal\":\"" + Taser + "\"}";
+                String requestBody = new JSONObject()
+                        .put("text", messageBody)
+                        .put("FromNumber", fromNumber)
+                        .put("DatePersonal", Taser)
+                        .toString();
+
                 RequestBody body = RequestBody.create(requestBody, JSON);
+
                 Request request = new Request.Builder()
                         .url(WEBHOOK_URL)
                         .post(body)
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("FromNumber", fromNumber)
-                        .addHeader("text", messageBody)
-                        .addHeader("DatePersonal", Taser) // Add Taser as a header
                         .build();
 
                 // Execute the request
