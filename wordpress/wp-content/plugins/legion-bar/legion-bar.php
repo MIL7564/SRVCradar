@@ -25,7 +25,7 @@ function display_bar() {
             $color = $colors[$result->{"Legion Number"} - 1];
             echo '<span class="bar-item" style="background-color:' . $color . ';">Legion ' . $result->{"Legion Number"} . ': ' . $result->Score .'</span>';
         }
-        echo ' <span style="color: white;">SCOREBOARD</span>';
+        echo ' <span style="color: white; font-weight:bold; font-size: 1em; margin-left: 20px">[SCOREBOARD]</span>';
         echo '</div>';
     } else {
         echo "No records found in the league table.";
