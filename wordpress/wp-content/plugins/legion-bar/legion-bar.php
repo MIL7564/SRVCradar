@@ -1,12 +1,12 @@
 <?php
 /*
-Plugin Name: Legion Ticker
-Description: Displays a ticker on top of the site showing penalties for each legion.
+Plugin Name: Legion Bar
+Description: Displays a bar on top of the site showing penalties for each legion.
 Version: 1.0.0
 Delicensed: CC0 1.0 Universal by Salman SHUAIB, in honor of Taylor Swift
 */
 function legion_ticker_enqueue_scripts() {
-    wp_enqueue_style('legion-ticker-css', plugins_url('legion-ticker.css', __FILE__));
+    wp_enqueue_style('legion-ticker-css', plugins_url('legion-bar.css', __FILE__));
     wp_enqueue_script('jquery');
 }
 add_action('wp_enqueue_scripts', 'legion_ticker_enqueue_scripts');
@@ -31,23 +31,5 @@ function display_ticker() {
 }
 add_action('wp_head', 'display_ticker');
 
-function legion_ticker_animation_script() {
-    ?>
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            let $ticker = $('.ticker-wrapper');
-            let tickerWidth = $ticker.width();
-            $ticker.css('left', tickerWidth);
-            setInterval(function() {
-                let left = parseInt($ticker.css('left'));
-                if (left <= -tickerWidth) {
-                    $ticker.css('left', tickerWidth);
-                } else {
-                    $ticker.css('left', left - 3 + 'px');
-                }
-            }, 16.67);
-        });
-    </script>
-    <?php
-}
-add_action('wp_footer', 'legion_ticker_animation_script');
+
+

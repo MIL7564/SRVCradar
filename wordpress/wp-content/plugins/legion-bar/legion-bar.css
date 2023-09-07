@@ -1,0 +1,19 @@
+/* Style for the ticker wrapper to make it fixed at the top */
+.ticker-wrapper {
+    background-color: #333;
+    padding: 10px 0;
+    width: 100%;
+    z-index: 1000;
+    position: fixed; /* Make it fixed at the top */
+    top: 0; /* Position it at the top */
+    left: 0; /* Align it with the left edge of the screen */
+}
+
+/* Style for individual ticker items */
+.ticker-item {
+    padding: 5px 10px;
+    color: #FFF;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
