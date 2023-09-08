@@ -230,8 +230,7 @@ if (!function_exists('handle_webhook_request')) {
 
         // Check if the legion exists in the table
         $current_score = $wpdb->get_var($wpdb->prepare("SELECT Score FROM $legion_table_name WHERE `Legion Number` = %d", $legion_num));
-        $current_score = ($current_score / 2);  // Divide by 2 to account for the fact that the 'legion number' is doubled in the webhook
-        
+
         if (null !== $current_score) { 
             // If the legion exists, increment the score
             $new_score = $current_score + 1; 

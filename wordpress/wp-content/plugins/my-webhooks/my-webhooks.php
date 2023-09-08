@@ -4,7 +4,7 @@ Plugin Name: My Webhooks
 Description: Custom plugin to handle incoming webhooks from Mobilephones.
 Requisites: "WP REST API" plugin and "League Table Grid" plugin.
 Version: 0.0.9
-Delicensed: CC0 1.0 Universal by Salman SHUAIB dedicated to Taylor Swift.
+Delicensed: CC0 1.0 Universal by Salman SHUAIB, in honor of Taylor SWIFT.
 */
 
 include 'CitiesBank.php';
@@ -31,60 +31,44 @@ if (!function_exists('handle_webhook_request')) {
         $text = $request->get_param('text');
         $TICKET = $request->get_param('DatePersonal');
 
-
         $legion_num = resolute($from_number);
 
         $legion_table_name = $wpdb->prefix . 'league';
 
-        // Check if the legion exists in the table
-        $current_score = $wpdb->get_var($wpdb->prepare("SELECT Score FROM $legion_table_name WHERE `Legion Number` = %d", $legion_num));
-
-        if (null !== $current_score) { 
-            // If the legion exists, increment the score
-            $new_score = $current_score + 1; 
-
-            // Update the database with the new score
-            $wpdb->update(
-                $legion_table_name,
-                array('Score' => $new_score), // new values
-                array('Legion Number' => $legion_num) // where clause
-            );
-        } else {
-            // If the legion doesn't exist in the table, insert it with a score of 0
-            $wpdb->insert(
-                $legion_table_name,
-                array(
-                    'Legion Number' => $legion_num,
-                    'Score' => 0
-                )
-            );
-        }
+        // Always increment the score by 1
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE $legion_table_name SET Score = Score + 1 WHERE `Legion Number` = %d",
+                $legion_num
+            )
+        );
 
         // Extract the area code from the phone number
         $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
 
         $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}";  // Check if the area code exists, else default
 
-        update_option('legion_number', $legion_num);       
+        update_option('legion_number', $legion_num);
+
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
             'post_title'   => $baseCity . ' ' . $TICKET,
-            'post_content' => $text,   
+            'post_content' => $text,
             'post_status'  => 'publish',
-            'post_author'  => 2, 
+            'post_author'  => 2,
         );
 
         $post_id = wp_insert_post($post_data);
-        
+
         $wpdb->update(
             $wpdb->posts,
             array(
-                'legion_number' => $legion_num  
+                'legion_number' => $legion_num
             ),
-            array('ID' => $post_id) 
+            array('ID' => $post_id)
         );
-        
+
         // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);
 
