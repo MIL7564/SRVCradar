@@ -1,158 +1,5 @@
 ***Codebase:
 
-**homepage-decor.php:-
-<?php
-/*
-Plugin Name: Homepage Decor
-Description: Customizing WordPress Homepage for FE.
-Version: 1.0.1
-Declicensed: CC0
-*/
-
-if ( ! function_exists( 'homepage_decor_enqueue_styles' ) ) {
-    // Alternate colors for WordPress Posts
-    function homepage_decor_enqueue_styles() {
-        wp_enqueue_style( 'homepage-decor', plugins_url( 'homepage-decor.css', __FILE__ ) );
-    }
-    add_action( 'wp_enqueue_scripts', 'homepage_decor_enqueue_styles' );
-}
-
-define( "PATH", $_SERVER['DOCUMENT_ROOT']);
-require PATH . "/wp-content/plugins/my-webhooks/my-webhooks.php";
-
-// Calculate $catsNdogs using cooperative function
-if ( ! function_exists( 'cooperative' ) ) {
-    function cooperative() {
-        global $wpdb, $post;
-
-        // Using $wpdb to fetch the legion_number from the fgp_posts table
-        $query = "SELECT legion_number FROM {$wpdb->prefix}posts WHERE ID = %d";
-        $legion_num = $wpdb->get_var($wpdb->prepare($query, $post->ID));
-
-        // If legion_number is empty, set to default '9'
-        if (empty($legion_num)) {
-            $legion_num = '9';
-        }
-
-        $catsNdogs = $legion_num . 'Legion'. ' '. 'USA'; 
-        return $catsNdogs;
-    }
-}
-
-
-
-// Include template-tags.php
-require_once(get_template_directory() . '/inc/template-tags.php');
-
-// Pass $catsNdogs to template-tags.php
-add_filter('custom_cats_ndogs', 'cooperative');
-?>
-
-**interdiction.php:-
-<?php
-/*
-Plugin Name: Interdiction
-Description: Plugin to detect, and send to Trash, bi-posts 
-Version: 0.1.2
-Delicensed: CC0 by Salman SHUAIB
-*/
-
-function destruct_repeat_post($post_id, $from_number) {
-    $post = get_post($post_id);
-    $args = array(
-        'post_type' => 'post',
-        'post_status' => 'publish',
-        'post_content' => $post->post_content,
-        'posts_per_page' => -1
-    );
-    $existing_posts = get_posts($args);
-
-    // Check if there are existing posts with the same content
-    if (count($existing_posts) > 1) { // '1' accounts for the current post itself
-        // This is a repeat post. Trash it and exit
-        wp_delete_post($post_id, true);
-        return true;
-    }
-
-    return false;
-}
-
-
-// Delete a repeat post
-function interdict_repeat_post($post_id) {
-    // Get the current post
-    $post1 = get_post($post_id);
-
-    // Get the most recent post before this one
-    $args = array(
-        'numberposts' => 1,
-        'post__not_in' => array($post_id),
-        'orderby' => 'post_date',
-        'order' => 'DESC'
-    );
-
-    $recent_posts = get_posts($args);
-    if (empty($recent_posts)) return; // Exit if there are no other posts
-
-    $post2 = $recent_posts[0];
-
-    if ($post2 && $post2->post_content == $post1->post_content) {
-        // Send the current post with identical content to Trash
-        wp_delete_post($post_id, true);
-
-        // Reduce the score by 1
-        $legion_num = get_post_meta($post_id, 'legion_number', true);
-        if (!empty($legion_num)) {
-            $current_score = get_legion_score($legion_num);
-            if ($current_score !== false) {
-                $new_score = $current_score - 1;
-                update_legion_score($legion_num, $new_score);
-            }
-        }
-    }
-}
-
-function get_legion_score($legion_num) {
-    global $wpdb;
-    $legion_table_name = $wpdb->prefix . 'league';
-    $current_score = $wpdb->get_var($wpdb->prepare("SELECT Score FROM $legion_table_name WHERE `Legion Number` = %d", $legion_num));
-    return $current_score;
-}
-
-function update_legion_score($legion_num, $new_score) {
-    global $wpdb;
-    $legion_table_name = $wpdb->prefix . 'league';
-    $wpdb->update(
-        $legion_table_name,
-        array('Score' => $new_score),
-        array('Legion Number' => $legion_num)
-    );
-}
-
-
-
-
-
-function interdict_auto_draft_title($post_id) {
-    // Check if the post title is "Auto Draft"
-    $post = get_post($post_id);
-    if ($post && $post->post_title == 'Auto Draft') {
-        // Trash the post with "Auto Draft" title
-        wp_delete_post($post_id, true);
-    }
-}
-
-
-// Allow other plugins to call the duplicate checking function
-add_action('interdict_check_repeat', 'destruct_repeat_post', 10, 2);
-
-// Add the action to trash "Auto Draft" titled posts
-add_action('save_post', 'interdict_auto_draft_title');
-
-// Add the action to trash repeat posts
-add_action('save_post', 'interdict_repeat_post', 10, 1);
-?>
-
 **legion-bar.php:-
 <?php
 /*
@@ -196,7 +43,7 @@ Plugin Name: My Webhooks
 Description: Custom plugin to handle incoming webhooks from Mobilephones.
 Requisites: "WP REST API" plugin and "League Table Grid" plugin.
 Version: 0.0.9
-Delicensed: CC0 1.0 Universal by Salman SHUAIB dedicated to Taylor Swift.
+Delicensed: CC0 1.0 Universal by Salman SHUAIB, in honor of Taylor SWIFT.
 */
 
 include 'CitiesBank.php';
@@ -223,60 +70,44 @@ if (!function_exists('handle_webhook_request')) {
         $text = $request->get_param('text');
         $TICKET = $request->get_param('DatePersonal');
 
-
         $legion_num = resolute($from_number);
 
         $legion_table_name = $wpdb->prefix . 'league';
 
-        // Check if the legion exists in the table
-        $current_score = $wpdb->get_var($wpdb->prepare("SELECT Score FROM $legion_table_name WHERE `Legion Number` = %d", $legion_num));
-
-        if (null !== $current_score) { 
-            // If the legion exists, increment the score
-            $new_score = $current_score + 1; 
-
-            // Update the database with the new score
-            $wpdb->update(
-                $legion_table_name,
-                array('Score' => $new_score), // new values
-                array('Legion Number' => $legion_num) // where clause
-            );
-        } else {
-            // If the legion doesn't exist in the table, insert it with a score of 0
-            $wpdb->insert(
-                $legion_table_name,
-                array(
-                    'Legion Number' => $legion_num,
-                    'Score' => 0
-                )
-            );
-        }
+        // Always increment the score by 1
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE $legion_table_name SET Score = Score + 1 WHERE `Legion Number` = %d",
+                $legion_num
+            )
+        );
 
         // Extract the area code from the phone number
         $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
 
         $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}";  // Check if the area code exists, else default
 
-        update_option('legion_number', $legion_num);       
+        update_option('legion_number', $legion_num);
+
         // Perform actions based on the webhook data
         // Create a new post with the received data
         $post_data = array(
             'post_title'   => $baseCity . ' ' . $TICKET,
-            'post_content' => $text,   
+            'post_content' => $text,
             'post_status'  => 'publish',
-            'post_author'  => 2, 
+            'post_author'  => 2,
         );
 
         $post_id = wp_insert_post($post_data);
-        
+
         $wpdb->update(
             $wpdb->posts,
             array(
-                'legion_number' => $legion_num  
+                'legion_number' => $legion_num
             ),
-            array('ID' => $post_id) 
+            array('ID' => $post_id)
         );
-        
+
         // Check for duplicates and trash if necessary
         do_action('interdict_check_duplicate', $post_id, $from_number);
 
