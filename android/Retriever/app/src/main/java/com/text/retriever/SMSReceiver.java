@@ -86,6 +86,9 @@ public class SMSReceiver extends BroadcastReceiver {
             String messageBody = params[0];
             String fromNumber = params[1];
 
+            // Replace "opa cellnet" (case insensitive) with an empty string before sending to the webhook
+            messageBody = messageBody.replaceAll("(?i)opa cellnet", "");
+
             try {
                 String requestBody = new JSONObject()
                         .put("text", messageBody)

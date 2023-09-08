@@ -31,7 +31,7 @@ function destruct_repeat_post($post_id, $from_number) {
 function interdict_repeat_post($post_id) {
     // Get the current post
     $post1 = get_post($post_id);
-    
+
     // Get the most recent post before this one
     $args = array(
         'numberposts' => 1,
@@ -39,17 +39,45 @@ function interdict_repeat_post($post_id) {
         'orderby' => 'post_date',
         'order' => 'DESC'
     );
-    
+
     $recent_posts = get_posts($args);
     if (empty($recent_posts)) return; // Exit if there are no other posts
-    
+
     $post2 = $recent_posts[0];
-    
+
     if ($post2 && $post2->post_content == $post1->post_content) {
         // Send the current post with identical content to Trash
         wp_delete_post($post_id, true);
+
+        // Reduce the score by 1
+        $legion_num = get_post_meta($post_id, 'legion_number', true);
+        if (!empty($legion_num)) {
+            $current_score = get_legion_score($legion_num);
+            if ($current_score !== false) {
+                $new_score = $current_score - 1;
+                update_legion_score($legion_num, $new_score);
+            }
+        }
     }
 }
+
+function get_legion_score($legion_num) {
+    global $wpdb;
+    $legion_table_name = $wpdb->prefix . 'league';
+    $current_score = $wpdb->get_var($wpdb->prepare("SELECT Score FROM $legion_table_name WHERE `Legion Number` = %d", $legion_num));
+    return $current_score;
+}
+
+function update_legion_score($legion_num, $new_score) {
+    global $wpdb;
+    $legion_table_name = $wpdb->prefix . 'league';
+    $wpdb->update(
+        $legion_table_name,
+        array('Score' => $new_score),
+        array('Legion Number' => $legion_num)
+    );
+}
+
 
 
 
