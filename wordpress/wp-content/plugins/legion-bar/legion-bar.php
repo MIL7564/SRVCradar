@@ -32,3 +32,14 @@ function display_bar() {
     }
 }
 add_action('wp_head', 'display_bar');
+
+
+/* After displaying the bar, check for any Legion with a score of 0
+foreach ($results as $result) {
+    if ($result->Score == 0) {
+        echo '<div class="winner-message">Legion ' . $result->{"Legion Number"} . ' is the present winner</div>';
+        break;
+    }
+}
+?>
+*/
