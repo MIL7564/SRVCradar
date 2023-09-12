@@ -101,34 +101,14 @@ function reset_legion_scores() {
     $wpdb->query("UPDATE $legion_table_name SET Score = 20");
 }
 
-// This function schedules the score reset
+// Schedule an event to reset legion scores hourly
 function schedule_reset_legion_scores() {
-    // Get current time in NYC timezone
-    $current_time = new DateTime('now', new DateTimeZone('America/New_York'));
-    $reset_time = new DateTime('midnight', new DateTimeZone('America/New_York')); // Next midnight
-    
-    if ($current_time > $reset_time) {
-        $reset_time->modify('+1 day');
-    }
-    
-    // Check if event is already scheduled
-    if (!wp_next_scheduled('reset_legion_scores_event')) {
-        wp_schedule_event($reset_time->getTimestamp(), '48hours', 'reset_legion_scores_event');
+    if (!wp_next_scheduled('hourly_reset_legion_scores')) {
+        wp_schedule_event(time(), 'hourly', 'hourly_reset_legion_scores');
     }
 }
 
-add_action('reset_legion_scores_event', 'reset_legion_scores');
-add_action('wp_loaded', 'schedule_reset_legion_scores');
-
-function custom_cron_schedule($schedules) {
-    $schedules['48hours'] = array(
-        'interval' => 48*60*60, // 48 hours in seconds
-        'display'  => 'Every 48 Hours',
-    );
-    return $schedules;
-}
-
-add_filter('cron_schedules', 'custom_cron_schedule');
-
+add_action('wp', 'schedule_reset_legion_scores');
+add_action('hourly_reset_legion_scores', 'reset_legion_scores');
 
 ?>

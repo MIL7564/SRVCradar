@@ -20,7 +20,10 @@ import okhttp3.Response;
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
-    private static final String WEBHOOK_URL = "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text";  // replace this with your actual URL
+    private static final String[] WEBHOOK_URLs = {
+            "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text",
+            "https://142.120.254.152/wordpress/wp-json/my-webhooks/v1/webhook/text"// replace this with your actual URL
+    };
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     // Define TheCurrentDate as a class member variable
@@ -89,28 +92,30 @@ public class SMSReceiver extends BroadcastReceiver {
             // Replace "opa cellnet" (case insensitive) with an empty string before sending to the webhook
             messageBody = messageBody.replaceAll("(?i)opa cellnet", "");
 
-            try {
-                String requestBody = new JSONObject()
-                        .put("text", messageBody)
-                        .put("FromNumber", fromNumber)
-                        .put("DatePersonal", Taser)
-                        .toString();
+            for (String webhookUrl: WEBHOOK_URLs) {
+                try {
+                    String requestBody = new JSONObject()
+                            .put("text", messageBody)
+                            .put("FromNumber", fromNumber)
+                            .put("DatePersonal", Taser)
+                            .toString();
 
-                RequestBody body = RequestBody.create(requestBody, JSON);
+                    RequestBody body = RequestBody.create(requestBody, JSON);
 
-                Request request = new Request.Builder()
-                        .url(WEBHOOK_URL)
-                        .post(body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
+                    Request request = new Request.Builder()
+                            .url(webhookUrl)
+                            .post(body)
+                            .addHeader("Content-Type", "application/json")
+                            .build();
 
-                // Execute the request
-                Response response = client.newCall(request).execute();
+                    // Execute the request
+                    Response response = client.newCall(request).execute();
 
-                Log.i(TAG, "Webhook response: " + response.body().string());
-            } catch (Exception e) {
-                Log.e(TAG, "Error in sending request", e);
-            }
+                    Log.i(TAG, "Webhook response: " + response.body().string());
+                } catch (Exception e) {
+                    Log.e(TAG, "Error in sending request", e);
+                }
+            } // <-- This closing brace was missing
 
             return null;
         }

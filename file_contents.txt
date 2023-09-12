@@ -141,6 +141,17 @@ function display_bar() {
 }
 add_action('wp_head', 'display_bar');
 
+
+/* After displaying the bar, check for any Legion with a score of 0
+foreach ($results as $result) {
+    if ($result->Score == 0) {
+        echo '<div class="winner-message">Legion ' . $result->{"Legion Number"} . ' is the present winner</div>';
+        break;
+    }
+}
+?>
+*/
+
 **my-webhooks.php:-
 <?php
 /*
@@ -237,4 +248,14 @@ function register_custom_webhook_route() {
 
 // Ensure the callback to register_custom_webhook_route is being run
 add_action('rest_api_init', 'register_custom_webhook_route');
+
+// This function sets the score for all legions to 20
+function reset_legion_scores() {
+    global $wpdb;
+    $legion_table_name = $wpdb->prefix . 'league';
+    $wpdb->query("UPDATE $legion_table_name SET Score = 20");
+}
+
+
+
 ?>
