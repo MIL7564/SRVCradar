@@ -1,3 +1,10 @@
+- Upload the "IF"ed functions files to staging2 before uploading to FE.com.
+- Pseudocode: 
++ C:\ Kindly specify PHP code for a scorecard bar on top of posts and right below menu for my WordPress site that picks score for each legion 
+from the X table columns: X1 and X2.
++ C:\ Hey, can you specify Java code after reading the following SMSReceiver.java file that picks up (if) any email address mentioned in the text message 
+and subscribes that email address using our nrucn.js and comment-notifications.php files (also below).
+
 - Deploy cellnet before Hurricane Lee barrel down toward New York City.
 
 - SOLVED: "IF" a SENDER mentiones his email address (identifiable via the @ symbol) in TEXT message to 14375562530; we send the 

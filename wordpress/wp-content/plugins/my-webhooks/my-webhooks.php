@@ -46,7 +46,7 @@ if (!function_exists('handle_webhook_request')) {
         // Extract the area code from the phone number
         $areaCode = substr($from_number, 0, 3);  // Assuming the area code is the first three digits
 
-        $baseCity = $areaCodeToCity[$areaCode] ?? "{Tag: BASECITY}";  // Check if the area code exists, else default
+        $baseCity = $areaCodeToCity[$areaCode] ?? "Earth";  // Check if the area code exists, else default
 
         update_option('legion_number', $legion_num);
 
