@@ -21,8 +21,9 @@ public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "SMSReceiver";
     private OkHttpClient client;
     private static final String[] WEBHOOK_URLs = {
-            "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text",
-            "https://142.120.254.152/wordpress/wp-json/my-webhooks/v1/webhook/text"// replace this with your actual URL
+            "https://FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text"//,
+            //"https://staging2.FlowerEconomics.com/wp-json/my-webhooks/v1/webhook/text"
+            // "https://142.120.254.152/wordpress/wp-json/my-webhooks/v1/webhook/text"// replace this with your actual URL
     };
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 

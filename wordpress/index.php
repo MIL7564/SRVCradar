@@ -1,17 +1,24 @@
-<?php
-/**
- * Front to the WordPress application. This file doesn't do anything, but loads
- * wp-blog-header.php which does and tells WordPress to load the theme.
- *
- * @package WordPress
- */
-
-/**
- * Tells WordPress to load the WordPress theme and output it.
- *
- * @var bool
- */
-define( 'WP_USE_THEMES', true );
-
-/** Loads the WordPress Environment and Template */
-require __DIR__ . '/wp-blog-header.php';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Under Development</title>
+    <style>
+        /* Add your custom CSS styles here */
+        body {
+            text-align: center;
+            padding: 100px;
+            font-size: 20px;
+            font-weight: lighter; /* Adjust the font-weight */
+        }
+        h1 {
+            font-weight: lighter; /* Adjust the font-weight for the heading */
+        }
+    </style>
+</head>
+<body>
+    <h1>Website Under Development</h1>
+    <p>We're adding features to our site and improving its look. Please check back in January 2024AD!</p>
+</body>
+</html>
